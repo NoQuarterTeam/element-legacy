@@ -13,6 +13,7 @@
     "build:web": "cd packages/web && yarn build",
     "pre-commit": "lerna run pre-commit",
     "test": "lerna run test",
+    "lint": "lerna run lint",
     "heroku-postbuild": "yarn build:api"
   },
   "husky": {
