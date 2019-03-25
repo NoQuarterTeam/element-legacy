@@ -11,14 +11,21 @@
   "scripts": {
     "build:api": "cd packages/api && yarn build",
     "build:web": "cd packages/web && yarn build",
-    "lint": "lerna run lint",
-    "publish": "lerna run publish",
+    "pre-commit": "lerna run pre-commit",
+    "test": "lerna run test",
     "heroku-postbuild": "yarn build:api"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lerna run --concurrency 1 --stream pre-commit"
+    }
   },
   "resolutions": {
     "graphql": "14.1.1"
   },
   "devDependencies": {
-    "lerna": "^3.13.0"
+    "husky": "^1.3.1",
+    "lerna": "^3.13.0",
+    "lint-staged": "^8.1.5"
   }
 }

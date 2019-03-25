@@ -1,22 +1,24 @@
 {
   "compilerOptions": {
+    "jsx": "react",
+    "lib": ["dom", "es2018", "esnext.asynciterable"],
+    "rootDir": "src",
+    "target": "es5",
+    "composite": false,
+
     "allowJs": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "strict": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "jsx": "preserve",
-    "lib": ["es2015", "es2017", "es6", "es7", "dom", "esnext.asynciterable"],
-    "module": "esnext",
-    "moduleResolution": "node",
     "noEmit": true,
     "noUnusedLocals": true,
     "resolveJsonModule": true,
     "removeComments": false,
-    "rootDir": "src",
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "es5"
+    "skipLibCheck": true
   },
-  "exclude": ["./node_modules", "**/*.spec.ts"],
+  "exclude": ["./node_modules"],
   "include": ["src/**/*.tsx", "src/**/*.ts"]
 }
