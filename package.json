@@ -11,9 +11,9 @@
   "scripts": {
     "build:api": "cd packages/api && yarn build",
     "build:web": "cd packages/web && yarn build",
-    "pre-commit": "lerna run pre-commit",
     "test": "lerna run test",
     "lint": "lerna run lint",
+    "pre-commit": "lerna run pre-commit",
     "heroku-postbuild": "yarn build:api"
   },
   "husky": {

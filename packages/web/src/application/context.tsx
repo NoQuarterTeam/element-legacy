@@ -1,9 +1,9 @@
 import React from "react"
-import { Maybe, Me } from "../lib/graphql/types"
+import { MeQuery } from "../lib/graphql/types"
 
-export interface IContext {
-  user: Maybe<Me.Me>
+export interface AppContext {
+  user: MeQuery["me"]
 }
-export const AppContext = React.createContext<IContext>({
+export const AppContext = React.createContext<AppContext>({
   user: null,
 })

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
@@ -15,5 +16,7 @@
     "strict": true,
     "strictPropertyInitialization": false,
     "target": "es6"
-  }
+  },
+  "exclude": ["./node_modules"],
+  "include": ["src/**/*.tsx", "src/**/*.ts", "src/**/*.js", "src/**/*.jx"]
 }

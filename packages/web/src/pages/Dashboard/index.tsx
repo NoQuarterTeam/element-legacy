@@ -1,4 +1,4 @@
-import React, { memo } from "react"
+import React, { memo, FC } from "react"
 import { RouteComponentProps } from "@reach/router"
 
 import useAppContext from "../../lib/hooks/useAppContext"
@@ -8,7 +8,7 @@ import styled from "../../application/theme"
 import Page from "../../components/Page"
 import Button from "../../components/Button"
 
-function Profile(_: RouteComponentProps) {
+const Dashboard: FC<RouteComponentProps> = () => {
   const { user } = useAppContext()
   const logout = useLogout()
   return (
@@ -23,7 +23,7 @@ function Profile(_: RouteComponentProps) {
   )
 }
 
-export default memo(Profile)
+export default memo(Dashboard)
 
 const StyledHeader = styled.h2`
   margin: ${p => p.theme.paddingXL} auto;

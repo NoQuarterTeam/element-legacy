@@ -11,7 +11,7 @@ import { createDbConnection } from "./db"
 import { authChecker } from "./lib/authChecker"
 
 import { cors, PORT, resolverPaths, APP_SECRET } from "./config"
-import { IRequest } from "./lib/types"
+import { AppRequest } from "./lib/types"
 
 async function main() {
   try {
@@ -37,7 +37,7 @@ async function main() {
     })
 
     const apolloServer = new ApolloServer({
-      context: ({ req, res }: { req: IRequest; res: Response }) => ({
+      context: ({ req, res }: { req: AppRequest; res: Response }) => ({
         req,
         res,
         userId: req.user && req.user.id,

@@ -1,5 +1,5 @@
-import React, { memo, useState } from "react"
-import { RouteComponentProps, Link } from "@reach/router"
+import React, { memo, useState, FC } from "react"
+import { RouteComponentProps, Link, navigate } from "@reach/router"
 import { GraphQLError } from "graphql"
 
 import styled from "../../application/theme"
@@ -10,7 +10,7 @@ import Input from "../../components/Input"
 import Button from "../../components/Button"
 import AuthForm from "../../components/AuthForm"
 
-function Register(props: RouteComponentProps) {
+const Register: FC<RouteComponentProps> = () => {
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
   const [firstName, setFirstName] = useState<string>("")
@@ -29,7 +29,7 @@ function Register(props: RouteComponentProps) {
         data: { email, password, firstName, lastName },
       },
     })
-      .then(() => props.navigate!("/"))
+      .then(() => navigate("/"))
       .catch((registerError: GraphQLError) => {
         setLoading(false)
         setError(registerError.message.split(":")[1])

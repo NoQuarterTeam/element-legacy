@@ -1,14 +1,12 @@
 import { useContext } from "react"
+
 import { AppContext } from "../../application/context"
-import { Me } from "../../lib/graphql/types"
 
-type AppContextReturn = {
-  user: Me.Me
-}
-
-function useAppContext(): AppContextReturn {
+function useAppContext() {
   const { user } = useContext(AppContext)
-  return { user: user! }
+  // Casting them as not null for App as there is CheckUser && CheckHouse
+  if (!user) throw new Error("")
+  return { user }
 }
 
 export default useAppContext

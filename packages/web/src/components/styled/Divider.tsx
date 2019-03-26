@@ -1,7 +1,7 @@
 import React, { FC } from "react"
 import styled, { darken } from "../../application/theme"
 
-type DividerProps = {}
+interface DividerProps {}
 
 const Divider: FC<DividerProps> = () => {
   return <StyledDivider />

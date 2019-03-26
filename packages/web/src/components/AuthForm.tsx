@@ -2,7 +2,7 @@ import React, { FC } from "react"
 import styled from "../application/theme"
 import Center from "./styled/Center"
 
-type AuthFormProps = {
+interface AuthFormProps {
   handleSubmit: (e: any) => void
 }
 const AuthForm: FC<AuthFormProps> = ({ children, handleSubmit }) => {

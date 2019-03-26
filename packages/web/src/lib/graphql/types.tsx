@@ -1,6 +1,9 @@
+import gql from "graphql-tag"
+import * as ReactApolloHooks from "react-apollo-hooks"
+
 type Maybe<T> = T | null
 /** All built-in and custom scalars, mapped to their actual values */
-export type Scalars = {
+export interface Scalars {
   ID: string
   String: string
   Boolean: boolean
@@ -8,56 +11,56 @@ export type Scalars = {
   Float: number
 }
 
-export type LoginInput = {
+export interface LoginInput {
   email: Scalars["String"]
   password: Scalars["String"]
 }
 
-export type Mutation = {
+export interface Mutation {
   register: UserAuthResponse
   login: UserAuthResponse
   updateUser?: Maybe<User>
   logout: Scalars["Boolean"]
 }
 
-export type MutationRegisterArgs = {
+export interface MutationRegisterArgs {
   data: RegisterInput
 }
 
-export type MutationLoginArgs = {
+export interface MutationLoginArgs {
   data: LoginInput
 }
 
-export type MutationUpdateUserArgs = {
+export interface MutationUpdateUserArgs {
   data: UpdateInput
 }
 
-export type Query = {
+export interface Query {
   me?: Maybe<User>
 }
 
-export type RegisterInput = {
+export interface RegisterInput {
   firstName: Scalars["String"]
   lastName: Scalars["String"]
   email: Scalars["String"]
   password: Scalars["String"]
 }
 
-export type UpdateInput = {
+export interface UpdateInput {
   firstName?: Maybe<Scalars["String"]>
   lastName?: Maybe<Scalars["String"]>
   email?: Maybe<Scalars["String"]>
   password?: Maybe<Scalars["String"]>
 }
 
-export type User = {
+export interface User {
   id: Scalars["ID"]
   email: Scalars["String"]
   firstName: Scalars["String"]
   lastName: Scalars["String"]
 }
 
-export type UserAuthResponse = {
+export interface UserAuthResponse {
   user: User
   token: Scalars["String"]
 }
@@ -66,13 +69,13 @@ export type UserFragment = { __typename?: "User" } & Pick<
   "id" | "firstName" | "lastName" | "email"
 >
 
-export type MeQueryVariables = {}
+export interface MeQueryVariables {}
 
 export type MeQuery = { __typename?: "Query" } & {
   me: Maybe<{ __typename?: "User" } & UserFragment>
 }
 
-export type LoginMutationVariables = {
+export interface LoginMutationVariables {
   data: LoginInput
 }
 
@@ -83,7 +86,7 @@ export type LoginMutation = { __typename?: "Mutation" } & {
   > & { user: { __typename?: "User" } & UserFragment }
 }
 
-export type RegisterMutationVariables = {
+export interface RegisterMutationVariables {
   data: RegisterInput
 }
 
@@ -94,7 +97,7 @@ export type RegisterMutation = { __typename?: "Mutation" } & {
   > & { user: { __typename?: "User" } & UserFragment }
 }
 
-export type UpdateUserMutationVariables = {
+export interface UpdateUserMutationVariables {
   data: UpdateInput
 }
 
@@ -102,15 +105,12 @@ export type UpdateUserMutation = { __typename?: "Mutation" } & {
   updateUser: Maybe<{ __typename?: "User" } & UserFragment>
 }
 
-export type LogoutMutationVariables = {}
+export interface LogoutMutationVariables {}
 
 export type LogoutMutation = { __typename?: "Mutation" } & Pick<
   Mutation,
   "logout"
 >
-
-import gql from "graphql-tag"
-import * as ReactApolloHooks from "react-apollo-hooks"
 export const UserFragmentDoc = gql`
   fragment User on User {
     id

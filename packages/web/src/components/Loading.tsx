@@ -2,11 +2,11 @@ import React, { Fragment, FC } from "react"
 import styled from "../application/theme"
 import useDebounce from "../lib/hooks/useDebounce"
 
-interface ILoadingProps {
+interface LoadingProps {
   loading: boolean
 }
 
-const Loading: FC<ILoadingProps> = ({ loading, children }) => {
+const Loading: FC<LoadingProps> = ({ loading, children }) => {
   const isLoading = useDebounce(loading, 200)
   return (
     <Fragment>
@@ -25,7 +25,7 @@ const StyledContainer = styled.div<{ loading: boolean }>`
   left: 0;
   height: 100vh;
   width: 100vw;
-  background-color: white
+  background-color: white;
   transition: opacity 1s, visibility -0.3s linear 1s;
 
   ${p => p.theme.flexCenter};

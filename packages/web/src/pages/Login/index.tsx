@@ -1,5 +1,5 @@
-import React, { memo, useState } from "react"
-import { RouteComponentProps, Link } from "@reach/router"
+import React, { memo, useState, FC } from "react"
+import { RouteComponentProps, Link, navigate } from "@reach/router"
 import { GraphQLError } from "graphql"
 import styled from "../../application/theme"
 
@@ -8,7 +8,7 @@ import Button from "../../components/Button"
 import Input from "../../components/Input"
 import AuthForm from "../../components/AuthForm"
 
-function Login(props: RouteComponentProps) {
+const Login: FC<RouteComponentProps> = () => {
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
   const [error, setError] = useState<string>("")
@@ -22,7 +22,7 @@ function Login(props: RouteComponentProps) {
     login({
       variables: { data: { email, password } },
     })
-      .then(() => props.navigate!("/"))
+      .then(() => navigate("/"))
       .catch((loginError: GraphQLError) => {
         setLoading(false)
         setError(loginError.message.split(":")[1])

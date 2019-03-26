@@ -10,7 +10,7 @@ const media = generateMedia({
   sm: "450px",
 })
 
-const theme: IThemeInterface = {
+const theme: ThemeInterface = {
   colorBackground: "#f8f9fd",
   colorPlaceholder: "#d3d3d3",
   colorLabel: "#b1bbc4",
@@ -48,7 +48,7 @@ const theme: IThemeInterface = {
   `,
 }
 
-export interface IThemeInterface {
+export interface ThemeInterface {
   borderRadius: string
   colorBackground: string
   colorHeader: string
@@ -81,7 +81,7 @@ const {
   createGlobalStyle,
   keyframes,
   ThemeProvider,
-} = styledComponents as ThemedStyledComponentsModule<IThemeInterface>
+} = styledComponents as ThemedStyledComponentsModule<ThemeInterface>
 
 export {
   theme,

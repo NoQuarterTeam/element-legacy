@@ -1,11 +1,11 @@
 import { Request, Response } from "express"
 
-export interface IResolverContext {
-  req: IRequest
+export interface ResolverContext {
+  req: AppRequest
   res: Response
   userId: string
 }
 
-export interface IRequest extends Request {
+export interface AppRequest extends Request {
   user?: { id: string }
 }
