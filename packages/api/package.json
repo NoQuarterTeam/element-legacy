@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "apollo-server-express": "2.4.8",
-    "aws-sdk": "2.431.0",
+    "aws-sdk": "2.432.0",
     "bcryptjs": "2.4.3",
     "connect-redis": "3.4.1",
     "dataloader": "1.4.0",
