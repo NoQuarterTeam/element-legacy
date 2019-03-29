@@ -23,4 +23,5 @@ export default Home
 const StyledHeader = styled.h2`
   font-size: ${p => p.theme.textL};
   margin-bottom: ${p => p.theme.paddingL};
+  color: ${p => p.theme.colorText};
 `

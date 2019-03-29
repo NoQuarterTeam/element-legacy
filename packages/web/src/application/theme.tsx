@@ -10,11 +10,16 @@ const media = generateMedia({
   sm: "450px",
 })
 
-const theme: ThemeInterface = {
-  colorBackground: "#f8f9fd",
-  colorPlaceholder: "#d3d3d3",
-  colorLabel: "#b1bbc4",
-  colorHeader: "#1b2d41",
+const theme: (small: boolean, isDark: boolean) => ThemeInterface = (
+  small,
+  isDark,
+) => ({
+  colorPage: isDark ? "#2f3335" : "white",
+  colorBackground: isDark ? "#373c3f" : "#f8f9fd",
+  colorPlaceholder: isDark ? "#6f7172" : "#d3d3d3",
+  colorShadow: isDark ? "rgba(0, 0, 0, 0.1)" : "rgba(200, 200, 200, 0.1)",
+  colorLabel: isDark ? "#81878a" : "#b1bbc4",
+  colorText: isDark ? "#ebecec" : "#1b2d41",
   colorPink: "#ed60d3",
   colorBlue: "#4586ff",
   fontBlack: 900,
@@ -26,10 +31,10 @@ const theme: ThemeInterface = {
   paddingXL: "40px",
   paddingXS: "3px",
   borderRadius: "5px",
-  textL: "1.75rem",
-  textM: "1.125rem",
-  textS: "0.875rem",
-  textXL: "2.25rem",
+  textL: small ? "1.5rem" : "1.75rem",
+  textM: small ? "1rem" : "1.125rem",
+  textS: small ? "0.75rem" : "0.875rem",
+  textXL: small ? "2rem" : "2.25rem",
   textXS: "0.625rem",
   flexCenter: `
     display: flex;
@@ -46,13 +51,15 @@ const theme: ThemeInterface = {
     align-items: center;
     justify-content: space-around;
   `,
-}
+})
 
 export interface ThemeInterface {
+  colorPage: string
   borderRadius: string
   colorBackground: string
-  colorHeader: string
+  colorText: string
   colorLabel: string
+  colorShadow: string
   colorPlaceholder: string
   colorPink: string
   colorBlue: string

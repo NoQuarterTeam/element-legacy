@@ -7,10 +7,11 @@
     "start": "parcel src/index.html --port 3000",
     "build": "rm -rf dist && NODE_ENV=production parcel build src/index.html",
     "test": "jest --passWithNoTests",
+    "typecheck": "tsc --noEmit",
     "generate": "graphql-codegen --config ./codegen.yml",
     "lint": "eslint --fix --cache --ext .jsx,.js,.ts,.tsx src",
     "prettify": "prettier --write './src/**/*.{ts,tsx}'",
-    "pre-commit": "tsc --noEmit && lint-staged"
+    "pre-commit": "lint-staged"
   },
   "lint-staged": {
     "*.{js,jsx,json,ts,tsx,html}": [
@@ -28,7 +29,8 @@
     "react-apollo-hooks": "^0.4.3",
     "react-dom": "^16.8.4",
     "styled-components": "^4.1.3",
-    "styled-media-query": "^2.1.1"
+    "styled-media-query": "^2.1.1",
+    "use-media": "^1.3.0"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "1.0.4",
