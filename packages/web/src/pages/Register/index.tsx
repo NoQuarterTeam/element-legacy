@@ -1,4 +1,4 @@
-import React, { memo, useState, FC } from "react"
+import React, { useState, FC } from "react"
 import { RouteComponentProps, Link, navigate } from "@reach/router"
 import { GraphQLError } from "graphql"
 
@@ -85,7 +85,7 @@ const Register: FC<RouteComponentProps> = () => {
   )
 }
 
-export default memo(Register)
+export default Register
 
 const StyledLink = styled.div`
   text-align: right;
@@ -93,7 +93,7 @@ const StyledLink = styled.div`
   text-decoration: none;
   outline: none;
   cursor: pointer;
-  color: ${p => p.theme.colorHeader};
+  color: ${p => p.theme.colorText};
   padding: ${p => p.theme.paddingS};
   font-size: ${p => p.theme.textM};
 
@@ -108,6 +108,7 @@ const StyledError = styled.div`
   opacity: 0.4;
   width: 100%;
   text-align: right;
+  color: ${p => p.theme.colorText};
   padding: ${p => p.theme.paddingM};
   font-size: ${p => p.theme.textS};
 `
