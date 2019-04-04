@@ -5,8 +5,8 @@ export const createToken = (userId: string): Promise<string> => {
   return new Promise(resolve => {
     try {
       const token = jwt.sign({ id: userId }, APP_SECRET, {
-        issuer: "@fullstack-boilerplate/api",
-        audience: ["@fullstack-boilerplate/app", "@fullstack-boilerplate/web"],
+        issuer: "@element/api",
+        audience: ["@element/app", "@element/web"],
         expiresIn: "4w",
       })
       resolve(token)

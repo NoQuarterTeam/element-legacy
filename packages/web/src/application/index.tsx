@@ -7,7 +7,7 @@ import { useMe } from "../lib/graphql/user/hooks"
 import Loading from "../components/Loading"
 import CheckAuth from "../components/CheckAuth"
 
-import Dashboard from "../pages/Dashboard"
+import Timeline from "../pages/Timeline"
 import NotFound from "../pages/NotFound"
 
 function Application() {
@@ -19,7 +19,7 @@ function Application() {
         <Suspense fallback={null}>
           <CheckAuth>
             <Router>
-              <Dashboard path="/" />
+              <Timeline path="/" />
               <NotFound default={true} />
             </Router>
           </CheckAuth>

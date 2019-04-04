@@ -4,9 +4,8 @@ import { AppContext } from "../../application/context"
 
 function useAppContext() {
   const { user } = useContext(AppContext)
-  // Casting them as not null for App as there is CheckUser && CheckHouse
-  if (!user) throw new Error("")
-  return { user }
+  // eslint-disable-next-line
+  return { user: user! }
 }
 
 export default useAppContext

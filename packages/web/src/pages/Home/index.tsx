@@ -9,7 +9,7 @@ const Home: FC<RouteComponentProps> = () => {
   return (
     <Page>
       <div>
-        <StyledHeader>Welcome to the Fullstack Boilerplate!</StyledHeader>
+        <StyledHeader>Welcome to Element!</StyledHeader>
         <Button color="pink" onClick={() => navigate("/login")}>
           Login
         </Button>

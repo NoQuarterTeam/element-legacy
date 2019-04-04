@@ -12,7 +12,6 @@ function Page({ children }: PageProps) {
 const StyledPage = styled.div`
   height: 100vh;
   width: 100vw;
-
   ${p => p.theme.flexCenter};
 `
 

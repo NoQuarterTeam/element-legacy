@@ -4,7 +4,7 @@
     "type": "postgres",
     "host": "localhost",
     "port": 5432,
-    "database": "fullstack-boilerplate",
+    "database": "element_development_2",
     "synchronize": true,
     "logging": false,
     "entities": ["src/modules/**/*.entity.ts"],
