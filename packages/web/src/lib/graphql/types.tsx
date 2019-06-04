@@ -1,6 +1,9 @@
-type Maybe<T> = T | null
+import gql from "graphql-tag"
+import * as ReactApolloHooks from "react-apollo-hooks"
+import * as ReactApollo from "react-apollo"
+export type Maybe<T> = T | null
 /** All built-in and custom scalars, mapped to their actual values */
-export type Scalars = {
+export interface Scalars {
   ID: string
   String: string
   Boolean: boolean
@@ -10,22 +13,14 @@ export type Scalars = {
   DateTime: any
 }
 
-export type CreateElementInput = {
+export interface CreateElementInput {
   name?: Maybe<Scalars["String"]>
   color?: Maybe<Scalars["String"]>
   archived?: Maybe<Scalars["Boolean"]>
 }
 
-export type CreateTaskInput = {
-  name?: Maybe<Scalars["String"]>
-  startTime?: Maybe<Scalars["String"]>
-  description?: Maybe<Scalars["String"]>
-  estimatedTime?: Maybe<Scalars["String"]>
-  completed?: Maybe<Scalars["Boolean"]>
-  scheduledDate?: Maybe<Scalars["DateTime"]>
-}
-
-export type Element = {
+export interface Element {
+  __typename?: "Element"
   id: Scalars["ID"]
   name: Scalars["String"]
   color: Scalars["String"]
@@ -34,28 +29,30 @@ export type Element = {
   updatedAt: Scalars["DateTime"]
 }
 
-export type Habit = {
+export interface Habit {
+  __typename?: "Habit"
   id: Scalars["ID"]
   archived: Scalars["Boolean"]
   createdAt: Scalars["DateTime"]
   updatedAt: Scalars["DateTime"]
 }
 
-export type InputHabit = {
+export interface InputHabit {
   archived?: Maybe<Scalars["Boolean"]>
 }
 
-export type InputProgress = {
+export interface InputProgress {
   date?: Maybe<Scalars["DateTime"]>
   archived?: Maybe<Scalars["Boolean"]>
 }
 
-export type LoginInput = {
+export interface LoginInput {
   email: Scalars["String"]
   password: Scalars["String"]
 }
 
-export type Mutation = {
+export interface Mutation {
+  __typename?: "Mutation"
   createElement?: Maybe<Element>
   updateElement?: Maybe<Element>
   destroyElement?: Maybe<Scalars["Boolean"]>
@@ -67,6 +64,7 @@ export type Mutation = {
   destroyProgress?: Maybe<Scalars["Boolean"]>
   createTask?: Maybe<Task>
   updateTask?: Maybe<Task>
+  updateTaskOrder?: Maybe<Task>
   destroyTask?: Maybe<Scalars["Boolean"]>
   register: UserAuthResponse
   login: UserAuthResponse
@@ -74,93 +72,106 @@ export type Mutation = {
   logout: Scalars["Boolean"]
 }
 
-export type MutationCreateElementArgs = {
+export interface MutationCreateElementArgs {
   data: CreateElementInput
 }
 
-export type MutationUpdateElementArgs = {
+export interface MutationUpdateElementArgs {
   data: CreateElementInput
   elementId: Scalars["String"]
 }
 
-export type MutationDestroyElementArgs = {
+export interface MutationDestroyElementArgs {
   elementId: Scalars["String"]
 }
 
-export type MutationCreateHabitArgs = {
+export interface MutationCreateHabitArgs {
   data: InputHabit
 }
 
-export type MutationUpdateHabitArgs = {
+export interface MutationUpdateHabitArgs {
   data: InputHabit
   habitId: Scalars["String"]
 }
 
-export type MutationDestroyHabitArgs = {
+export interface MutationDestroyHabitArgs {
   habitId: Scalars["String"]
 }
 
-export type MutationCreateProgressArgs = {
+export interface MutationCreateProgressArgs {
   data: InputProgress
 }
 
-export type MutationUpdateProgressArgs = {
+export interface MutationUpdateProgressArgs {
   data: InputProgress
   progressId: Scalars["String"]
 }
 
-export type MutationDestroyProgressArgs = {
+export interface MutationDestroyProgressArgs {
   progressId: Scalars["String"]
 }
 
-export type MutationCreateTaskArgs = {
-  data: CreateTaskInput
+export interface MutationCreateTaskArgs {
+  data: TaskInput
 }
 
-export type MutationUpdateTaskArgs = {
-  data: UpdateTask
+export interface MutationUpdateTaskArgs {
+  data: TaskInput
   taskId: Scalars["String"]
 }
 
-export type MutationDestroyTaskArgs = {
+export interface MutationUpdateTaskOrderArgs {
+  data: OrderTaskInput
   taskId: Scalars["String"]
 }
 
-export type MutationRegisterArgs = {
+export interface MutationDestroyTaskArgs {
+  taskId: Scalars["String"]
+}
+
+export interface MutationRegisterArgs {
   data: RegisterInput
 }
 
-export type MutationLoginArgs = {
+export interface MutationLoginArgs {
   data: LoginInput
 }
 
-export type MutationUpdateUserArgs = {
+export interface MutationUpdateUserArgs {
   data: UpdateInput
 }
 
-export type Progress = {
+export interface OrderTaskInput {
+  order: Scalars["Float"]
+  scheduledDate: Scalars["DateTime"]
+}
+
+export interface Progress {
+  __typename?: "Progress"
   id: Scalars["ID"]
   date: Scalars["DateTime"]
   createdAt: Scalars["DateTime"]
   updatedAt: Scalars["DateTime"]
 }
 
-export type Query = {
-  allElements?: Maybe<Array<Element>>
-  allHabits?: Maybe<Array<Habit>>
-  allProgresss?: Maybe<Array<Progress>>
-  allTasks?: Maybe<Array<Task>>
+export interface Query {
+  __typename?: "Query"
+  allElements?: Maybe<Element[]>
+  allHabits?: Maybe<Habit[]>
+  allProgresss?: Maybe<Progress[]>
+  allTasks?: Maybe<Task[]>
   me?: Maybe<User>
 }
 
-export type RegisterInput = {
+export interface RegisterInput {
   firstName: Scalars["String"]
   lastName: Scalars["String"]
   email: Scalars["String"]
   password: Scalars["String"]
 }
 
-export type Task = {
+export interface Task {
+  __typename?: "Task"
   id: Scalars["ID"]
   name: Scalars["String"]
   startTime?: Maybe<Scalars["String"]>
@@ -168,35 +179,40 @@ export type Task = {
   estimatedTime?: Maybe<Scalars["String"]>
   completed: Scalars["Boolean"]
   scheduledDate?: Maybe<Scalars["DateTime"]>
-  order?: Maybe<Scalars["Float"]>
+  order: Scalars["Float"]
+  elementId: Scalars["String"]
+  element: Element
   createdAt: Scalars["DateTime"]
   updatedAt: Scalars["DateTime"]
 }
 
-export type UpdateInput = {
+export interface TaskInput {
+  name: Scalars["String"]
+  startTime: Scalars["String"]
+  description: Scalars["String"]
+  estimatedTime: Scalars["String"]
+  completed: Scalars["Boolean"]
+  scheduledDate: Scalars["DateTime"]
+  elementId: Scalars["String"]
+}
+
+export interface UpdateInput {
   firstName?: Maybe<Scalars["String"]>
   lastName?: Maybe<Scalars["String"]>
   email?: Maybe<Scalars["String"]>
   password?: Maybe<Scalars["String"]>
 }
 
-export type UpdateTask = {
-  name?: Maybe<Scalars["String"]>
-  startTime?: Maybe<Scalars["String"]>
-  description?: Maybe<Scalars["String"]>
-  estimatedTime?: Maybe<Scalars["String"]>
-  completed?: Maybe<Scalars["Boolean"]>
-  scheduledDate?: Maybe<Scalars["DateTime"]>
-}
-
-export type User = {
+export interface User {
+  __typename?: "User"
   id: Scalars["ID"]
   email: Scalars["String"]
   firstName: Scalars["String"]
   lastName: Scalars["String"]
 }
 
-export type UserAuthResponse = {
+export interface UserAuthResponse {
+  __typename?: "UserAuthResponse"
   user: User
   token: Scalars["String"]
 }
@@ -205,18 +221,27 @@ export type ElementFragment = { __typename?: "Element" } & Pick<
   "id" | "name" | "color" | "archived"
 >
 
-export type AllElementsQueryVariables = {}
+export interface AllElementsQueryVariables {}
 
 export type AllElementsQuery = { __typename?: "Query" } & {
-  allElements: Maybe<Array<{ __typename?: "Element" } & ElementFragment>>
+  allElements: Maybe<({ __typename?: "Element" } & ElementFragment)[]>
 }
 
-export type CreateElementMutationVariables = {
+export interface CreateElementMutationVariables {
   data: CreateElementInput
 }
 
 export type CreateElementMutation = { __typename?: "Mutation" } & {
   createElement: Maybe<{ __typename?: "Element" } & ElementFragment>
+}
+
+export interface UpdateElementMutationVariables {
+  elementId: Scalars["String"]
+  data: CreateElementInput
+}
+
+export type UpdateElementMutation = { __typename?: "Mutation" } & {
+  updateElement: Maybe<{ __typename?: "Element" } & ElementFragment>
 }
 
 export type TaskFragment = { __typename?: "Task" } & Pick<
@@ -227,21 +252,48 @@ export type TaskFragment = { __typename?: "Task" } & Pick<
   | "description"
   | "estimatedTime"
   | "completed"
+  | "order"
   | "scheduledDate"
->
+  | "elementId"
+> & {
+    element: { __typename?: "Element" } & Pick<
+      Element,
+      "id" | "color" | "name" | "archived" | "createdAt" | "updatedAt"
+    >
+  }
 
-export type AllTasksQueryVariables = {}
+export interface AllTasksQueryVariables {}
 
 export type AllTasksQuery = { __typename?: "Query" } & {
-  allTasks: Maybe<Array<{ __typename?: "Task" } & TaskFragment>>
+  allTasks: Maybe<({ __typename?: "Task" } & TaskFragment)[]>
 }
 
-export type CreateTaskMutationVariables = {
-  data: CreateTaskInput
+export interface CreateTaskMutationVariables {
+  data: TaskInput
 }
 
 export type CreateTaskMutation = { __typename?: "Mutation" } & {
   createTask: Maybe<{ __typename?: "Task" } & TaskFragment>
+}
+
+export interface UpdateTaskMutationVariables {
+  taskId: Scalars["String"]
+  data: TaskInput
+}
+
+export type UpdateTaskMutation = { __typename?: "Mutation" } & {
+  updateTask: Maybe<{ __typename?: "Task" } & TaskFragment>
+}
+
+export interface UpdateTaskOrderMutationVariables {
+  taskId: Scalars["String"]
+  data: OrderTaskInput
+}
+
+export type UpdateTaskOrderMutation = { __typename?: "Mutation" } & {
+  updateTaskOrder: Maybe<
+    { __typename?: "Task" } & Pick<Task, "id" | "order" | "scheduledDate">
+  >
 }
 
 export type UserFragment = { __typename?: "User" } & Pick<
@@ -249,13 +301,13 @@ export type UserFragment = { __typename?: "User" } & Pick<
   "id" | "firstName" | "lastName" | "email"
 >
 
-export type MeQueryVariables = {}
+export interface MeQueryVariables {}
 
 export type MeQuery = { __typename?: "Query" } & {
   me: Maybe<{ __typename?: "User" } & UserFragment>
 }
 
-export type LoginMutationVariables = {
+export interface LoginMutationVariables {
   data: LoginInput
 }
 
@@ -266,7 +318,7 @@ export type LoginMutation = { __typename?: "Mutation" } & {
   > & { user: { __typename?: "User" } & UserFragment }
 }
 
-export type RegisterMutationVariables = {
+export interface RegisterMutationVariables {
   data: RegisterInput
 }
 
@@ -277,7 +329,7 @@ export type RegisterMutation = { __typename?: "Mutation" } & {
   > & { user: { __typename?: "User" } & UserFragment }
 }
 
-export type UpdateUserMutationVariables = {
+export interface UpdateUserMutationVariables {
   data: UpdateInput
 }
 
@@ -285,15 +337,12 @@ export type UpdateUserMutation = { __typename?: "Mutation" } & {
   updateUser: Maybe<{ __typename?: "User" } & UserFragment>
 }
 
-export type LogoutMutationVariables = {}
+export interface LogoutMutationVariables {}
 
 export type LogoutMutation = { __typename?: "Mutation" } & Pick<
   Mutation,
   "logout"
 >
-
-import gql from "graphql-tag"
-import * as ReactApolloHooks from "react-apollo-hooks"
 export const ElementFragmentDoc = gql`
   fragment Element on Element {
     id
@@ -310,7 +359,17 @@ export const TaskFragmentDoc = gql`
     description
     estimatedTime
     completed
+    order
     scheduledDate
+    elementId
+    element {
+      id
+      color
+      name
+      archived
+      createdAt
+      updatedAt
+    }
   }
 `
 export const UserFragmentDoc = gql`
@@ -346,6 +405,10 @@ export const CreateElementDocument = gql`
   }
   ${ElementFragmentDoc}
 `
+export type CreateElementMutationFn = ReactApollo.MutationFn<
+  CreateElementMutation,
+  CreateElementMutationVariables
+>
 
 export function useCreateElementMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -357,6 +420,30 @@ export function useCreateElementMutation(
     CreateElementMutation,
     CreateElementMutationVariables
   >(CreateElementDocument, baseOptions)
+}
+export const UpdateElementDocument = gql`
+  mutation UpdateElement($elementId: String!, $data: CreateElementInput!) {
+    updateElement(elementId: $elementId, data: $data) {
+      ...Element
+    }
+  }
+  ${ElementFragmentDoc}
+`
+export type UpdateElementMutationFn = ReactApollo.MutationFn<
+  UpdateElementMutation,
+  UpdateElementMutationVariables
+>
+
+export function useUpdateElementMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    UpdateElementMutation,
+    UpdateElementMutationVariables
+  >,
+) {
+  return ReactApolloHooks.useMutation<
+    UpdateElementMutation,
+    UpdateElementMutationVariables
+  >(UpdateElementDocument, baseOptions)
 }
 export const AllTasksDocument = gql`
   query AllTasks {
@@ -376,13 +463,17 @@ export function useAllTasksQuery(
   )
 }
 export const CreateTaskDocument = gql`
-  mutation CreateTask($data: CreateTaskInput!) {
+  mutation CreateTask($data: TaskInput!) {
     createTask(data: $data) {
       ...Task
     }
   }
   ${TaskFragmentDoc}
 `
+export type CreateTaskMutationFn = ReactApollo.MutationFn<
+  CreateTaskMutation,
+  CreateTaskMutationVariables
+>
 
 export function useCreateTaskMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -394,6 +485,55 @@ export function useCreateTaskMutation(
     CreateTaskMutation,
     CreateTaskMutationVariables
   >(CreateTaskDocument, baseOptions)
+}
+export const UpdateTaskDocument = gql`
+  mutation UpdateTask($taskId: String!, $data: TaskInput!) {
+    updateTask(taskId: $taskId, data: $data) {
+      ...Task
+    }
+  }
+  ${TaskFragmentDoc}
+`
+export type UpdateTaskMutationFn = ReactApollo.MutationFn<
+  UpdateTaskMutation,
+  UpdateTaskMutationVariables
+>
+
+export function useUpdateTaskMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    UpdateTaskMutation,
+    UpdateTaskMutationVariables
+  >,
+) {
+  return ReactApolloHooks.useMutation<
+    UpdateTaskMutation,
+    UpdateTaskMutationVariables
+  >(UpdateTaskDocument, baseOptions)
+}
+export const UpdateTaskOrderDocument = gql`
+  mutation UpdateTaskOrder($taskId: String!, $data: OrderTaskInput!) {
+    updateTaskOrder(taskId: $taskId, data: $data) {
+      id
+      order
+      scheduledDate
+    }
+  }
+`
+export type UpdateTaskOrderMutationFn = ReactApollo.MutationFn<
+  UpdateTaskOrderMutation,
+  UpdateTaskOrderMutationVariables
+>
+
+export function useUpdateTaskOrderMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    UpdateTaskOrderMutation,
+    UpdateTaskOrderMutationVariables
+  >,
+) {
+  return ReactApolloHooks.useMutation<
+    UpdateTaskOrderMutation,
+    UpdateTaskOrderMutationVariables
+  >(UpdateTaskOrderDocument, baseOptions)
 }
 export const MeDocument = gql`
   query Me {
@@ -423,6 +563,10 @@ export const LoginDocument = gql`
   }
   ${UserFragmentDoc}
 `
+export type LoginMutationFn = ReactApollo.MutationFn<
+  LoginMutation,
+  LoginMutationVariables
+>
 
 export function useLoginMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -446,6 +590,10 @@ export const RegisterDocument = gql`
   }
   ${UserFragmentDoc}
 `
+export type RegisterMutationFn = ReactApollo.MutationFn<
+  RegisterMutation,
+  RegisterMutationVariables
+>
 
 export function useRegisterMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -466,6 +614,10 @@ export const UpdateUserDocument = gql`
   }
   ${UserFragmentDoc}
 `
+export type UpdateUserMutationFn = ReactApollo.MutationFn<
+  UpdateUserMutation,
+  UpdateUserMutationVariables
+>
 
 export function useUpdateUserMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<
@@ -483,6 +635,10 @@ export const LogoutDocument = gql`
     logout
   }
 `
+export type LogoutMutationFn = ReactApollo.MutationFn<
+  LogoutMutation,
+  LogoutMutationVariables
+>
 
 export function useLogoutMutation(
   baseOptions?: ReactApolloHooks.MutationHookOptions<

@@ -1,44 +1,36 @@
 import { InputType, Field } from "type-graphql"
 import { Task } from "./task.entity"
+import { CreateElementInput } from "../element/element.input"
 
 @InputType()
-export class CreateTaskInput implements Partial<Task> {
-  @Field({ nullable: true })
-  name?: string
+export class TaskInput implements Partial<Task> {
+  @Field()
+  name: string
 
-  @Field({ nullable: true })
-  startTime?: string
+  @Field()
+  startTime: string
 
-  @Field({ nullable: true })
-  description?: string
+  @Field()
+  description: string
 
-  @Field({ nullable: true })
-  estimatedTime?: string
+  @Field()
+  estimatedTime: string
 
-  @Field({ nullable: true })
-  completed?: boolean
+  @Field()
+  completed: boolean
 
-  @Field({ nullable: true })
-  scheduledDate?: Date
+  @Field()
+  scheduledDate: Date
+
+  @Field()
+  elementId: string
 }
 
 @InputType()
-export class UpdateTask implements Partial<Task> {
-  @Field({ nullable: true })
-  name?: string
+export class OrderTaskInput implements Partial<Task> {
+  @Field()
+  order: number
 
-  @Field({ nullable: true })
-  startTime?: string
-
-  @Field({ nullable: true })
-  description?: string
-
-  @Field({ nullable: true })
-  estimatedTime?: string
-
-  @Field({ nullable: true })
-  completed?: boolean
-
-  @Field({ nullable: true })
-  scheduledDate?: Date
+  @Field()
+  scheduledDate: Date
 }

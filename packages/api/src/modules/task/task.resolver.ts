@@ -2,8 +2,7 @@ import { Resolver, Mutation, Arg, Authorized, Query } from "type-graphql"
 
 import { Task } from "./task.entity"
 import { TaskService } from "./task.service"
-// import { ResolverContext } from "../../lib/types"
-import { CreateTaskInput, UpdateTask } from "./task.input"
+import { TaskInput, OrderTaskInput } from "./task.input"
 
 @Resolver(() => Task)
 export class TaskResolver {
@@ -19,7 +18,7 @@ export class TaskResolver {
   // CREATE TASK
   @Authorized()
   @Mutation(() => Task, { nullable: true })
-  async createTask(@Arg("data") data: CreateTaskInput): Promise<Task> {
+  async createTask(@Arg("data") data: TaskInput): Promise<Task> {
     return this.taskService.create(data)
   }
 
@@ -28,9 +27,19 @@ export class TaskResolver {
   @Mutation(() => Task, { nullable: true })
   async updateTask(
     @Arg("taskId") taskId: string,
-    @Arg("data") data: UpdateTask,
+    @Arg("data") data: TaskInput,
   ): Promise<Task> {
     return this.taskService.update(taskId, data)
+  }
+
+  // UPDATE TASK ORDER
+  @Authorized()
+  @Mutation(() => Task, { nullable: true })
+  async updateTaskOrder(
+    @Arg("taskId") taskId: string,
+    @Arg("data") data: OrderTaskInput,
+  ): Promise<Task> {
+    return this.taskService.updateOrder(taskId, data)
   }
 
   // DESTROY TASK
@@ -39,4 +48,9 @@ export class TaskResolver {
   destroyTask(@Arg("taskId") taskId: string): Promise<boolean> {
     return this.taskService.destroy(taskId)
   }
+
+  // @FieldResolver()
+  // element(@Root() task: Task) {
+  //   return elememnt.fnd
+  // }
 }

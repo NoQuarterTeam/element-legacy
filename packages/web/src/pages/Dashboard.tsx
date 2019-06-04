@@ -1,13 +1,13 @@
 import React, { FC } from "react"
 import { RouteComponentProps } from "@reach/router"
 
-import useAppContext from "../../lib/hooks/useAppContext"
-import { useLogout } from "../../lib/graphql/user/hooks"
+import useAppContext from "../lib/hooks/useAppContext"
+import { useLogout } from "../lib/graphql/user/hooks"
 
-import styled from "../../application/theme"
-import Page from "../../components/Page"
-import Button from "../../components/Button"
-import ThemeSwitcher from "../../components/ThemeSwitcher"
+import styled from "../application/theme"
+import Page from "../components/Page"
+import Button from "../components/Button"
+import ThemeSwitcher from "../components/ThemeSwitcher"
 
 const Dashboard: FC<RouteComponentProps> = () => {
   const { user } = useAppContext()

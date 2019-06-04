@@ -8,9 +8,9 @@ import {
   ManyToOne,
 } from "typeorm"
 
-import { Element } from "../element/element.entity"
-
 import { ObjectType, Field, ID } from "type-graphql"
+import { CreateElementInput } from "../element/element.input"
+import { Element } from "../element/element.entity"
 
 @ObjectType()
 @Entity()
@@ -43,12 +43,17 @@ export class Task extends BaseEntity {
   @Column({ nullable: true })
   scheduledDate: Date
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Field()
+  @Column({ type: "int" })
   order: number
 
+  @Field()
+  @Column()
+  elementId: string
+
+  @Field(() => Element)
   @ManyToOne(() => Element, element => element.tasks, { eager: true })
-  element: Element
+  element: CreateElementInput
 
   // @OneToMany(() => Progress, progress => progress.task)
   // progress: Progress;

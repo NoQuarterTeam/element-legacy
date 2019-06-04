@@ -1,18 +1,17 @@
 import React, { memo } from "react"
 import styled from "styled-components"
-import { Task as TaskType } from "../lib/graphql/types"
+import { TaskFragment } from "../lib/graphql/types"
 
 interface TaskProps {
-  task: TaskType
-  id: number
-  key: number
+  task: TaskFragment
+  isDragging: boolean
 }
-function Task({ task }: TaskProps) {
+function Task({ task, ...rest }: TaskProps) {
   return (
     <StyledTaskBox
-      // {...props}
+      {...rest}
       completed={task.completed}
-      color="#333"
+      color={task.element.color}
       id={task.id}
       className="task"
     >
@@ -20,9 +19,7 @@ function Task({ task }: TaskProps) {
       {/* <StyledTaskElement completed={task.completed}>
         {task.element.name}
       </StyledTaskElement> */}
-      <StyledTaskStart completed={task.completed}>
-        {task.startTime}
-      </StyledTaskStart>
+      <StyledTaskStart completed={task.completed}>{task.order}</StyledTaskStart>
       <StyledTaskDuration completed={task.completed}>
         {task.estimatedTime}
       </StyledTaskDuration>
@@ -42,7 +39,7 @@ const StyledTaskElement = styled.p<{ completed: boolean }>`
   display: none;
 `
 
-const StyledTaskBox = styled.div<{ completed: boolean }>`
+const StyledTaskBox = styled.div<{ completed: boolean; color: string }>`
   position: relative;
   cursor: pointer;
   display: flex;
@@ -54,7 +51,7 @@ const StyledTaskBox = styled.div<{ completed: boolean }>`
   border-radius: 8px;
   border: ${props => (props.completed ? "1px solid" + props.color : "none")};
   padding: 6px;
-  box-shadow: ${props => props.theme.boxShadow};
+  /* box-shadow: ${props => props.theme.boxShadow}; */
 
   &:hover ${StyledTaskElement} {
     display: block;

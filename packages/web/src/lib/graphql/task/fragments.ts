@@ -8,7 +8,16 @@ export const Task = gql`
     description
     estimatedTime
     completed
+    order
     scheduledDate
-    element
+    elementId
+    element {
+      id
+      color
+      name
+      archived
+      createdAt
+      updatedAt
+    }
   }
 `

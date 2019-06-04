@@ -62,7 +62,7 @@ function TimelineHead() {
 
   return (
     <StyledMonthsHeadContainer>
-      {getMonths(dayjs().subtract(10, "day"), 20).map((month, i) => {
+      {getMonths(dayjs().subtract(20, "day"), 40).map((month, i) => {
         return (
           <StyledTimelineHead key={i}>
             <StyledMonthHeader>{monthNames[month]}</StyledMonthHeader>
@@ -130,7 +130,6 @@ const StyledTimelineHead = styled.div`
 const StyledMonthsHeadContainer = styled.div`
   display: flex;
   flex-direction: row;
-  box-shadow: 0 4px 2px -2px rgba(15, 15, 15, 0.1);
   width: fit-content;
 `
 
@@ -141,6 +140,7 @@ const StyledMonthHeader = styled.h3`
   width: 64px;
   left: 16px;
   margin-left: 16px;
+  z-index: 1;
 `
 
 const StyledDaysHeader = styled.div`
@@ -150,7 +150,7 @@ const StyledDaysHeader = styled.div`
 
 const StyledDayHeader = styled.h3<{ weekend: boolean; today: boolean }>`
   font-weight: ${props => (props.today ? "800" : "400")};
-  font-size: ${props => (props.today ? "14px" : "12px")};
+  font-size: ${props => (props.today ? "15px" : "12px")};
   width: 88px;
   height: 177px;
   margin: 0;
@@ -158,6 +158,7 @@ const StyledDayHeader = styled.h3<{ weekend: boolean; today: boolean }>`
   justify-content: center;
   align-items: center;
   background-color: ${props => (props.weekend ? "rgba(0,0,0,0.03)" : "")};
+  background-color: ${props => (props.today ? "rgb(225, 233, 244, 0.8)" : "")};
   padding-top: 160px;
   margin-top: -160px;
 `

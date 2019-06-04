@@ -1,5 +1,5 @@
 import dayjs, { Dayjs } from "dayjs"
-import { Task } from "./graphql/types"
+import { Task, TaskFragment } from "./graphql/types"
 
 export const snakeToCamel = (value: string) =>
   value.replace(/_(\w)/g, m => m[1].toUpperCase())
@@ -44,7 +44,7 @@ export const getMonths = (startDate: Dayjs, daysCount: number) => {
   })
 }
 
-export const calculateTotalTime = (tasks: Task[]) => {
+export const calculateTotalTime = (tasks: TaskFragment[]) => {
   let total = 0
   tasks &&
     tasks.map(task => {
@@ -58,6 +58,70 @@ export const calculateTotalTime = (tasks: Task[]) => {
   const totalFormatted = Math.floor(total / 60) + "h " + (total % 60) + "m"
 
   return totalFormatted
+}
+
+// a little function to help us with reordering the result
+function reorder<R>(list: R[], startIndex: number, endIndex: number): R[] {
+  const result = list
+
+  const [removed] = result.splice(startIndex, 1)
+
+  result.splice(endIndex, 0, removed)
+
+  return result
+}
+
+export const reorderTasks = (source: any, destination: any, dayTasks: any) => {
+  const orderedTasks = reorder<Task>(dayTasks, source.index, destination.index)
+
+  const updatedTaskList = orderedTasks.map((task, index) => {
+    return {
+      ...task,
+      order: index,
+    }
+  })
+
+  return updatedTaskList
+}
+
+export function move(
+  source: Task[],
+  destination: Task[],
+  droppableSource: any,
+  droppableDestination: any,
+): [Task[], Task[]] {
+  const sourceClone = Array.from(source)
+  const destClone = Array.from(destination)
+  const [removed] = sourceClone.splice(droppableSource.index, 1)
+  destClone.splice(droppableDestination.index, 0, removed)
+
+  const updatedDestinationTasksByDay = destClone.map((task, index) => {
+    const scheduledDate = dayjs(droppableDestination.droppableId).toISOString()
+    return {
+      ...task,
+      order: index,
+      scheduledDate: scheduledDate,
+    }
+  })
+
+  const updatedSourceTasksByDay = sourceClone.map((task, index) => {
+    return {
+      ...task,
+      order: index,
+    }
+  })
+
+  return [updatedSourceTasksByDay, updatedDestinationTasksByDay]
+}
+
+export const getDayTasksAndOrder = (allTasks: any, target: any) => {
+  return allTasks
+    .filter((t: Task) =>
+      dayjs(t.scheduledDate).isSame(dayjs(target.droppableId), "day"),
+    )
+    .sort((a: Task, b: Task) => {
+      return a.order - b.order
+    })
 }
 
 // const isToday? = (day) => {

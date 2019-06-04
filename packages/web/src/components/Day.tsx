@@ -1,11 +1,12 @@
-import React from "react"
+import React, { memo } from "react"
 import styled from "styled-components"
 import { Dayjs } from "dayjs"
+import { Droppable, Draggable } from "react-beautiful-dnd"
 
 import Task from "./Task"
 
-import { calculateTotalTime } from "../lib/helpers"
-import { Task as TaskType } from "../lib/graphql/types"
+import { calculateTotalTime, today } from "../lib/helpers"
+import { TaskFragment } from "../lib/graphql/types"
 // import { Droppable, Draggable } from 'react-beautiful-dnd';
 
 // import dayjs from "dayjs"
@@ -18,93 +19,91 @@ interface DayProps {
   weekend: boolean
   day: Dayjs
   month: string
-  tasks: TaskType[]
+  tasks: TaskFragment[]
+  handleTaskModal: any
 }
-function Day({ weekend, day, month, tasks }: DayProps) {
+function Day({
+  weekend,
+  day,
+  month,
+  tasks,
+  handleTaskModal,
+  ...props
+}: DayProps) {
   // const { updateTasks } = useContext(AppContext);
 
   return (
-    // <Droppable droppableId={day.toString()}>
-    // 	{provided => (
-    // <div ref={provided.innerRef}>
-    <StyledDay weekend={weekend}>
-      {tasks &&
-        tasks
-          // .sort(function(a, b) {
-          //   return a.order - b.order
-          // })
-          .map((task, index) => (
-            <Task
-              key={index}
-              // isDragging={snapshot.isDragging}
-              id={index}
-              task={task}
-              // onClick={() => handleTaskModal(task)}
-              // onMouseDown={() => onMouseDown(event, task)}
-            />
-          ))}
+    <Droppable droppableId={day.toString()}>
+      {provided => (
+        <div ref={provided.innerRef} {...provided.droppableProps}>
+          <StyledDay weekend={weekend} today={today(day)} {...props}>
+            {tasks &&
+              tasks
+                .sort((a, b) => {
+                  return a.order - b.order
+                })
+                .map((task, index) => (
+                  <Draggable key={task.id} draggableId={task.id} index={index}>
+                    {(provided, snapshot) => {
+                      return (
+                        <div
+                          ref={provided.innerRef}
+                          key={index}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <Task
+                            isDragging={snapshot.isDragging}
+                            task={task}
+                            onClick={() => handleTaskModal(task)}
+                            // onMouseDown={() => onMouseDown(event, task)}
+                          />
+                        </div>
+                      )
+                    }}
+                  </Draggable>
+                ))}
+            {/* {calculateTotalTime(tasks)} */}
 
-      {/* {tasks &&
-							tasks
-								.sort(function(a, b) {
-									return a.order - b.order;
-								})
-								.map((task, index) => (
-									<Draggable key={task.id} draggableId={task.id} index={index}>
-										{(provided, snapshot) => {
-											const onMouseDown = (() => {
-												// dragHandleProps might be null
-												if (!provided.dragHandleProps) {
-													return onMouseDown;
-												}
-												// creating a new onMouseDown function that calls taskOnMouseDown as well as the drag handle one.
-												return event => {
-													taskOnMouseDown(event, task);
-													// provided.dragHandleProps.onMouseDown(event);
-												};
-											})();
+            {provided.placeholder}
 
-											return (
-												<div
-													ref={provided.innerRef}
-													{...provided.draggableProps}
-													{...provided.dragHandleProps}
-													style={getItemStyle(
-														snapshot.isDragging,
-														provided.draggableProps.style,
-													)}
-												>
-													<Task
-														// key={index}
-														isDragging={snapshot.isDragging}
-														id={index}
-														task={task}
-														onClick={() => handleTaskModal(task)}
-														onMouseDown={() => onMouseDown(event, task)}
-													/>
-												</div>
-											);
-										}}
-									// {/* </Draggable> */}
-      {/* ))} */}
-      {/* {provided.placeholder} */}
-      {calculateTotalTime(tasks)}
-    </StyledDay>
-    // </div>
-    // )}
-    // </Droppable>
+            <AddNewTask onClick={() => handleTaskModal()}>
+              <PlaceholderTask />
+            </AddNewTask>
+          </StyledDay>
+        </div>
+      )}
+    </Droppable>
   )
 }
 
-export default Day
+export default memo(Day)
 
-const StyledDay = styled.div<{ weekend: boolean }>`
+const StyledDay = styled.div<{ weekend: boolean; today: boolean }>`
   position: relative;
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   width: 88px;
   background-color: ${props => (props.weekend ? "rgba(0,0,0,0.03)" : "")};
   height: 880px;
   font-size: 12px;
+  padding-top: 8px;
+  background-color: ${props => (props.today ? "rgb(225, 233, 244, 0.8)" : "")};
+`
+
+const PlaceholderTask = styled.div`
+  min-width: calc(100% - 8px);
+  height: 56px;
+  border-radius: 8px;
+`
+
+const AddNewTask = styled.div`
+  cursor: pointer;
+  height: -webkit-fill-available;
+  border-radius: 5px;
+  margin: 4px;
+
+  &:hover ${PlaceholderTask} {
+    background-color: rgb(225, 233, 244, 0.5);
+  }
 `

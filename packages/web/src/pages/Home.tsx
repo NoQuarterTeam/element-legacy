@@ -1,9 +1,9 @@
 import React, { FC } from "react"
 import { RouteComponentProps, navigate } from "@reach/router"
 
-import styled from "../../application/theme"
-import Page from "../../components/Page"
-import Button from "../../components/Button"
+import styled from "../application/theme"
+import Page from "../components/Page"
+import Button from "../components/Button"
 
 const Home: FC<RouteComponentProps> = () => {
   return (

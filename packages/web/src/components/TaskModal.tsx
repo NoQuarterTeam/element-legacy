@@ -1,13 +1,23 @@
 import React, { FC } from "react"
-import styled from "../application/theme"
-import { useCreateTaskMutation, CreateTaskInput } from "../lib/graphql/types"
+
+import {
+  useCreateTaskMutation,
+  CreateTaskInput,
+  Task,
+  useUpdateTaskMutation,
+  UpdateTaskInput,
+} from "../lib/graphql/types"
 
 import Modal from "./Modal"
 import TaskForm from "./TaskForm"
 
-interface TaskModalProps {}
-const TaskModal: FC<TaskModalProps> = ({}) => {
+interface TaskModalProps {
+  task: Task
+  closeModal: () => void
+}
+const TaskModal: FC<TaskModalProps> = ({ closeModal, task }) => {
   const createTask = useCreateTaskMutation()
+  const updateTask = useUpdateTaskMutation()
 
   const handleCreateTask = async (taskData: CreateTaskInput) => {
     await createTask({
@@ -15,11 +25,25 @@ const TaskModal: FC<TaskModalProps> = ({}) => {
         data: taskData,
       },
     })
+    closeModal()
+  }
+
+  const handleUpdateTask = async (data: UpdateTaskInput) => {
+    await updateTask({
+      variables: {
+        taskId: task.id,
+        data,
+      },
+    })
+    closeModal()
   }
 
   return (
-    <Modal>
-      <TaskForm onFormSubmit={handleCreateTask} />
+    <Modal onClose={closeModal}>
+      <TaskForm
+        onFormSubmit={task ? handleUpdateTask : handleCreateTask}
+        task={task}
+      />
     </Modal>
   )
 }

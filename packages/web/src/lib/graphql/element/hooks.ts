@@ -1,7 +1,15 @@
-import { useCreateElementMutation, useAllElementsQuery } from "../types"
+import {
+  useCreateElementMutation,
+  useAllElementsQuery,
+  useUpdateElementMutation,
+} from "../types"
 
 export function useCreateElement() {
   return useCreateElementMutation({})
+}
+
+export function useUpdateElement() {
+  return useUpdateElementMutation({})
 }
 
 export function useAllElements() {

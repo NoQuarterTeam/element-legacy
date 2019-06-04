@@ -6,15 +6,19 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   style?: any
   prefix?: string
   value?: any
+  variant?: string
+  labelDirection?: string
 }
 
 function Input(
-  { label, prefix = "", ...inputProps }: InputProps,
+  { label, labelDirection = "column", prefix = "", ...inputProps }: InputProps,
   ref: Ref<HTMLInputElement>,
 ) {
   return (
-    <StyledContainer>
-      {label && <StyledLabel>{label}</StyledLabel>}
+    <StyledContainer labelDirection={labelDirection}>
+      {label && (
+        <StyledLabel labelDirection={labelDirection}>{label}</StyledLabel>
+      )}
       <div>
         <StyledPrefix>{prefix}</StyledPrefix>
         <StyledInput {...inputProps} ref={ref} hasPrefix={!!prefix} />
@@ -25,17 +29,22 @@ function Input(
 
 export default memo(forwardRef(Input))
 
-const StyledContainer = styled.div`
-  width: 100%;
+const StyledContainer = styled.div<{ labelDirection?: string }>`
   padding: ${p => p.theme.paddingS} 0;
+  display: flex;
+  flex-direction: column;
+  ${p => p.labelDirection === "row" && "flex-direction: row"};
+  ${p => p.labelDirection === "row" && "justify-content: space-between"};
+  align-items: center;
 `
 
-const StyledLabel = styled.label`
+const StyledLabel = styled.label<{ labelDirection?: string }>`
   color: ${p => p.theme.colorLabel};
   font-size: ${p => p.theme.textS};
+  ${p => p.labelDirection === "row" && "padding-right: 1rem"};
 `
 
-const StyledInput = styled.input<{ hasPrefix?: boolean }>`
+const StyledInput = styled.input<{ hasPrefix?: boolean; variant: string }>`
   border: 0;
   width: 100%;
   outline: 0;
@@ -48,6 +57,7 @@ const StyledInput = styled.input<{ hasPrefix?: boolean }>`
   padding: ${p => p.theme.paddingM} 0;
   ${p => p.hasPrefix && "padding-left: 16px"};
   ${p => p.type === "date" && "padding-bottom: 7px"};
+  ${p => p.variant === "large" && "font-size: 30px"};
   border-top-left-radius: ${p => p.theme.borderRadius};
   border-top-right-radius: ${p => p.theme.borderRadius};
 

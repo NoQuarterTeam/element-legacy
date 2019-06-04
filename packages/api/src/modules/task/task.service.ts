@@ -1,5 +1,5 @@
 import { Task } from "./task.entity"
-import { CreateTaskInput, UpdateTask } from "./task.input"
+import { TaskInput, OrderTaskInput } from "./task.input"
 
 import { Service } from "typedi"
 
@@ -14,10 +14,7 @@ export class TaskService {
   async findAll(): Promise<Task[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const tasks = await Task.getRepository()
-          .createQueryBuilder("task")
-          .getMany()
-
+        const tasks = await Task.find()
         resolve(tasks)
       } catch (error) {
         reject(error)
@@ -25,7 +22,7 @@ export class TaskService {
     })
   }
 
-  create(data: CreateTaskInput): Promise<Task> {
+  create(data: TaskInput): Promise<Task> {
     return new Promise(async (resolve, reject) => {
       try {
         const task = await Task.create({
@@ -38,7 +35,22 @@ export class TaskService {
     })
   }
 
-  update(taskId: string, data: UpdateTask): Promise<Task> {
+  update(taskId: string, data: TaskInput): Promise<Task> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let task = await this.findById(taskId)
+        if (!task) throw new Error("task not found")
+        Object.assign(task, data)
+        await task.save()
+        task = await this.findById(taskId)
+        resolve(task)
+      } catch (error) {
+        reject(error)
+      }
+    })
+  }
+
+  updateOrder(taskId: string, data: OrderTaskInput): Promise<Task> {
     return new Promise(async (resolve, reject) => {
       try {
         const task = await this.findById(taskId)

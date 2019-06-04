@@ -19,3 +19,12 @@ export const CREATE_ELEMENT = gql`
   }
   ${Element}
 `
+
+export const UPDATE_ELEMENT = gql`
+  mutation UpdateElement($elementId: String!, $data: CreateElementInput!) {
+    updateElement(elementId: $elementId, data: $data) {
+      ...Element
+    }
+  }
+  ${Element}
+`

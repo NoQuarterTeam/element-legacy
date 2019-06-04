@@ -1,31 +1,38 @@
 import React, { useState, FC } from "react"
 import { RouteComponentProps, Link, navigate } from "@reach/router"
 import { GraphQLError } from "graphql"
-import styled from "../../application/theme"
 
-import { useLogin } from "../../lib/graphql/user/hooks"
-import Button from "../../components/Button"
-import Input from "../../components/Input"
-import AuthForm from "../../components/AuthForm"
+import styled from "../application/theme"
 
-const Login: FC<RouteComponentProps> = () => {
+import { useRegister } from "../lib/graphql/user/hooks"
+
+import Input from "../components/Input"
+import Button from "../components/Button"
+import AuthForm from "../components/AuthForm"
+
+const Register: FC<RouteComponentProps> = () => {
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
+  const [firstName, setFirstName] = useState<string>("")
+  const [lastName, setLastName] = useState<string>("")
+
   const [error, setError] = useState<string>("")
   const [loading, setLoading] = useState<boolean>(false)
 
-  const login = useLogin()
+  const register = useRegister()
 
   const handleSubmit = (e: any) => {
     e.preventDefault()
     setLoading(true)
-    login({
-      variables: { data: { email, password } },
+    register({
+      variables: {
+        data: { email, password, firstName, lastName },
+      },
     })
       .then(() => navigate("/"))
-      .catch((loginError: GraphQLError) => {
+      .catch((registerError: GraphQLError) => {
         setLoading(false)
-        setError(loginError.message.split(":")[1])
+        setError(registerError.message.split(":")[1])
       })
   }
 
@@ -48,27 +55,37 @@ const Login: FC<RouteComponentProps> = () => {
         required={true}
         placeholder="********"
       />
+      <Input
+        label="First name"
+        value={firstName}
+        onChange={e => setFirstName(e.target.value)}
+        type="text"
+        required={true}
+        placeholder="Jim"
+      />
       <br />
-      <Button loading={loading} full={true}>
-        Login
+
+      <Input
+        label="Last name"
+        value={lastName}
+        onChange={e => setLastName(e.target.value)}
+        type="text"
+        required={true}
+        placeholder="Sebe"
+      />
+      <br />
+      <Button disabled={loading} loading={loading} full={true}>
+        Sign up
       </Button>
       {error && <StyledError>{error}</StyledError>}
-      <StyledLinks>
-        <Link to="/register">
-          <StyledLink>Sign up</StyledLink>
-        </Link>
-      </StyledLinks>
+      <Link to="/login">
+        <StyledLink>Login</StyledLink>
+      </Link>
     </AuthForm>
   )
 }
 
-export default Login
-
-const StyledLinks = styled.div`
-  width: 100%;
-  padding: ${p => p.theme.paddingL} 0;
-  ${p => p.theme.flexBetween};
-`
+export default Register
 
 const StyledLink = styled.div`
   text-align: right;

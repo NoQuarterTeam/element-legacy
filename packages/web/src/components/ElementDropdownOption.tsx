@@ -5,24 +5,30 @@ import Input from "./Input"
 
 interface ElementDropdownOptionProps {
   element: any
-  selected: number
+  selected: any
   togglePicker: any
+  handleSelectElement: () => void
 }
 const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
   element,
   selected,
   togglePicker,
+  handleSelectElement,
   ...props
 }) => {
   return (
     <>
       <StyledOptionContainer {...props}>
-        <StyledOption selected={selected} id={element.id}>
+        <StyledOption
+          selectedId={selected && selected.id}
+          onClick={handleSelectElement}
+          id={element.id}
+        >
           {element.name}
         </StyledOption>
         <StyledColorCircle
           id={element.id}
-          onClick={e => togglePicker(e)}
+          onClick={() => togglePicker(element)}
           color={element.color}
           // ref={buttonRef}
         />
@@ -46,22 +52,24 @@ const StyledDelete = styled.p`
 const StyledOptionContainer = styled.div`
   display: flex;
   position: relative;
+  margin: 20px 0;
+  align-items: center;
 
   &:hover ${StyledDelete} {
     visibility: visible;
   }
 `
 
-const StyledOption = styled.p<{ selected: number; id: number }>`
+const StyledOption = styled.p<{ selectedId: number; id: number }>`
   cursor: pointer;
-  font-weight: ${props => (props.id == props.selected ? "900" : "400")};
+  font-weight: ${props => (props.id === props.selectedId ? "900" : "400")};
 `
 
 const StyledColorCircle = styled.div`
   border-radius: 50%;
   height: 21px;
   width: 21px;
-  margin: 16px 5px;
+  margin: 0 10px;
   cursor: pointer;
   background-color: ${props => props.color};
 `

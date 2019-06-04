@@ -12,10 +12,29 @@ export const GET_ALL_TASKS = gql`
 `
 
 export const CREATE_TASK = gql`
-  mutation CreateTask($data: CreateTaskInput!) {
+  mutation CreateTask($data: TaskInput!) {
     createTask(data: $data) {
       ...Task
     }
   }
   ${Task}
+`
+
+export const UPDATE_TASK = gql`
+  mutation UpdateTask($taskId: String!, $data: TaskInput!) {
+    updateTask(taskId: $taskId, data: $data) {
+      ...Task
+    }
+  }
+  ${Task}
+`
+
+export const UPDATE_TASK_ORDER = gql`
+  mutation UpdateTaskOrder($taskId: String!, $data: OrderTaskInput!) {
+    updateTaskOrder(taskId: $taskId, data: $data) {
+      id
+      order
+      scheduledDate
+    }
+  }
 `
