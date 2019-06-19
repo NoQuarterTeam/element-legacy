@@ -5,9 +5,12 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
+  ManyToOne,
 } from "typeorm"
 
 import { ObjectType, Field, ID } from "type-graphql"
+import { Element } from "../element/element.entity"
 
 @ObjectType()
 @Entity()
@@ -17,12 +20,17 @@ export class Habit extends BaseEntity {
   id: string
 
   @Field()
-  @Column({ nullable: true })
+  @Column({ default: false })
   archived: boolean
 
-  // @OneToOne(() => Element, { eager: true })
-  // @JoinColumn()
-  // element: Element;
+  @Field()
+  @Column()
+  elementId: string
+
+  @Field(() => Element)
+  @ManyToOne(() => Element, { eager: true })
+  @JoinColumn()
+  element: Element
 
   @Field()
   @CreateDateColumn()
@@ -31,4 +39,8 @@ export class Habit extends BaseEntity {
   @Field()
   @UpdateDateColumn()
   updatedAt: Date
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  archivedAt: Date
 }

@@ -6,10 +6,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToMany,
 } from "typeorm"
 
 import { ObjectType, Field, ID } from "type-graphql"
 import { Task } from "../task/task.entity"
+import { Habit } from "../habit/habit.entity"
 
 @ObjectType()
 @Entity()
@@ -32,6 +34,9 @@ export class Element extends BaseEntity {
 
   @OneToMany(() => Task, task => task.element)
   tasks: Task[]
+
+  @ManyToMany(() => Habit)
+  habit: Habit[]
 
   @Field()
   @CreateDateColumn()

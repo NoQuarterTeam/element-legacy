@@ -1,5 +1,5 @@
 import React, { memo, ButtonHTMLAttributes } from "react"
-import styled, { css, ThemeInterface, lighten } from "../application/theme"
+import styled, { css, ThemeInterface } from "../application/theme"
 import { capitalize } from "../lib/helpers"
 
 export type Variant = "primary" | "secondary" | "tertiary"
@@ -42,9 +42,8 @@ const primaryStyles = (color: string) => css`
 
 const secondaryStyles = (color: string) => css`
   background-color: transparent;
-  padding: ${p => `${p.theme.paddingM} ${p.theme.paddingXL}`};
-  border: 2px solid ${p => lighten(0.25, p.theme["color" + capitalize(color)])};
   color: ${p => p.theme["color" + capitalize(color)]};
+  padding: 0;
 `
 
 const tertiaryStyles = (color: string) => css`
@@ -73,9 +72,8 @@ const StyledButton = styled.button<ButtonProps>`
   letter-spacing: 1px;
   color: white;
   text-align: center;
-  border-radius: 100px;
+  border-radius: 5px;
   font-size: ${p => p.theme.textM};
-  margin: ${p => (p.full ? 0 : p.theme.paddingS)};
   cursor: ${p => (p.disabled ? "not-allowed" : "pointer")};
   width: ${p => (!p.full ? "auto" : "100%")};
   opacity: ${p => (p.disabled ? 0.5 : 1)};

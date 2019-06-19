@@ -14,9 +14,7 @@ export class ElementService {
   async findAll(): Promise<Element[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const elements = await Element.getRepository()
-          .createQueryBuilder("element")
-          .getMany()
+        const elements = await Element.find()
 
         resolve(elements)
       } catch (error) {

@@ -1,5 +1,5 @@
 import React, { InputHTMLAttributes, forwardRef, Ref, memo } from "react"
-import styled, { lighten } from "../application/theme"
+import styled from "../application/theme"
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
@@ -40,11 +40,14 @@ const StyledContainer = styled.div<{ labelDirection?: string }>`
 
 const StyledLabel = styled.label<{ labelDirection?: string }>`
   color: ${p => p.theme.colorLabel};
-  font-size: ${p => p.theme.textS};
+  font-size: ${p => p.theme.textM};
   ${p => p.labelDirection === "row" && "padding-right: 1rem"};
 `
 
-const StyledInput = styled.input<{ hasPrefix?: boolean; variant: string }>`
+const StyledInput = styled.input<{
+  hasPrefix?: boolean
+  variant?: string
+}>`
   border: 0;
   width: 100%;
   outline: 0;
@@ -63,9 +66,6 @@ const StyledInput = styled.input<{ hasPrefix?: boolean; variant: string }>`
 
   &::placeholder {
     color: ${p => p.theme.colorPlaceholder};
-  }
-
-  &:focus {
   }
 `
 

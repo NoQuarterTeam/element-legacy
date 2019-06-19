@@ -1,64 +1,28 @@
 import React from "react"
 import styled from "styled-components"
-import dayjs from "dayjs"
+import dayjs, { Dayjs } from "dayjs"
 import advancedFormat from "dayjs/plugin/advancedFormat"
-import { getMonths, getDays, today } from "../lib/helpers"
+import {
+  getMonths,
+  getDays,
+  today,
+  calculateHabitProgress,
+  monthNames,
+  allActiveHabits,
+} from "../lib/helpers"
+import { useAllHabits } from "../lib/graphql/habit/hooks"
+import { useAllProgress } from "../lib/graphql/progress/hooks"
+import { FC } from "react"
+import { darken } from "polished"
 dayjs.extend(advancedFormat)
 
-function TimelineHead() {
-  // const { openHabitsModal, habits, groupedProgress } = useContext(AppContext)
-
-  // const calculateProgress = day => {
-  //   const progArr = groupedProgress[dayjs(day).format("DD/MM/YYYY")].reduce(
-  //     (acc, progress) => {
-  //       return [...acc, progress.task.element.name]
-  //     },
-  //     [],
-  //   )
-  //   // remove duplicates:
-  //   const progressUnique = progArr.filter(function(value, index, array) {
-  //     return array.indexOf(value) == index
-  //   })
-
-  //   // habits filter by createdAt date is before now
-
-  //   const habitArr = habits
-  //     .filter(h => !h.archived)
-  //     .filter(hab =>
-  //       dayjs(day)
-  //         .startOf("day")
-  //         .isAfter(
-  //           dayjs(hab.createdAt)
-  //             .startOf("day")
-  //             .subtract(1, "day"),
-  //         ),
-  //     )
-  //     .reduce((acc, habit) => {
-  //       return [...acc, habit.element.name]
-  //     }, [])
-
-  //   const results = habitArr.reduce((acc, habit) => {
-  //     return [...acc, progressUnique.includes(habit)]
-  //   }, [])
-
-  //   return results
-  // }
-
-  // DAYJS set month is broken!!
-  let monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ]
+interface TimelineHeadProps {
+  openHabitModal: (day: Dayjs) => void
+}
+const TimelineHead: FC<TimelineHeadProps> = ({ openHabitModal }) => {
+  const habits = useAllHabits()
+  const allProgress = useAllProgress()
+  if (!allProgress) return null
 
   return (
     <StyledMonthsHeadContainer>
@@ -72,44 +36,35 @@ function TimelineHead() {
                   return month === day.month()
                 })
                 .map(day => (
-                  <StyledContainer key={day.unix()}>
-                    <StyledDayHeader
-                      key={day.unix()}
-                      today={today(day)}
-                      weekend={dayjs(day).day() === 0 || dayjs(day).day() == 6}
-                    >
+                  <StyledContainer
+                    key={day.unix()}
+                    today={today(day)}
+                    weekend={dayjs(day).day() === 0 || dayjs(day).day() === 6}
+                  >
+                    <StyledDayHeader key={day.unix()} today={today(day)}>
                       {dayjs(day).format("ddd Do")}
                     </StyledDayHeader>
-                    {/* <StyledHabbits
-                      weekend={dayjs(day).day() == 0 || dayjs(day).day() == 6}
-                      onClick={() => openHabitsModal(dayjs(day))}
+                    <StyledHabits
+                      today={today(day)}
+                      count={habits && allActiveHabits(day, habits).length}
+                      onClick={() => openHabitModal(day)}
                     >
-                      {groupedProgress[dayjs(day).format("DD/MM/YYYY")] &&
-                        calculateProgress(day).map((e, index) => {
-                          return e && <Circle key={index} completed={e} />
-                        })}
-
-                      {groupedProgress[dayjs(day).format("DD/MM/YYYY")] &&
-                        calculateProgress(day).map((e, index) => {
-                          return !e && <Circle key={index} completed={e} />
-                        })}
-
-                      {!groupedProgress[dayjs(day).format("DD/MM/YYYY")] &&
-                        habits
-                          .filter(h => !h.archived)
-                          .filter(hab =>
-                            dayjs(day)
-                              .startOf("day")
-                              .isAfter(
-                                dayjs(hab.createdAt)
-                                  .startOf("day")
-                                  .subtract(1, "day"),
-                              ),
-                          )
-                          .map((e, index) => {
-                            return <Circle key={index} completed={false} />
-                          })}
-                    </StyledHabbits> */}
+                      {allProgress &&
+                        habits &&
+                        calculateHabitProgress(day, allProgress, habits).map(
+                          (result: any[], index) => {
+                            return (
+                              <Circle
+                                key={index}
+                                completed={result[1]}
+                                count={
+                                  habits && allActiveHabits(day, habits).length
+                                }
+                              />
+                            )
+                          },
+                        )}
+                    </StyledHabits>
                   </StyledContainer>
                 ))}
             </StyledDaysHeader>
@@ -138,8 +93,8 @@ const StyledMonthHeader = styled.h3`
   flex-direction: row;
   position: sticky;
   width: 64px;
-  left: 16px;
-  margin-left: 16px;
+  left: ${p => p.theme.paddingML};
+  margin-left: ${p => p.theme.paddingML};
   z-index: 1;
 `
 
@@ -148,7 +103,7 @@ const StyledDaysHeader = styled.div`
   flex-direction: row;
 `
 
-const StyledDayHeader = styled.h3<{ weekend: boolean; today: boolean }>`
+const StyledDayHeader = styled.h3<{ today: boolean }>`
   font-weight: ${props => (props.today ? "800" : "400")};
   font-size: ${props => (props.today ? "15px" : "12px")};
   width: 88px;
@@ -157,28 +112,41 @@ const StyledDayHeader = styled.h3<{ weekend: boolean; today: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${props => (props.weekend ? "rgba(0,0,0,0.03)" : "")};
-  background-color: ${props => (props.today ? "rgb(225, 233, 244, 0.8)" : "")};
   padding-top: 160px;
   margin-top: -160px;
 `
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ weekend: boolean; today: boolean }>`
   display: flex;
   flex-direction: column;
+  background-color: ${props =>
+    props.weekend
+      ? p => darken(0.02, p.theme.colorBackground)
+      : p => p.theme.colorBackground};
+  padding-top: 168px;
+  margin-top: -168px;
+  background-color: ${props =>
+    props.weekend
+      ? p => darken(0.02, p.theme.colorBackground)
+      : p => p.theme.colorBackground};
+  background-color: ${props => (props.today ? "rgb(225, 233, 244, 0.8)" : "")};
 `
 
-// const StyledHabbits = styled.div<{ weekend: boolean }>`
-//   display: flex;
-//   justify-content: space-around;
-//   cursor: pointer;
-//   padding: 8px 8px;
-//   background-color: ${props => (props.weekend ? "rgba(0,0,0,0.03)" : "")};
-// `
+const StyledHabits = styled.div<{ today: boolean; count: any }>`
+  display: flex;
+  max-width: 88px;
+  justify-content: ${props => (props.count > 6 ? "center" : "space-evenly")};
+  cursor: pointer;
+  padding: ${p => p.theme.paddingM};
+  padding-left: ${props =>
+    props.count > 6 ? 8 + 0.73 * props.count + "px" : "8px"};
+`
 
-// const Circle = styled.div<{ completed: boolean }>`
-//   width: 8px;
-//   height: 8px;
-//   border-radius: 50%;
-//   background-color: ${props => (props.completed ? "lightgreen" : "red")};
-// `
+const Circle = styled.div<{ completed: boolean; count: any }>`
+  min-width: 11px;
+  min-height: 11px;
+  margin-left: ${props => (props.count > 6 ? -0.3 * props.count + "px" : 0)};
+  border-radius: 50%;
+  background-color: ${props => (props.completed ? "#A3ED9E" : "#E4A3A3")};
+  z-index: ${props => (props.completed ? 1 : 0)};
+`

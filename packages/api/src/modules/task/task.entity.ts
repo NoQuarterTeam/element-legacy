@@ -6,11 +6,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToMany,
 } from "typeorm"
 
 import { ObjectType, Field, ID } from "type-graphql"
 import { CreateElementInput } from "../element/element.input"
 import { Element } from "../element/element.entity"
+import { Progress } from "../progress/progress.entity"
 
 @ObjectType()
 @Entity()
@@ -55,8 +57,9 @@ export class Task extends BaseEntity {
   @ManyToOne(() => Element, element => element.tasks, { eager: true })
   element: CreateElementInput
 
-  // @OneToMany(() => Progress, progress => progress.task)
-  // progress: Progress;
+  // @Field()
+  @OneToMany(() => Progress, progress => progress.task)
+  progress: Progress
 
   @Field()
   @CreateDateColumn()

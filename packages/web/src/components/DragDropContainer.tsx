@@ -1,5 +1,5 @@
 import React, { FC } from "react"
-import { TaskFragment } from "../lib/graphql/types"
+import { TaskFragment, AllProgressDocument } from "../lib/graphql/types"
 import { DragDropContext } from "react-beautiful-dnd"
 import { useUpdateTaskOrder } from "../lib/graphql/task/hooks"
 import { getDayTasksAndOrder, reorderTasks, move } from "../lib/helpers"
@@ -45,6 +45,7 @@ const DragDropContainer: FC<DDProps> = ({ children, allTasks }) => {
         result.forEach(day =>
           day.forEach(task => {
             updateTaskOrder({
+              refetchQueries: [{ query: AllProgressDocument }],
               variables: {
                 taskId: task.id,
                 data: { order: task.order, scheduledDate: task.scheduledDate },

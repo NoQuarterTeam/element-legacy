@@ -54,25 +54,21 @@ const StyledInput = styled.input`
 
 const Icon = styled.svg`
   fill: none;
-  stroke: white;
+  stroke: ${p => p.theme.colorText};
   stroke-width: 4px;
-  width: 12px;
+  width: 24px;
   transition: 200ms all;
   visibility: hidden;
 `
 
 const StyledCheckbox = styled.span`
-  height: 20px;
-  width: 20px;
+  height: 30px;
+  width: 30px;
   cursor: pointer;
   transition: 100ms all;
   border-radius: 3px;
-  border: 2px solid ${p => p.theme.colorPrimary};
+  border: 2px solid ${p => p.theme.colorText};
   ${p => p.theme.flexCenter};
-
-  &:hover {
-    box-shadow: 0 0 5px 0 rgb(243, 86, 128, 0.5);
-  }
 `
 const StyledWrap = styled.label`
   display: flex;
@@ -80,15 +76,10 @@ const StyledWrap = styled.label`
 
   ${StyledInput} {
     &:checked ~ span {
-      background-color: ${p => p.theme.colorPrimary};
+      /* background-color: ${p => p.theme.colorPlaceholder}; */
       ${Icon} {
         visibility: visible;
       }
-    }
-  }
-  ${StyledInput} {
-    &:focus ~ span {
-      box-shadow: 0 0 5px 0 rgb(243, 86, 128, 0.5);
     }
   }
 `

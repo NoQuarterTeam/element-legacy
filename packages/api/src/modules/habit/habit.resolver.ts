@@ -3,7 +3,7 @@ import { Resolver, Mutation, Arg, Authorized, Query } from "type-graphql"
 import { Habit } from "./habit.entity"
 import { HabitService } from "./habit.service"
 
-import { InputHabit } from "./habit.input"
+import { HabitInput } from "./habit.input"
 
 @Resolver(() => Habit)
 export class HabitResolver {
@@ -19,7 +19,7 @@ export class HabitResolver {
   // CREATE HABIT
   @Authorized()
   @Mutation(() => Habit, { nullable: true })
-  async createHabit(@Arg("data") data: InputHabit): Promise<Habit> {
+  async createHabit(@Arg("data") data: HabitInput): Promise<Habit> {
     return this.habitService.create(data)
   }
 
@@ -28,15 +28,15 @@ export class HabitResolver {
   @Mutation(() => Habit, { nullable: true })
   async updateHabit(
     @Arg("habitId") habitId: string,
-    @Arg("data") data: InputHabit,
+    @Arg("data") data: HabitInput,
   ): Promise<Habit> {
     return this.habitService.update(habitId, data)
   }
 
-  // DESTROY HABIT
+  // ARCHIVE HABIT
   @Authorized()
-  @Mutation(() => Boolean, { nullable: true })
-  destroyHabit(@Arg("habitId") habitId: string): Promise<boolean> {
-    return this.habitService.destroy(habitId)
+  @Mutation(() => Habit, { nullable: true })
+  archiveHabit(@Arg("habitId") habitId: string): Promise<Habit> {
+    return this.habitService.archive(habitId)
   }
 }

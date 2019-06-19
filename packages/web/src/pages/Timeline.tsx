@@ -1,40 +1,49 @@
 import React, { useEffect, useRef, FC, useState } from "react"
 import { RouteComponentProps } from "@reach/router"
-import dayjs from "dayjs"
+import dayjs, { Dayjs } from "dayjs"
 // import useAppContext from "../../lib/hooks/useAppContext"
 // import { useLogout } from "../../lib/graphql/user/hooks"
 import styled from "../application/theme"
 import Day from "../components/Day"
 import TimelineHead from "../components/TimelineHead"
 import { useAllTasks } from "../lib/graphql/task/hooks"
-import { getDays } from "../lib/helpers"
+import { getDays, sleep } from "../lib/helpers"
 import DragDropContainer from "../components/DragDropContainer"
 import TaskModal from "../components/TaskModal"
+import HabitModal from "../components/HabitModal"
+import Button from "../components/Button"
+import { TaskFragment } from "../lib/graphql/types"
 
 const Timeline: FC<RouteComponentProps> = () => {
   // const { user } = useAppContext()
   const [modal, setModal] = useState("")
-  const [task, setTask] = useState("")
+  const [task, setTask] = useState()
+  const [dayClicked, setDayClicked] = useState()
+  const [isLoading, setIsLoading] = useState(true)
+
   const allTasks = useAllTasks()
 
   const timelineRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // Center horizontal scroll to current day
     if (timelineRef.current) {
-      timelineRef.current.scrollLeft =
-        timelineRef.current.scrollWidth / 2 - window.innerWidth / 3
+      window.scrollTo(timelineRef.current.scrollWidth / 2.4, 0)
     }
-  }, [])
+  }, [timelineRef.current])
 
-  const openTaskModal = ({ task, day }: any) => {
+  const openTaskModal = (day: Dayjs, task?: TaskFragment) => {
     setModal("task")
     if (task) {
       setTask(task)
     } else {
-      const task = { scheduledDate: day }
-      setTask(task)
+      const scheduledTask = { scheduledDate: day }
+      setTask(scheduledTask)
     }
+  }
+
+  const handleHabitModal = (day: Dayjs) => {
+    setModal("habit")
+    setDayClicked(day)
   }
 
   const closeTaskModal = () => {
@@ -47,9 +56,13 @@ const Timeline: FC<RouteComponentProps> = () => {
       {modal === "task" && (
         <TaskModal task={task} closeModal={() => closeTaskModal()} />
       )}
+      {modal === "habit" && (
+        <HabitModal day={dayClicked} closeModal={() => closeTaskModal()} />
+      )}
+
       <StyledNav />
       <StyledTimelineWrapper ref={timelineRef}>
-        <TimelineHead />
+        <TimelineHead openHabitModal={handleHabitModal} />
         <StyledTimeline>
           {allTasks && (
             <DragDropContainer allTasks={allTasks}>
@@ -64,10 +77,9 @@ const Timeline: FC<RouteComponentProps> = () => {
                         dayjs(t.scheduledDate).isSame(dayjs(day), "day"),
                       )}
                       handleTaskModal={passedTask =>
-                        openTaskModal({ task: passedTask, day: dayjs(day) })
+                        openTaskModal(dayjs(day), passedTask)
                       }
                       weekend={dayjs(day).day() === 0 || dayjs(day).day() === 6}
-                      // onClick={openTaskModal}
                     />
                   )
                 })}
@@ -87,13 +99,13 @@ const StyledNav = styled.div`
   width: 100%;
   z-index: 98;
   position: fixed;
-  background-color: #fff;
+  background-color: ${p => p.theme.colorBackground};
   box-shadow: 1px 1px 7px rgba(0, 0, 0, 0.0655288);
 `
 
 const StyledTimelineWrapper = styled.div`
   padding-top: 100px;
-  overflow: scroll;
+  /* overflow: scroll; */
 `
 
 const StyledTimeline = styled.div`

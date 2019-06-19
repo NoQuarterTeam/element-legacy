@@ -18,7 +18,7 @@ export class TaskResolver {
   // CREATE TASK
   @Authorized()
   @Mutation(() => Task, { nullable: true })
-  async createTask(@Arg("data") data: TaskInput): Promise<Task> {
+  async createTask(@Arg("data") data: TaskInput): Promise<Task | null> {
     return this.taskService.create(data)
   }
 
@@ -39,7 +39,7 @@ export class TaskResolver {
     @Arg("taskId") taskId: string,
     @Arg("data") data: OrderTaskInput,
   ): Promise<Task> {
-    return this.taskService.updateOrder(taskId, data)
+    return this.taskService.update(taskId, data)
   }
 
   // DESTROY TASK

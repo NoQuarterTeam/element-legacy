@@ -38,3 +38,9 @@ export const UPDATE_TASK_ORDER = gql`
     }
   }
 `
+
+export const DELETE_TASK = gql`
+  mutation DeleteTask($taskId: String!) {
+    destroyTask(taskId: $taskId)
+  }
+`

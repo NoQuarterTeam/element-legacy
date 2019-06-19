@@ -33,17 +33,16 @@ export interface Habit {
   __typename?: "Habit"
   id: Scalars["ID"]
   archived: Scalars["Boolean"]
+  elementId: Scalars["String"]
+  element: Element
   createdAt: Scalars["DateTime"]
   updatedAt: Scalars["DateTime"]
+  archivedAt?: Maybe<Scalars["DateTime"]>
 }
 
-export interface InputHabit {
-  archived?: Maybe<Scalars["Boolean"]>
-}
-
-export interface InputProgress {
-  date?: Maybe<Scalars["DateTime"]>
-  archived?: Maybe<Scalars["Boolean"]>
+export interface HabitInput {
+  elementId?: Maybe<Scalars["String"]>
+  archived: Scalars["Boolean"]
 }
 
 export interface LoginInput {
@@ -58,10 +57,7 @@ export interface Mutation {
   destroyElement?: Maybe<Scalars["Boolean"]>
   createHabit?: Maybe<Habit>
   updateHabit?: Maybe<Habit>
-  destroyHabit?: Maybe<Scalars["Boolean"]>
-  createProgress?: Maybe<Progress>
-  updateProgress?: Maybe<Progress>
-  destroyProgress?: Maybe<Scalars["Boolean"]>
+  archiveHabit?: Maybe<Habit>
   createTask?: Maybe<Task>
   updateTask?: Maybe<Task>
   updateTaskOrder?: Maybe<Task>
@@ -86,29 +82,16 @@ export interface MutationDestroyElementArgs {
 }
 
 export interface MutationCreateHabitArgs {
-  data: InputHabit
+  data: HabitInput
 }
 
 export interface MutationUpdateHabitArgs {
-  data: InputHabit
+  data: HabitInput
   habitId: Scalars["String"]
 }
 
-export interface MutationDestroyHabitArgs {
+export interface MutationArchiveHabitArgs {
   habitId: Scalars["String"]
-}
-
-export interface MutationCreateProgressArgs {
-  data: InputProgress
-}
-
-export interface MutationUpdateProgressArgs {
-  data: InputProgress
-  progressId: Scalars["String"]
-}
-
-export interface MutationDestroyProgressArgs {
-  progressId: Scalars["String"]
 }
 
 export interface MutationCreateTaskArgs {
@@ -149,7 +132,7 @@ export interface OrderTaskInput {
 export interface Progress {
   __typename?: "Progress"
   id: Scalars["ID"]
-  date: Scalars["DateTime"]
+  task: Task
   createdAt: Scalars["DateTime"]
   updatedAt: Scalars["DateTime"]
 }
@@ -158,7 +141,7 @@ export interface Query {
   __typename?: "Query"
   allElements?: Maybe<Element[]>
   allHabits?: Maybe<Habit[]>
-  allProgresss?: Maybe<Progress[]>
+  allProgress?: Maybe<Progress[]>
   allTasks?: Maybe<Task[]>
   me?: Maybe<User>
 }
@@ -187,13 +170,14 @@ export interface Task {
 }
 
 export interface TaskInput {
-  name: Scalars["String"]
-  startTime: Scalars["String"]
-  description: Scalars["String"]
-  estimatedTime: Scalars["String"]
-  completed: Scalars["Boolean"]
-  scheduledDate: Scalars["DateTime"]
-  elementId: Scalars["String"]
+  name?: Maybe<Scalars["String"]>
+  startTime?: Maybe<Scalars["String"]>
+  description?: Maybe<Scalars["String"]>
+  estimatedTime?: Maybe<Scalars["String"]>
+  completed?: Maybe<Scalars["Boolean"]>
+  scheduledDate?: Maybe<Scalars["DateTime"]>
+  elementId?: Maybe<Scalars["String"]>
+  order?: Maybe<Scalars["Float"]>
 }
 
 export interface UpdateInput {
@@ -244,7 +228,49 @@ export type UpdateElementMutation = { __typename?: "Mutation" } & {
   updateElement: Maybe<{ __typename?: "Element" } & ElementFragment>
 }
 
-export type TaskFragment = { __typename?: "Task" } & Pick<
+export type HabitFragment = { __typename?: "Habit" } & Pick<
+  Habit,
+  "id" | "createdAt" | "archivedAt"
+> & { element: { __typename?: "Element" } & Pick<Element, "name" | "color"> }
+
+export interface AllHabitsQueryVariables {}
+
+export type AllHabitsQuery = { __typename?: "Query" } & {
+  allHabits: Maybe<({ __typename?: "Habit" } & HabitFragment)[]>
+}
+
+export interface CreateHabitMutationVariables {
+  data: HabitInput
+}
+
+export type CreateHabitMutation = { __typename?: "Mutation" } & {
+  createHabit: Maybe<{ __typename?: "Habit" } & HabitFragment>
+}
+
+export interface ArchiveHabitMutationVariables {
+  habitId: Scalars["String"]
+}
+
+export type ArchiveHabitMutation = { __typename?: "Mutation" } & {
+  archiveHabit: Maybe<{ __typename?: "Habit" } & HabitFragment>
+}
+
+export type ProgressFragment = { __typename?: "Progress" } & Pick<
+  Progress,
+  "id"
+> & {
+    task: { __typename?: "Task" } & Pick<Task, "name" | "scheduledDate"> & {
+        element: { __typename?: "Element" } & Pick<Element, "name">
+      }
+  }
+
+export interface AllProgressQueryVariables {}
+
+export type AllProgressQuery = { __typename?: "Query" } & {
+  allProgress: Maybe<({ __typename?: "Progress" } & ProgressFragment)[]>
+}
+
+export type TaskFragment = { __typename: "Task" } & Pick<
   Task,
   | "id"
   | "name"
@@ -295,6 +321,15 @@ export type UpdateTaskOrderMutation = { __typename?: "Mutation" } & {
     { __typename?: "Task" } & Pick<Task, "id" | "order" | "scheduledDate">
   >
 }
+
+export interface DeleteTaskMutationVariables {
+  taskId: Scalars["String"]
+}
+
+export type DeleteTaskMutation = { __typename?: "Mutation" } & Pick<
+  Mutation,
+  "destroyTask"
+>
 
 export type UserFragment = { __typename?: "User" } & Pick<
   User,
@@ -351,8 +386,32 @@ export const ElementFragmentDoc = gql`
     archived
   }
 `
+export const HabitFragmentDoc = gql`
+  fragment Habit on Habit {
+    id
+    element {
+      name
+      color
+    }
+    createdAt
+    archivedAt
+  }
+`
+export const ProgressFragmentDoc = gql`
+  fragment Progress on Progress {
+    id
+    task {
+      name
+      scheduledDate
+      element {
+        name
+      }
+    }
+  }
+`
 export const TaskFragmentDoc = gql`
   fragment Task on Task {
+    __typename
     id
     name
     startTime
@@ -445,6 +504,88 @@ export function useUpdateElementMutation(
     UpdateElementMutationVariables
   >(UpdateElementDocument, baseOptions)
 }
+export const AllHabitsDocument = gql`
+  query AllHabits {
+    allHabits {
+      ...Habit
+    }
+  }
+  ${HabitFragmentDoc}
+`
+
+export function useAllHabitsQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<AllHabitsQueryVariables>,
+) {
+  return ReactApolloHooks.useQuery<AllHabitsQuery, AllHabitsQueryVariables>(
+    AllHabitsDocument,
+    baseOptions,
+  )
+}
+export const CreateHabitDocument = gql`
+  mutation CreateHabit($data: HabitInput!) {
+    createHabit(data: $data) {
+      ...Habit
+    }
+  }
+  ${HabitFragmentDoc}
+`
+export type CreateHabitMutationFn = ReactApollo.MutationFn<
+  CreateHabitMutation,
+  CreateHabitMutationVariables
+>
+
+export function useCreateHabitMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    CreateHabitMutation,
+    CreateHabitMutationVariables
+  >,
+) {
+  return ReactApolloHooks.useMutation<
+    CreateHabitMutation,
+    CreateHabitMutationVariables
+  >(CreateHabitDocument, baseOptions)
+}
+export const ArchiveHabitDocument = gql`
+  mutation ArchiveHabit($habitId: String!) {
+    archiveHabit(habitId: $habitId) {
+      ...Habit
+    }
+  }
+  ${HabitFragmentDoc}
+`
+export type ArchiveHabitMutationFn = ReactApollo.MutationFn<
+  ArchiveHabitMutation,
+  ArchiveHabitMutationVariables
+>
+
+export function useArchiveHabitMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    ArchiveHabitMutation,
+    ArchiveHabitMutationVariables
+  >,
+) {
+  return ReactApolloHooks.useMutation<
+    ArchiveHabitMutation,
+    ArchiveHabitMutationVariables
+  >(ArchiveHabitDocument, baseOptions)
+}
+export const AllProgressDocument = gql`
+  query AllProgress {
+    allProgress {
+      ...Progress
+    }
+  }
+  ${ProgressFragmentDoc}
+`
+
+export function useAllProgressQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<AllProgressQueryVariables>,
+) {
+  return ReactApolloHooks.useQuery<AllProgressQuery, AllProgressQueryVariables>(
+    AllProgressDocument,
+    baseOptions,
+  )
+}
 export const AllTasksDocument = gql`
   query AllTasks {
     allTasks {
@@ -534,6 +675,27 @@ export function useUpdateTaskOrderMutation(
     UpdateTaskOrderMutation,
     UpdateTaskOrderMutationVariables
   >(UpdateTaskOrderDocument, baseOptions)
+}
+export const DeleteTaskDocument = gql`
+  mutation DeleteTask($taskId: String!) {
+    destroyTask(taskId: $taskId)
+  }
+`
+export type DeleteTaskMutationFn = ReactApollo.MutationFn<
+  DeleteTaskMutation,
+  DeleteTaskMutationVariables
+>
+
+export function useDeleteTaskMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    DeleteTaskMutation,
+    DeleteTaskMutationVariables
+  >,
+) {
+  return ReactApolloHooks.useMutation<
+    DeleteTaskMutation,
+    DeleteTaskMutationVariables
+  >(DeleteTaskDocument, baseOptions)
 }
 export const MeDocument = gql`
   query Me {

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, Fragment } from "react"
+import React, { FC, useEffect } from "react"
 import styled from "../application/theme"
 import Tile from "./styled/Tile"
 import Center from "./styled/Center"
@@ -36,7 +36,7 @@ const StyledModal = styled(Center)`
   bottom: 0;
   z-index: 99;
   overflow: scroll;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: ${p => p.theme.colorOverlay};
 `
 
 const StyledOverlay = styled.div`
@@ -49,7 +49,7 @@ const StyledOverlay = styled.div`
 const StyledTile = styled(Tile)`
   z-index: 101;
   margin: ${p => p.theme.paddingXL};
-  padding: ${p => p.theme.paddingL};
+  padding: ${p => p.theme.paddingL} ${p => p.theme.paddingXL};
   height: max-content;
   max-width: 600px;
 `

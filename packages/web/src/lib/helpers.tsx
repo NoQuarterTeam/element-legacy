@@ -1,5 +1,10 @@
 import dayjs, { Dayjs } from "dayjs"
-import { Task, TaskFragment } from "./graphql/types"
+import {
+  Task,
+  TaskFragment,
+  ProgressFragment,
+  HabitFragment,
+} from "./graphql/types"
 
 export const snakeToCamel = (value: string) =>
   value.replace(/_(\w)/g, m => m[1].toUpperCase())
@@ -44,20 +49,51 @@ export const getMonths = (startDate: Dayjs, daysCount: number) => {
   })
 }
 
+export const formatTime = (time: number) => {
+  if (time !== 0) {
+    let formatted
+    if (Math.floor(time / 60)) {
+      formatted = Math.floor(time / 60) + "h "
+      if (Math.floor(time % 60)) {
+        formatted = formatted + Math.floor(time % 60) + "m"
+      }
+    } else if (Math.floor(time % 60)) {
+      formatted = Math.floor(time % 60) + "m"
+    }
+    return formatted
+  } else {
+    return false
+  }
+}
+
+export const hoursInMins = (estimatedTime?: string | null) => {
+  if (estimatedTime) {
+    const split = estimatedTime.split(":")
+    const minutes = parseInt(split[0]) * 60
+    return minutes + parseInt(split[1])
+  } else {
+    return 0
+  }
+}
+
 export const calculateTotalTime = (tasks: TaskFragment[]) => {
   let total = 0
   tasks &&
+    tasks.length &&
     tasks.map(task => {
       if (task.estimatedTime) {
-        let arr = task.estimatedTime.split(":")
-        const hoursInMins = parseInt(arr[0]) * 60
-        total = total + hoursInMins + parseInt(arr[1])
+        return (total = total + hoursInMins(task.estimatedTime))
+      } else {
+        return 0
       }
     })
 
-  const totalFormatted = Math.floor(total / 60) + "h " + (total % 60) + "m"
-
-  return totalFormatted
+  if (total !== 0) {
+    const formatted = formatTime(total)
+    return formatted
+  } else {
+    return false
+  }
 }
 
 // a little function to help us with reordering the result
@@ -123,6 +159,73 @@ export const getDayTasksAndOrder = (allTasks: any, target: any) => {
       return a.order - b.order
     })
 }
+
+export const allActiveHabits = (day: Dayjs, habits: HabitFragment[]) => {
+  const activeHabits = habits
+    .filter((hab: HabitFragment) =>
+      dayjs(day)
+        .startOf("day")
+        .isAfter(
+          dayjs(hab.createdAt)
+            .startOf("day")
+            .subtract(1, "day"),
+        ),
+    )
+    .filter((hab: HabitFragment) => {
+      if (hab.archivedAt) {
+        return dayjs(day)
+          .startOf("day")
+          .isBefore(dayjs(hab.archivedAt).startOf("day"))
+      } else {
+        return true
+      }
+    })
+  return activeHabits
+}
+
+export const calculateHabitProgress = (
+  day: Dayjs,
+  allProgress: ProgressFragment[],
+  habits: HabitFragment[],
+) => {
+  const dayProgress = allProgress.filter((progress: ProgressFragment) =>
+    dayjs(progress.task.scheduledDate).isSame(dayjs(day), "day"),
+  )
+  const progArr = dayProgress.map(
+    (progress: ProgressFragment) => progress.task.element.name,
+  )
+
+  const activeHabits = allActiveHabits(day, habits)
+  const results = activeHabits
+    .map((h: HabitFragment) => {
+      if (progArr.includes(h.element.name)) {
+        return [h, true]
+      } else {
+        return [h, false]
+      }
+    })
+    .sort(function(x, y) {
+      return x[1] === y[1] ? 0 : x[1] ? -1 : 1
+    })
+
+  return results
+}
+
+// DAYJS set month is broken!!
+export const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+]
 
 // const isToday? = (day) => {
 //   return dayjs(day).isSame(dayjs(), "day")

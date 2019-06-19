@@ -1,34 +1,39 @@
 import React, { useState, useEffect } from "react"
 import styled from "../application/theme"
 
-import { Task, TaskInput } from "../lib/graphql/types"
+import { TaskFragment } from "../lib/graphql/types"
 import useFormState from "../lib/hooks/useFormState"
 import { sleep } from "../lib/helpers"
+import { useAllElements } from "../lib/graphql/element/hooks"
 
 import Input from "./Input"
 import Button from "./Button"
 import ElementDropdown from "./ElementDropdown"
 import Checkbox from "./Checkbox"
-import dayjs = require("dayjs")
+import dayjs from "dayjs"
+import TextArea from "./TextArea"
 
 interface TaskFormProps {
   onFormSubmit: (data: any) => Promise<any>
-  task: Task
+  task: TaskFragment
+  onDeleteTask: () => void
 }
-function TaskForm({ onFormSubmit, task }: TaskFormProps) {
+function TaskForm({ onFormSubmit, task, onDeleteTask }: TaskFormProps) {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
+  const elements = useAllElements()
+
   const initialState = {
     name: task ? task.name : "",
     completed: task ? task.completed : false,
-    elementId: task ? task.element.id : "",
-    scheduledDate: task ? task.scheduledDate : "",
-    estimatedTime: task ? task.estimatedTime : "",
-    startTime: task ? task.startTime : "",
-    description: task ? task.description : "",
+    elementId: task.element ? task.element.id : "",
+    scheduledDate: task.scheduledDate ? task.scheduledDate : "",
+    estimatedTime: task.estimatedTime ? task.estimatedTime : "",
+    startTime: task.startTime ? task.startTime : "",
+    description: task.description ? task.description : "",
   }
 
-  const { formState, setFormState } = useFormState<TaskInput>(initialState)
+  const { formState, setFormState } = useFormState(initialState)
 
   useEffect(() => {
     if (task) {
@@ -36,7 +41,7 @@ function TaskForm({ onFormSubmit, task }: TaskFormProps) {
     }
   }, [task])
 
-  const handleTaskCreate = async (e: any) => {
+  const handleTaskUpdate = async (e: any) => {
     e.preventDefault()
     setLoading(true)
     onFormSubmit(formState).catch(async () => {
@@ -48,7 +53,7 @@ function TaskForm({ onFormSubmit, task }: TaskFormProps) {
   }
 
   return (
-    <StyledForm onSubmit={handleTaskCreate}>
+    <StyledForm onSubmit={handleTaskUpdate}>
       <Input
         value={formState.name ? formState.name : ""}
         onChange={e => setFormState({ name: e.target.value })}
@@ -67,13 +72,21 @@ function TaskForm({ onFormSubmit, task }: TaskFormProps) {
       <StyledGrid>
         <StyledRow>
           <ElementDropdown
-            selectedElement={
-              formState.elementId ? formState.elementId : undefined
-            }
+            selectedElementId={formState.elementId ? formState.elementId : ""}
             handleSelectElement={element =>
               setFormState({ elementId: element.id })
             }
+            elements={elements}
           />
+          <Input
+            type="time"
+            label="Estimated time:"
+            labelDirection="row"
+            value={formState.estimatedTime ? formState.estimatedTime : ""}
+            onChange={e => setFormState({ estimatedTime: e.target.value })}
+          />
+        </StyledRow>
+        <StyledRow>
           <Input
             type="date"
             value={
@@ -82,15 +95,6 @@ function TaskForm({ onFormSubmit, task }: TaskFormProps) {
                 : dayjs().format("YYYY-MM-DD")
             }
             onChange={e => setFormState({ scheduledDate: e.target.value })}
-          />
-        </StyledRow>
-        <StyledRow>
-          <Input
-            type="time"
-            label="Estimated time:"
-            labelDirection="row"
-            value={formState.estimatedTime ? formState.estimatedTime : ""}
-            onChange={e => setFormState({ estimatedTime: e.target.value })}
           />
           <Input
             type="time"
@@ -101,18 +105,22 @@ function TaskForm({ onFormSubmit, task }: TaskFormProps) {
           />
         </StyledRow>
         <StyledRow>
-          <Input
+          <TextArea
             placeholder="Description"
-            style={{ width: "100%" }}
+            type="textarea"
             value={formState.description ? formState.description : ""}
             onChange={e => setFormState({ description: e.target.value })}
           />
         </StyledRow>
+        <StyledRow style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+          <Button loading={loading} variant="secondary" onClick={onDeleteTask}>
+            Delete
+          </Button>
+          <Button loading={loading} variant="primary">
+            Submit
+          </Button>
+        </StyledRow>
       </StyledGrid>
-      <br />
-      <Button loading={loading} variant="secondary">
-        Submit
-      </Button>
       {error && <StyledError>{error}</StyledError>}
     </StyledForm>
   )
@@ -125,15 +133,14 @@ const StyledForm = styled.form`
   width: 100%;
   margin: 0 auto;
   position: relative;
-  display: flex;
+  ${p => p.theme.flexCenter};
   align-items: flex-start;
-  justify-content: center;
   flex-direction: column;
 `
 
 const StyledCheckboxWrapper = styled.div`
   position: absolute;
-  top: 0;
+  top: ${p => p.theme.paddingM};
   right: 0;
 `
 
@@ -153,9 +160,3 @@ const StyledRow = styled.div`
   width: 100%;
   align-items: center;
 `
-
-// const StyledCheckboxWrapper = styled.label`
-//   position: absolute;
-//   right: ${props => props.theme.paddingLarge};
-//   top: ${props => props.theme.paddingLarge};
-// `

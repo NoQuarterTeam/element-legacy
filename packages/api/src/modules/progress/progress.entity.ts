@@ -2,12 +2,13 @@ import {
   BaseEntity,
   Entity,
   PrimaryGeneratedColumn,
-  Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from "typeorm"
 
 import { ObjectType, Field, ID } from "type-graphql"
+import { Task } from "../task/task.entity"
 
 @ObjectType()
 @Entity()
@@ -16,12 +17,13 @@ export class Progress extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string
 
-  @Field()
-  @Column({ nullable: true })
-  date: Date
+  // @Field()
+  // @Column({ nullable: true })
+  // date: Date
 
-  // @ManyToOne(() => Task, task => task.progress, { eager: true })
-  // task: Task;
+  @Field(() => Task)
+  @ManyToOne(() => Task, task => task.progress, { eager: true, cascade: true })
+  task: Task
 
   @Field()
   @CreateDateColumn()

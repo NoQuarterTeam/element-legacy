@@ -1,10 +1,14 @@
 import { Habit } from "./habit.entity"
-import { InputHabit } from "./habit.input"
+import { HabitInput } from "./habit.input"
+import { ElementService } from "../element/element.service"
 
 import { Service } from "typedi"
+import dayjs = require("dayjs")
 
 @Service()
 export class HabitService {
+  constructor(private readonly elementService: ElementService) {}
+
   async findById(habitId: string): Promise<Habit> {
     const habit = await Habit.findOne(habitId)
     if (!habit) throw new Error("habit not found")
@@ -14,10 +18,7 @@ export class HabitService {
   async findAll(): Promise<Habit[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const habits = await Habit.getRepository()
-          .createQueryBuilder("habit")
-          .getMany()
-
+        const habits = await Habit.find()
         resolve(habits)
       } catch (error) {
         reject(error)
@@ -25,37 +26,24 @@ export class HabitService {
     })
   }
 
-  create(data: InputHabit): Promise<Habit> {
+  create(data: HabitInput): Promise<Habit> {
     return new Promise(async (resolve, reject) => {
       try {
-        // const { elementId, ...habitParams } = req.body;
-        // const element = await Element.findOne(elementId);
-        // if (!element) throw new Error("not found");
-        // // If the element being added has already been a habit but archived, update archived to false.
-        // const habitsByElement = await Habit.find({ element });
-        // const habitByElement = habitsByElement[0];
-        // if (habitByElement) {
-        //   habitByElement.archived = false;
-        //   await habitByElement.save();
-        //   resolve(habitByElement)
-        // } else {
-        //   let habit = await Habit.create(habitParams).save();
-        //   if (!habit) throw new Error("not found");
-        //   habit.element = element;
-        //   await habit.save();
-        //   resolve(habit)
-        // }
-        // const habit = await Habit.create({
-        //   ...data,
-        // }).save()
-        // resolve(habit)
+        if (data.elementId) {
+          const element = await this.elementService.findById(data.elementId)
+          const habit = await Habit.create({
+            ...data,
+            element,
+          }).save()
+          resolve(habit)
+        }
       } catch (error) {
         reject(error)
       }
     })
   }
 
-  update(habitId: string, data: InputHabit): Promise<Habit> {
+  update(habitId: string, data: HabitInput): Promise<Habit> {
     return new Promise(async (resolve, reject) => {
       try {
         const habit = await this.findById(habitId)
@@ -69,13 +57,15 @@ export class HabitService {
     })
   }
 
-  destroy(habitId: string): Promise<boolean> {
+  archive(habitId: string): Promise<Habit> {
     return new Promise(async (resolve, reject) => {
       try {
         const habit = await Habit.findOne(habitId)
         if (!habit) throw new Error("not found")
-        await habit.remove()
-        resolve(true)
+        Object.assign(habit, { archived: true })
+        Object.assign(habit, { archivedAt: dayjs() })
+        await habit.save()
+        resolve(habit)
       } catch (error) {
         reject(error)
       }

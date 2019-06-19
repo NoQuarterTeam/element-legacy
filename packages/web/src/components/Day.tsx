@@ -7,6 +7,7 @@ import Task from "./Task"
 
 import { calculateTotalTime, today } from "../lib/helpers"
 import { TaskFragment } from "../lib/graphql/types"
+import { darken } from "polished"
 // import { Droppable, Draggable } from 'react-beautiful-dnd';
 
 // import dayjs from "dayjs"
@@ -20,21 +21,14 @@ interface DayProps {
   day: Dayjs
   month: string
   tasks: TaskFragment[]
-  handleTaskModal: any
+  handleTaskModal: (task?: TaskFragment) => void
 }
-function Day({
-  weekend,
-  day,
-  month,
-  tasks,
-  handleTaskModal,
-  ...props
-}: DayProps) {
+function Day({ weekend, day, tasks, handleTaskModal, ...props }: DayProps) {
   // const { updateTasks } = useContext(AppContext);
 
   return (
     <Droppable droppableId={day.toString()}>
-      {provided => (
+      {(provided, snapshot) => (
         <div ref={provided.innerRef} {...provided.droppableProps}>
           <StyledDay weekend={weekend} today={today(day)} {...props}>
             {tasks &&
@@ -42,7 +36,7 @@ function Day({
                 .sort((a, b) => {
                   return a.order - b.order
                 })
-                .map((task, index) => (
+                .map((task: TaskFragment, index) => (
                   <Draggable key={task.id} draggableId={task.id} index={index}>
                     {(provided, snapshot) => {
                       return (
@@ -63,7 +57,9 @@ function Day({
                     }}
                   </Draggable>
                 ))}
-            {/* {calculateTotalTime(tasks)} */}
+            <StyledTotalTime dragging={snapshot.isDraggingOver}>
+              {calculateTotalTime(tasks) && calculateTotalTime(tasks)}
+            </StyledTotalTime>
 
             {provided.placeholder}
 
@@ -79,29 +75,42 @@ function Day({
 
 export default memo(Day)
 
-const StyledDay = styled.div<{ weekend: boolean; today: boolean }>`
+const StyledDay = styled.div<{
+  weekend: boolean
+  today: boolean
+}>`
   position: relative;
   display: flex;
   flex-direction: column;
   width: 88px;
-  background-color: ${props => (props.weekend ? "rgba(0,0,0,0.03)" : "")};
   height: 880px;
-  font-size: 12px;
-  padding-top: 8px;
+  font-size: ${p => p.theme.textS};
+  background-color: ${props =>
+    props.weekend
+      ? p => darken(0.02, p.theme.colorBackground)
+      : p => p.theme.colorBackground};
   background-color: ${props => (props.today ? "rgb(225, 233, 244, 0.8)" : "")};
 `
 
 const PlaceholderTask = styled.div`
-  min-width: calc(100% - 8px);
+  min-width: calc(100% - ${p => p.theme.paddingS});
   height: 56px;
-  border-radius: 8px;
+  border-radius: ${p => p.theme.borderRadius};
+`
+
+const StyledTotalTime = styled.div<{ dragging: boolean }>`
+  color: ${p => p.theme.colorLabel};
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  margin-top: ${props => (props.dragging ? "65px" : 0)};
 `
 
 const AddNewTask = styled.div`
   cursor: pointer;
   height: -webkit-fill-available;
-  border-radius: 5px;
-  margin: 4px;
+  border-radius: ${p => p.theme.borderRadius};
+  margin: ${p => p.theme.paddingS};
 
   &:hover ${PlaceholderTask} {
     background-color: rgb(225, 233, 244, 0.5);

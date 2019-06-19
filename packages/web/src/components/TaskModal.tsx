@@ -1,35 +1,41 @@
 import React, { FC } from "react"
-
 import {
-  useCreateTaskMutation,
-  CreateTaskInput,
-  Task,
-  useUpdateTaskMutation,
-  UpdateTaskInput,
+  useCreateTask,
+  useUpdateTask,
+  useDeleteTask,
+} from "../lib/graphql/task/hooks"
+import {
+  TaskInput,
+  TaskFragment,
+  AllProgressDocument,
 } from "../lib/graphql/types"
-
 import Modal from "./Modal"
 import TaskForm from "./TaskForm"
 
 interface TaskModalProps {
-  task: Task
+  task: TaskFragment
   closeModal: () => void
 }
 const TaskModal: FC<TaskModalProps> = ({ closeModal, task }) => {
-  const createTask = useCreateTaskMutation()
-  const updateTask = useUpdateTaskMutation()
+  const createTask = useCreateTask()
+  const updateTask = useUpdateTask()
+  const destroyTask = useDeleteTask(task)
 
-  const handleCreateTask = async (taskData: CreateTaskInput) => {
+  const handleCreateTask = async (taskData: TaskInput) => {
+    const data = { ...taskData, order: 100 }
     await createTask({
+      refetchQueries: [{ query: AllProgressDocument }],
+
       variables: {
-        data: taskData,
+        data,
       },
     })
     closeModal()
   }
 
-  const handleUpdateTask = async (data: UpdateTaskInput) => {
+  const handleUpdateTask = async (data: TaskInput) => {
     await updateTask({
+      refetchQueries: [{ query: AllProgressDocument }],
       variables: {
         taskId: task.id,
         data,
@@ -38,10 +44,20 @@ const TaskModal: FC<TaskModalProps> = ({ closeModal, task }) => {
     closeModal()
   }
 
+  const handleDeleteTask = async () => {
+    await destroyTask({
+      variables: {
+        taskId: task.id,
+      },
+    })
+    closeModal()
+  }
+
   return (
     <Modal onClose={closeModal}>
       <TaskForm
-        onFormSubmit={task ? handleUpdateTask : handleCreateTask}
+        onFormSubmit={task.id ? handleUpdateTask : handleCreateTask}
+        onDeleteTask={handleDeleteTask}
         task={task}
       />
     </Modal>
