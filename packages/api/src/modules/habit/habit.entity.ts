@@ -27,6 +27,10 @@ export class Habit extends BaseEntity {
   @Column()
   elementId: string
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  activeFrom: Date
+
   @Field(() => Element)
   @ManyToOne(() => Element, { eager: true })
   @JoinColumn()

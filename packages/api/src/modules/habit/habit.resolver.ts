@@ -36,7 +36,10 @@ export class HabitResolver {
   // ARCHIVE HABIT
   @Authorized()
   @Mutation(() => Habit, { nullable: true })
-  archiveHabit(@Arg("habitId") habitId: string): Promise<Habit> {
-    return this.habitService.archive(habitId)
+  archiveHabit(
+    @Arg("habitId") habitId: string,
+    @Arg("data") data: HabitInput,
+  ): Promise<Habit> {
+    return this.habitService.archive(habitId, data)
   }
 }

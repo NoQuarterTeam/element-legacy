@@ -21,8 +21,8 @@ export const CREATE_HABIT = gql`
 `
 
 export const ARCHIVE_HABIT = gql`
-  mutation ArchiveHabit($habitId: String!) {
-    archiveHabit(habitId: $habitId) {
+  mutation ArchiveHabit($habitId: String!, $data: HabitInput!) {
+    archiveHabit(habitId: $habitId, data: $data) {
       ...Habit
     }
   }

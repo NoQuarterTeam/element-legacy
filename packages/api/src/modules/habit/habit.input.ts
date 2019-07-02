@@ -6,6 +6,12 @@ export class HabitInput implements Partial<Habit> {
   @Field({ nullable: true })
   elementId?: string
 
-  @Field()
+  @Field({ nullable: true })
   archived?: boolean
+
+  @Field({ nullable: true })
+  archivedAt?: Date
+
+  @Field({ nullable: true })
+  activeFrom?: Date
 }

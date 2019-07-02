@@ -14,7 +14,7 @@ import styled from "styled-components"
 import { darken, lighten } from "polished"
 import { calculateHabitProgress } from "../lib/helpers"
 import { Dayjs } from "dayjs"
-import dayjs = require("dayjs")
+import dayjs from "dayjs"
 
 interface HabitModalProps {
   closeModal: () => void
@@ -41,7 +41,7 @@ const HabitModal: FC<HabitModalProps> = ({ closeModal, day }) => {
     await archiveHabit({
       variables: {
         habitId: habitData.id,
-        // archivedAt: dayjs(day).format("DD/MM/YYYY"),
+        data: { archivedAt: dayjs(day).format("MM/DD/YYYY") },
       },
     })
   }
@@ -79,7 +79,13 @@ const HabitModal: FC<HabitModalProps> = ({ closeModal, day }) => {
             },
           )}
       </FlexGrid>
-      {habits && <HabitForm onFormSubmit={handleCreateHabit} habits={habits} />}
+      {habits && (
+        <HabitForm
+          onFormSubmit={handleCreateHabit}
+          habits={habits}
+          day={day.format("YYYY-MM-DD")}
+        />
+      )}
     </Modal>
   )
 }

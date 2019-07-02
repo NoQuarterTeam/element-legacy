@@ -6,5 +6,8 @@ export const Element = gql`
     name
     color
     archived
+    # parentElement {
+    #   id
+    # }
   }
 `

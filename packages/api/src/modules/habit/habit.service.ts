@@ -57,13 +57,13 @@ export class HabitService {
     })
   }
 
-  archive(habitId: string): Promise<Habit> {
+  archive(habitId: string, data: HabitInput): Promise<Habit> {
     return new Promise(async (resolve, reject) => {
       try {
         const habit = await Habit.findOne(habitId)
         if (!habit) throw new Error("not found")
         Object.assign(habit, { archived: true })
-        Object.assign(habit, { archivedAt: dayjs() })
+        Object.assign(habit, { archivedAt: data.archivedAt })
         await habit.save()
         resolve(habit)
       } catch (error) {

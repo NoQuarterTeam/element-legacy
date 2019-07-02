@@ -166,7 +166,7 @@ export const allActiveHabits = (day: Dayjs, habits: HabitFragment[]) => {
       dayjs(day)
         .startOf("day")
         .isAfter(
-          dayjs(hab.createdAt)
+          dayjs(hab.activeFrom)
             .startOf("day")
             .subtract(1, "day"),
         ),
@@ -174,12 +174,13 @@ export const allActiveHabits = (day: Dayjs, habits: HabitFragment[]) => {
     .filter((hab: HabitFragment) => {
       if (hab.archivedAt) {
         return dayjs(day)
-          .startOf("day")
-          .isBefore(dayjs(hab.archivedAt).startOf("day"))
+          .endOf("day")
+          .isBefore(dayjs(hab.archivedAt).endOf("day"))
       } else {
         return true
       }
     })
+
   return activeHabits
 }
 

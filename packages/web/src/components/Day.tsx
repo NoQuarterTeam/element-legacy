@@ -6,8 +6,13 @@ import { Droppable, Draggable } from "react-beautiful-dnd"
 import Task from "./Task"
 
 import { calculateTotalTime, today } from "../lib/helpers"
-import { TaskFragment } from "../lib/graphql/types"
+import { TaskFragment, AllProgressDocument } from "../lib/graphql/types"
 import { darken } from "polished"
+import {
+  useCreateTask,
+  useUpdateTask,
+  useDeleteTask,
+} from "../lib/graphql/task/hooks"
 // import { Droppable, Draggable } from 'react-beautiful-dnd';
 
 // import dayjs from "dayjs"
@@ -24,7 +29,56 @@ interface DayProps {
   handleTaskModal: (task?: TaskFragment) => void
 }
 function Day({ weekend, day, tasks, handleTaskModal, ...props }: DayProps) {
-  // const { updateTasks } = useContext(AppContext);
+  const createTask = useCreateTask()
+  const updateTask = useUpdateTask()
+  const destroyTask = useDeleteTask()
+
+  const onTaskClick = async (event: MouseEvent, task: TaskFragment) => {
+    if (!event) {
+      return false
+    }
+
+    if (!event.metaKey && !event.altKey && !event.shiftKey) {
+      handleTaskModal(task)
+    }
+    if (event.metaKey) {
+      // DUPLICATE
+      const data = { ...task, order: task.order + 1 }
+
+      delete data.__typename
+      delete data.element
+      delete data.id
+
+      await createTask({
+        refetchQueries: [{ query: AllProgressDocument }],
+
+        variables: {
+          data,
+        },
+      })
+    } else if (event.shiftKey) {
+      // DELETE
+      await destroyTask({
+        refetchQueries: [{ query: AllProgressDocument }],
+        variables: {
+          taskId: task.id,
+        },
+      })
+    } else if (event.altKey) {
+      // COMPLETE
+      const data = { ...task, completed: !task.completed }
+      delete data.__typename
+      delete data.element
+      delete data.id
+      await updateTask({
+        refetchQueries: [{ query: AllProgressDocument }],
+        variables: {
+          taskId: task.id,
+          data,
+        },
+      })
+    }
+  }
 
   return (
     <Droppable droppableId={day.toString()}>
@@ -49,8 +103,8 @@ function Day({ weekend, day, tasks, handleTaskModal, ...props }: DayProps) {
                           <Task
                             isDragging={snapshot.isDragging}
                             task={task}
-                            onClick={() => handleTaskModal(task)}
-                            // onMouseDown={() => onMouseDown(event, task)}
+                            onClick={(event: any) => onTaskClick(event, task)}
+                            // onMouseDown={() => onTaskClick(event, task)}
                           />
                         </div>
                       )

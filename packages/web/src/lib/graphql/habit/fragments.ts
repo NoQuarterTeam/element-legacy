@@ -7,7 +7,7 @@ export const Habit = gql`
       name
       color
     }
-    createdAt
+    activeFrom
     archivedAt
   }
 `

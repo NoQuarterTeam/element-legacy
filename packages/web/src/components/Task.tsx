@@ -6,7 +6,7 @@ import { hoursInMins, formatTime } from "../lib/helpers"
 interface TaskProps {
   task: TaskFragment
   isDragging: boolean
-  onClick: () => void
+  onClick: (event: any) => void
 }
 function Task({ task, ...rest }: TaskProps) {
   return (

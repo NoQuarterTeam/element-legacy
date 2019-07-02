@@ -8,17 +8,23 @@ import Button from "./Button"
 import ElementDropdown from "./ElementDropdown"
 import { sleep } from "../lib/helpers"
 import { HabitFragment } from "../lib/graphql/types"
+import Input from "./Input"
+import { Dayjs } from "dayjs"
 
 interface HabitFormProps {
   onFormSubmit: (data: any) => Promise<any>
+  day: string
   habits: HabitFragment[]
 }
-function HabitForm({ onFormSubmit, habits }: HabitFormProps) {
+function HabitForm({ onFormSubmit, habits, day }: HabitFormProps) {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   const elements = useAllElements()
 
-  const { formState, setFormState } = useFormState({ elementId: "" })
+  const { formState, setFormState } = useFormState({
+    elementId: "",
+    activeFrom: day,
+  })
 
   const handleHabitUpdate = async (e: any) => {
     e.preventDefault()
@@ -51,6 +57,7 @@ function HabitForm({ onFormSubmit, habits }: HabitFormProps) {
             elements && elements.filter(el => !habitNames.includes(el.name))
           }
         />
+        <Input hidden defaultValue={formState.activeFrom} />
         {formState.elementId && (
           <Button
             loading={loading}

@@ -33,6 +33,23 @@ const TaskModal: FC<TaskModalProps> = ({ closeModal, task }) => {
     closeModal()
   }
 
+  const handleDuplicateTask = async () => {
+    const data = { ...task, order: task.order + 1 }
+
+    delete data.__typename
+    delete data.element
+    delete data.id
+
+    await createTask({
+      refetchQueries: [{ query: AllProgressDocument }],
+
+      variables: {
+        data,
+      },
+    })
+    closeModal()
+  }
+
   const handleUpdateTask = async (data: TaskInput) => {
     await updateTask({
       refetchQueries: [{ query: AllProgressDocument }],
@@ -58,6 +75,7 @@ const TaskModal: FC<TaskModalProps> = ({ closeModal, task }) => {
       <TaskForm
         onFormSubmit={task.id ? handleUpdateTask : handleCreateTask}
         onDeleteTask={handleDeleteTask}
+        onDuplicateTask={handleDuplicateTask}
         task={task}
       />
     </Modal>

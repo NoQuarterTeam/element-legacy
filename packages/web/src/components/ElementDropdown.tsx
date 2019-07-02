@@ -41,9 +41,14 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
 
   const createNewElement = async () => {
     if (newElement !== "") {
+      let letters = "0123456789ABCDEF"
+      let generatedColor = ""
+      for (var i = 0; i < 6; i++) {
+        generatedColor += letters[Math.floor(Math.random() * 16)]
+      }
       const elementData = {
         name: newElement,
-        color: "#" + ((Math.random() * 0xfff) << 0).toString(16),
+        color: generatedColor,
       }
       await createElement({
         variables: {

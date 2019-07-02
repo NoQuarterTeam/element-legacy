@@ -7,6 +7,8 @@ import {
   UpdateDateColumn,
   OneToMany,
   ManyToMany,
+  ManyToOne,
+  JoinColumn,
 } from "typeorm"
 
 import { ObjectType, Field, ID } from "type-graphql"
@@ -37,6 +39,10 @@ export class Element extends BaseEntity {
 
   @ManyToMany(() => Habit)
   habit: Habit[]
+
+  // @Field(() => Element)
+  // @ManyToOne(() => Element)
+  // parentElement: Element
 
   @Field()
   @CreateDateColumn()

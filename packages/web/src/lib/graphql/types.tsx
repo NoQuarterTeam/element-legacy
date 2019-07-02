@@ -34,6 +34,7 @@ export interface Habit {
   id: Scalars["ID"]
   archived: Scalars["Boolean"]
   elementId: Scalars["String"]
+  activeFrom?: Maybe<Scalars["DateTime"]>
   element: Element
   createdAt: Scalars["DateTime"]
   updatedAt: Scalars["DateTime"]
@@ -42,7 +43,9 @@ export interface Habit {
 
 export interface HabitInput {
   elementId?: Maybe<Scalars["String"]>
-  archived: Scalars["Boolean"]
+  archived?: Maybe<Scalars["Boolean"]>
+  archivedAt?: Maybe<Scalars["DateTime"]>
+  activeFrom?: Maybe<Scalars["DateTime"]>
 }
 
 export interface LoginInput {
@@ -91,6 +94,7 @@ export interface MutationUpdateHabitArgs {
 }
 
 export interface MutationArchiveHabitArgs {
+  data: HabitInput
   habitId: Scalars["String"]
 }
 
@@ -230,7 +234,7 @@ export type UpdateElementMutation = { __typename?: "Mutation" } & {
 
 export type HabitFragment = { __typename?: "Habit" } & Pick<
   Habit,
-  "id" | "createdAt" | "archivedAt"
+  "id" | "activeFrom" | "archivedAt"
 > & { element: { __typename?: "Element" } & Pick<Element, "name" | "color"> }
 
 export interface AllHabitsQueryVariables {}
@@ -249,6 +253,7 @@ export type CreateHabitMutation = { __typename?: "Mutation" } & {
 
 export interface ArchiveHabitMutationVariables {
   habitId: Scalars["String"]
+  data: HabitInput
 }
 
 export type ArchiveHabitMutation = { __typename?: "Mutation" } & {
@@ -393,7 +398,7 @@ export const HabitFragmentDoc = gql`
       name
       color
     }
-    createdAt
+    activeFrom
     archivedAt
   }
 `
@@ -546,8 +551,8 @@ export function useCreateHabitMutation(
   >(CreateHabitDocument, baseOptions)
 }
 export const ArchiveHabitDocument = gql`
-  mutation ArchiveHabit($habitId: String!) {
-    archiveHabit(habitId: $habitId) {
+  mutation ArchiveHabit($habitId: String!, $data: HabitInput!) {
+    archiveHabit(habitId: $habitId, data: $data) {
       ...Habit
     }
   }

@@ -17,8 +17,14 @@ interface TaskFormProps {
   onFormSubmit: (data: any) => Promise<any>
   task: TaskFragment
   onDeleteTask: () => void
+  onDuplicateTask: () => void
 }
-function TaskForm({ onFormSubmit, task, onDeleteTask }: TaskFormProps) {
+function TaskForm({
+  onFormSubmit,
+  task,
+  onDeleteTask,
+  onDuplicateTask,
+}: TaskFormProps) {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   const elements = useAllElements()
@@ -57,7 +63,7 @@ function TaskForm({ onFormSubmit, task, onDeleteTask }: TaskFormProps) {
       <Input
         value={formState.name ? formState.name : ""}
         onChange={e => setFormState({ name: e.target.value })}
-        placeholder="Task name"
+        placeholder="What is it?"
         required={true}
         variant="large"
       />
@@ -80,7 +86,7 @@ function TaskForm({ onFormSubmit, task, onDeleteTask }: TaskFormProps) {
           />
           <Input
             type="time"
-            label="Estimated time:"
+            label="How long for?"
             labelDirection="row"
             value={formState.estimatedTime ? formState.estimatedTime : ""}
             onChange={e => setFormState({ estimatedTime: e.target.value })}
@@ -98,7 +104,7 @@ function TaskForm({ onFormSubmit, task, onDeleteTask }: TaskFormProps) {
           />
           <Input
             type="time"
-            label="Start time:"
+            label="What time?"
             labelDirection="row"
             value={formState.startTime ? formState.startTime : ""}
             onChange={e => setFormState({ startTime: e.target.value })}
@@ -115,6 +121,13 @@ function TaskForm({ onFormSubmit, task, onDeleteTask }: TaskFormProps) {
         <StyledRow style={{ marginTop: "1rem", marginBottom: "1rem" }}>
           <Button loading={loading} variant="secondary" onClick={onDeleteTask}>
             Delete
+          </Button>
+          <Button
+            loading={loading}
+            variant="secondary"
+            onClick={onDuplicateTask}
+          >
+            Duplicate
           </Button>
           <Button loading={loading} variant="primary">
             Submit
