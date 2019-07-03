@@ -48,7 +48,7 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
       }
       const elementData = {
         name: newElement,
-        color: generatedColor,
+        color: "#" + generatedColor,
       }
       await createElement({
         variables: {
