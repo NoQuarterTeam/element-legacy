@@ -77,12 +77,13 @@ export class ProgressService {
     if (task.completed) {
       // check for habit with elementId that is active within the Tasks scheduled date
       const allHabits = await this.habitService.findAll()
+
       const activeHabits = allHabits
         .filter(
           (habit: Habit) =>
             habit.elementId === task.elementId &&
             dayjs(task.scheduledDate).isAfter(
-              dayjs(habit.createdAt).startOf("day"),
+              dayjs(habit.activeFrom).startOf("day"),
               // .subtract(1, "day"),
             ),
         )

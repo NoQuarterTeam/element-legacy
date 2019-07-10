@@ -8,6 +8,7 @@ import { darken } from "polished"
 interface ElementDropdownOptionProps {
   element: ElementFragment
   selected: any
+  child?: boolean
   togglePicker: any
   handleSelectElement: () => void
   archiveElement: (element: ElementFragment) => void
@@ -85,7 +86,7 @@ const StyledColorCircle = styled.div`
   }
 `
 
-const StyledOptionContainer = styled.div<{ color: string }>`
+const StyledOptionContainer = styled.div<{ color: string; child?: boolean }>`
   position: relative;
   ${p => p.theme.flexCenter};
   padding: ${p => p.theme.paddingM} ${p => p.theme.paddingL}
@@ -93,6 +94,7 @@ const StyledOptionContainer = styled.div<{ color: string }>`
   margin: ${p => p.theme.paddingS};
   border-radius: ${p => p.theme.borderRadius};
   cursor: pointer;
+  margin-left: ${p => (p.child ? p.theme.paddingL : p.theme.paddingS)};
 
   &:hover {
     background-color: ${p => lighten(0.2, p.color)};

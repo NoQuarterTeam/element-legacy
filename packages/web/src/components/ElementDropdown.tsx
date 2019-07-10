@@ -137,13 +137,38 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
             .filter(e => e.archived === false)
             .map((element, index) => (
               <div key={index}>
-                <ElementDropdownOption
+                {/* <ElementDropdownOption
                   element={element}
                   selected={selectedElement && selectedElement}
                   handleSelectElement={() => selectElement(element)}
                   togglePicker={() => selectedPicker(element)}
                   archiveElement={handleArchiveElement}
-                />
+                /> */}
+                {(element.children || !element.parentId) && (
+                  <ElementDropdownOption
+                    key={index}
+                    element={element}
+                    selected={selectedElement && selectedElement}
+                    handleSelectElement={() => selectElement(element)}
+                    togglePicker={() => selectedPicker(element)}
+                    archiveElement={handleArchiveElement}
+                  />
+                )}
+                {elements
+                  .filter(e => e.parentId === element.id)
+                  .map((el, i) => (
+                    <>
+                      <ElementDropdownOption
+                        key={i}
+                        element={el}
+                        selected={selectedElement && selectedElement}
+                        handleSelectElement={() => selectElement(el)}
+                        togglePicker={() => selectedPicker(el)}
+                        archiveElement={handleArchiveElement}
+                        child={true}
+                      />
+                    </>
+                  ))}
               </div>
             ))}
       </StyledDropdownMenu>

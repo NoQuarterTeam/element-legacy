@@ -8,7 +8,6 @@ import {
   OneToMany,
   ManyToMany,
   ManyToOne,
-  JoinColumn,
 } from "typeorm"
 
 import { ObjectType, Field, ID } from "type-graphql"
@@ -40,9 +39,22 @@ export class Element extends BaseEntity {
   @ManyToMany(() => Habit)
   habit: Habit[]
 
-  // @Field(() => Element)
-  // @ManyToOne(() => Element)
-  // parentElement: Element
+  @Field(() => [Element], { nullable: true })
+  @OneToMany(() => Element, element => element.children, {
+    cascade: false,
+    nullable: true,
+  })
+  children: Element[]
+
+  @ManyToOne(() => Element, element => element.parent, {
+    cascade: false,
+    nullable: true,
+  })
+  parent: Element
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  parentId: string
 
   @Field()
   @CreateDateColumn()

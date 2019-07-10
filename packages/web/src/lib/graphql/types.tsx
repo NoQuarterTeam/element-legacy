@@ -25,6 +25,8 @@ export interface Element {
   name: Scalars["String"]
   color: Scalars["String"]
   archived: Scalars["Boolean"]
+  children?: Maybe<Element[]>
+  parentId: Scalars["String"]
   createdAt: Scalars["DateTime"]
   updatedAt: Scalars["DateTime"]
 }
@@ -206,8 +208,8 @@ export interface UserAuthResponse {
 }
 export type ElementFragment = { __typename?: "Element" } & Pick<
   Element,
-  "id" | "name" | "color" | "archived"
->
+  "id" | "name" | "color" | "archived" | "parentId"
+> & { children: Maybe<({ __typename?: "Element" } & Pick<Element, "id">)[]> }
 
 export interface AllElementsQueryVariables {}
 
@@ -389,6 +391,10 @@ export const ElementFragmentDoc = gql`
     name
     color
     archived
+    parentId
+    children {
+      id
+    }
   }
 `
 export const HabitFragmentDoc = gql`

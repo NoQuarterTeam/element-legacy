@@ -197,6 +197,7 @@ export const calculateHabitProgress = (
   )
 
   const activeHabits = allActiveHabits(day, habits)
+
   const results = activeHabits
     .map((h: HabitFragment) => {
       if (progArr.includes(h.element.name)) {
