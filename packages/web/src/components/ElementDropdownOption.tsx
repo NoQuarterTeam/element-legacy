@@ -12,6 +12,7 @@ interface ElementDropdownOptionProps {
   togglePicker: any
   hiddenElement?: boolean
   handleSelectElement: () => void
+  addChild: (element: ElementFragment) => void
   archiveElement: (element: ElementFragment) => void
 }
 const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
@@ -21,6 +22,7 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
   handleSelectElement,
   archiveElement,
   hiddenElement,
+  addChild,
   ...props
 }) => {
   return (
@@ -38,7 +40,9 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
         >
           {element.name}
         </StyledOption>
-
+        <StyledAdd color={element.color} onClick={() => addChild(element)}>
+          +
+        </StyledAdd>
         <StyledColorCircle
           id={element.id}
           onClick={() => togglePicker(element)}
@@ -98,6 +102,18 @@ const StyledColorCircle = styled.div`
   }
 `
 
+const StyledAdd = styled.p<{ color: string }>`
+  color: ${p => darken(0.2, p.color)};
+  font-size: ${p => p.theme.textL};
+  line-height: 1rem;
+  visibility: hidden;
+  margin: 0 ${p => p.theme.paddingM};
+
+  &:hover {
+    transform: scale(1.1);
+  }
+`
+
 const StyledOptionContainer = styled.div<{
   color: string
   child?: boolean
@@ -123,6 +139,10 @@ const StyledOptionContainer = styled.div<{
   }
 
   &:hover ${StyledDelete} {
+    visibility: visible;
+  }
+
+  &:hover ${StyledAdd} {
     visibility: visible;
   }
 

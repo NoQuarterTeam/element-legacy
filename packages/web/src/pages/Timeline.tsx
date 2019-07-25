@@ -87,10 +87,17 @@ const Timeline: FC<RouteComponentProps> = () => {
   }
 
   const toggleAll = () => {
-    setFilteredElements(
+    if (
       elements &&
-        elements.filter(el => !el.archived).map(element => element.id),
-    )
+      filteredElements.length === elements.filter(el => !el.archived).length
+    ) {
+      setFilteredElements([])
+    } else {
+      setFilteredElements(
+        elements &&
+          elements.filter(el => !el.archived).map(element => element.id),
+      )
+    }
   }
 
   return (
@@ -155,6 +162,7 @@ const StyledNav = styled.div`
   background-color: ${p => p.theme.colorBackground};
   box-shadow: 1px 1px 7px rgba(0, 0, 0, 0.0655288);
   display: flex;
+  padding-left: 100px;
 `
 
 const StyledTimelineWrapper = styled.div`

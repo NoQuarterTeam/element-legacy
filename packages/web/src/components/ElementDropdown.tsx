@@ -32,8 +32,10 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
   const [dropdownOpen, openDropdown] = useState(false)
   const [pickerOpen, openColorPicker] = useState(false)
   const [newElement, setNewElement] = useState("")
+  const [newChildElement, setNewChildElement] = useState("")
   const [pickerElement, setPickerElement] = useState<ElementFragment>()
   const [selectedElement, selectSelectedElement] = useState<ElementFragment>()
+  const [addingChild, setAddingChild] = useState()
   const pickerRef = createRef<HTMLDivElement>()
   const dropdownRef = createRef<HTMLDivElement>()
 
@@ -62,6 +64,28 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
         },
       })
       setNewElement("")
+    }
+  }
+
+  const createNewChildElement = async (parent: ElementFragment) => {
+    if (newChildElement !== "") {
+      let letters = "0123456789ABCDEF"
+      let generatedColor = ""
+      for (var i = 0; i < 6; i++) {
+        generatedColor += letters[Math.floor(Math.random() * 16)]
+      }
+      const elementData = {
+        name: newChildElement,
+        color: "#" + generatedColor,
+        parentId: parent.id,
+      }
+      await createElement({
+        variables: {
+          data: elementData,
+        },
+      })
+      setNewChildElement("")
+      setAddingChild("")
     }
   }
 
@@ -104,6 +128,10 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
     setPickerElement(element)
   }
 
+  const addChild = (element: ElementFragment) => {
+    setAddingChild(element.id)
+  }
+
   return (
     <StyledDropdownContainer ref={dropdownRef}>
       <StyledDropdownPlaceholder
@@ -139,7 +167,7 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
           </StyledAdd>
         </StyledNewElement>
         {filteredElements && (
-          <StyledToggle onClick={toggleAll}>Show all</StyledToggle>
+          <StyledToggle onClick={toggleAll}>Toggle all</StyledToggle>
         )}
         {elements &&
           elements
@@ -147,17 +175,38 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
             .map((element, index) => (
               <div key={element.id}>
                 {!element.parentId && (
-                  <ElementDropdownOption
-                    key={index}
-                    element={element}
-                    selected={selectedElement && selectedElement}
-                    handleSelectElement={() => selectElement(element)}
-                    togglePicker={() => selectedPicker(element)}
-                    archiveElement={handleArchiveElement}
-                    hiddenElement={
-                      filteredElements && !filteredElements.includes(element.id)
-                    }
-                  />
+                  <>
+                    <ElementDropdownOption
+                      key={index}
+                      element={element}
+                      selected={selectedElement && selectedElement}
+                      handleSelectElement={() => selectElement(element)}
+                      togglePicker={() => selectedPicker(element)}
+                      archiveElement={handleArchiveElement}
+                      hiddenElement={
+                        filteredElements &&
+                        !filteredElements.includes(element.id)
+                      }
+                      addChild={addChild}
+                    />
+                    {addingChild === element.id && (
+                      <StyledNewElement>
+                        <Input
+                          placeholder="New child element..."
+                          onChange={e => setNewChildElement(e.target.value)}
+                          value={newChildElement}
+                          style={{ fontSize: "16px", padding: 0 }}
+                          autoFocus
+                        />
+                        <StyledAdd
+                          newElement={newChildElement}
+                          onClick={() => createNewChildElement(element)}
+                        >
+                          +
+                        </StyledAdd>
+                      </StyledNewElement>
+                    )}
+                  </>
                 )}
                 {elements
                   .filter(e => e.parentId === element.id)
@@ -174,7 +223,25 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
                         hiddenElement={
                           filteredElements && !filteredElements.includes(el.id)
                         }
+                        addChild={addChild}
                       />
+                      {addingChild === el.id && (
+                        <StyledNewElement>
+                          <Input
+                            placeholder="New child element..."
+                            onChange={e => setNewChildElement(e.target.value)}
+                            value={newChildElement}
+                            style={{ fontSize: "16px", padding: 0 }}
+                            autoFocus
+                          />
+                          <StyledAdd
+                            newElement={newChildElement}
+                            onClick={() => createNewChildElement(el)}
+                          >
+                            +
+                          </StyledAdd>
+                        </StyledNewElement>
+                      )}
                     </div>
                   ))}
               </div>
@@ -253,7 +320,19 @@ const StyledAdd = styled.div<{ newElement: string }>`
 `
 
 const StyledToggle = styled.div`
+  position: relative;
+  ${p => p.theme.flexCenter};
+  padding: ${p => p.theme.paddingM} ${p => p.theme.paddingL}
+    ${p => p.theme.paddingM} ${p => p.theme.paddingM};
+  margin: ${p => p.theme.paddingS};
+  border-radius: ${p => p.theme.borderRadius};
   cursor: pointer;
+  text-align: left;
+  margin-left: ${p => p.theme.paddingS};
+
+  &:hover {
+    background-color: ${p => p.theme.colorLabel};
+  }
 `
 
 const StyledPickerContainer = styled.div`

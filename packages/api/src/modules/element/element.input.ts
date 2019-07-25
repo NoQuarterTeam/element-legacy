@@ -11,4 +11,7 @@ export class CreateElementInput implements Partial<Element> {
 
   @Field({ nullable: true })
   archived?: boolean
+
+  @Field({ nullable: true })
+  parentId?: string
 }
