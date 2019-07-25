@@ -10,6 +10,7 @@ interface ElementDropdownOptionProps {
   selected: any
   child?: boolean
   togglePicker: any
+  hiddenElement?: boolean
   handleSelectElement: () => void
   archiveElement: (element: ElementFragment) => void
 }
@@ -19,15 +20,21 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
   togglePicker,
   handleSelectElement,
   archiveElement,
+  hiddenElement,
   ...props
 }) => {
   return (
     <>
-      <StyledOptionContainer {...props} color={element.color}>
+      <StyledOptionContainer
+        {...props}
+        hiddenElement={hiddenElement}
+        color={element.color}
+      >
         <StyledOption
           selectedId={selected && selected.id}
           onClick={handleSelectElement}
           id={element.id}
+          hiddenElement={hiddenElement}
         >
           {element.name}
         </StyledOption>
@@ -64,12 +71,17 @@ const StyledDelete = styled.p<{ color: string }>`
   }
 `
 
-const StyledOption = styled.p<{ selectedId: string; id: string }>`
+const StyledOption = styled.p<{
+  selectedId: string
+  id: string
+  hiddenElement?: boolean
+}>`
   font-weight: ${props =>
     props.id === props.selectedId
       ? p => p.theme.fontBlack
       : p => p.theme.fontBold};
   width: 100%;
+  text-decoration: ${p => (p.hiddenElement ? "line-through" : "inherit")};
 `
 
 const StyledColorCircle = styled.div`
@@ -86,7 +98,11 @@ const StyledColorCircle = styled.div`
   }
 `
 
-const StyledOptionContainer = styled.div<{ color: string; child?: boolean }>`
+const StyledOptionContainer = styled.div<{
+  color: string
+  child?: boolean
+  hiddenElement?: boolean
+}>`
   position: relative;
   ${p => p.theme.flexCenter};
   padding: ${p => p.theme.paddingM} ${p => p.theme.paddingL}
@@ -95,9 +111,11 @@ const StyledOptionContainer = styled.div<{ color: string; child?: boolean }>`
   border-radius: ${p => p.theme.borderRadius};
   cursor: pointer;
   margin-left: ${p => (p.child ? p.theme.paddingL : p.theme.paddingS)};
+  text-decoration: ${p => (p.hiddenElement ? "line-through" : "normal")};
 
   &:hover {
-    background-color: ${p => lighten(0.2, p.color)};
+    background-color: ${p =>
+      p.hiddenElement ? "white" : lighten(0.2, p.color)};
   }
 
   &:hover ${StyledColorCircle} {

@@ -1,4 +1,13 @@
-import { Resolver, Mutation, Arg, Authorized, Query } from "type-graphql"
+import {
+  Resolver,
+  Mutation,
+  Arg,
+  Authorized,
+  Query,
+  Field,
+  FieldResolver,
+  Root,
+} from "type-graphql"
 
 import { Element } from "./element.entity"
 import { ElementService } from "./element.service"
@@ -38,5 +47,11 @@ export class ElementResolver {
   @Mutation(() => Boolean, { nullable: true })
   destroyElement(@Arg("elementId") elementId: string): Promise<boolean> {
     return this.elementService.destroy(elementId)
+  }
+
+  // TODO - data loader
+  @FieldResolver()
+  async children(@Root() element: Element) {
+    return this.elementService.findChildren(element.id)
   }
 }

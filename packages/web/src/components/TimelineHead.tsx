@@ -13,7 +13,7 @@ import {
 import { useAllHabits } from "../lib/graphql/habit/hooks"
 import { useAllProgress } from "../lib/graphql/progress/hooks"
 import { FC } from "react"
-import { darken } from "polished"
+import { darken, lighten } from "polished"
 dayjs.extend(advancedFormat)
 
 interface TimelineHeadProps {
@@ -60,6 +60,7 @@ const TimelineHead: FC<TimelineHeadProps> = ({ openHabitModal }) => {
                                 count={
                                   habits && allActiveHabits(day, habits).length
                                 }
+                                past={dayjs(day).isBefore(dayjs())}
                               />
                             )
                           },
@@ -93,6 +94,7 @@ const StyledMonthHeader = styled.h3`
   flex-direction: row;
   position: sticky;
   width: 64px;
+  margin-bottom: ${p => p.theme.paddingM};
   left: ${p => p.theme.paddingML};
   margin-left: ${p => p.theme.paddingML};
   z-index: 1;
@@ -107,7 +109,7 @@ const StyledDayHeader = styled.h3<{ today: boolean }>`
   font-weight: ${props => (props.today ? "800" : "400")};
   font-size: ${props => (props.today ? "15px" : "12px")};
   width: 88px;
-  height: 177px;
+  height: 190px;
   margin: 0;
   display: flex;
   justify-content: center;
@@ -129,7 +131,8 @@ const StyledContainer = styled.div<{ weekend: boolean; today: boolean }>`
     props.weekend
       ? p => darken(0.02, p.theme.colorBackground)
       : p => p.theme.colorBackground};
-  background-color: ${props => (props.today ? "rgb(225, 233, 244, 0.8)" : "")};
+  background-color: ${props =>
+    props.today ? lighten(0.35, props.theme.colorBlue) : ""};
 `
 
 const StyledHabits = styled.div<{ today: boolean; count: any }>`
@@ -142,11 +145,16 @@ const StyledHabits = styled.div<{ today: boolean; count: any }>`
     props.count > 6 ? 8 + 0.73 * props.count + "px" : "8px"};
 `
 
-const Circle = styled.div<{ completed: boolean; count: any }>`
+const Circle = styled.div<{ completed: boolean; count: any; past: boolean }>`
   min-width: 11px;
   min-height: 11px;
   margin-left: ${props => (props.count > 6 ? -0.3 * props.count + "px" : 0)};
   border-radius: 50%;
-  background-color: ${props => (props.completed ? "#A3ED9E" : "#E4A3A3")};
+  background-color: ${props =>
+    props.completed
+      ? "#A3ED9E"
+      : props.past
+      ? darken(0.1, props.theme.colorWarning)
+      : darken(0.1, props.theme.colorBackground)};
   z-index: ${props => (props.completed ? 1 : 0)};
 `

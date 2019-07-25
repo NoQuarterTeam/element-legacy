@@ -48,7 +48,7 @@ const HabitModal: FC<HabitModalProps> = ({ closeModal, day }) => {
 
   return (
     <Modal onClose={closeModal}>
-      <StyledHeader>Habits - {dayjs(day).format("Do MMMM")}</StyledHeader>
+      <StyledHeader>Daily Habits - {dayjs(day).format("Do MMMM")}</StyledHeader>
       <StyledInfo>
         Select which elements of your life you want to track as habits
       </StyledInfo>

@@ -56,6 +56,7 @@ function HabitForm({ onFormSubmit, habits, day }: HabitFormProps) {
           elements={
             elements && elements.filter(el => !habitNames.includes(el.name))
           }
+          placeholder="Add a habit"
         />
         <Input hidden defaultValue={formState.activeFrom} />
         {formState.elementId && (

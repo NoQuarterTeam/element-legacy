@@ -12,14 +12,20 @@ import Input from "./Input"
 import { lighten } from "@noquarter/ui"
 
 interface ElementDropdownProps {
-  selectedElementId: string
+  selectedElementId?: string
   elements: ElementFragment[] | undefined | null
+  placeholder: string
   handleSelectElement: (element: ElementFragment) => void
+  filteredElements?: string[]
+  toggleAll?: () => void
 }
 const ElementDropdown: FC<ElementDropdownProps> = ({
   selectedElementId,
   handleSelectElement,
   elements,
+  placeholder,
+  filteredElements,
+  toggleAll,
 }) => {
   const createElement = useCreateElement()
   const updateElement = useUpdateElement()
@@ -105,7 +111,7 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
         onClick={() => openDropdown(!dropdownOpen)}
         color={selectedElement && selectedElement.color}
       >
-        {selectedElement ? selectedElement.name : "Select element..."}
+        {selectedElement ? selectedElement.name : placeholder}
       </StyledDropdownPlaceholder>
 
       {pickerOpen && (
@@ -132,19 +138,15 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
             +
           </StyledAdd>
         </StyledNewElement>
+        {filteredElements && (
+          <StyledToggle onClick={toggleAll}>Show all</StyledToggle>
+        )}
         {elements &&
           elements
             .filter(e => e.archived === false)
             .map((element, index) => (
-              <div key={index}>
-                {/* <ElementDropdownOption
-                  element={element}
-                  selected={selectedElement && selectedElement}
-                  handleSelectElement={() => selectElement(element)}
-                  togglePicker={() => selectedPicker(element)}
-                  archiveElement={handleArchiveElement}
-                /> */}
-                {(element.children || !element.parentId) && (
+              <div key={element.id}>
+                {!element.parentId && (
                   <ElementDropdownOption
                     key={index}
                     element={element}
@@ -152,22 +154,28 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
                     handleSelectElement={() => selectElement(element)}
                     togglePicker={() => selectedPicker(element)}
                     archiveElement={handleArchiveElement}
+                    hiddenElement={
+                      filteredElements && !filteredElements.includes(element.id)
+                    }
                   />
                 )}
                 {elements
                   .filter(e => e.parentId === element.id)
-                  .map((el, i) => (
-                    <>
+                  .map(el => (
+                    <div key={el.id}>
                       <ElementDropdownOption
-                        key={i}
+                        key={el.id}
                         element={el}
                         selected={selectedElement && selectedElement}
                         handleSelectElement={() => selectElement(el)}
                         togglePicker={() => selectedPicker(el)}
                         archiveElement={handleArchiveElement}
                         child={true}
+                        hiddenElement={
+                          filteredElements && !filteredElements.includes(el.id)
+                        }
                       />
-                    </>
+                    </div>
                   ))}
               </div>
             ))}
@@ -242,6 +250,10 @@ const StyledAdd = styled.div<{ newElement: string }>`
   &:hover {
     transform: scale(1.1);
   }
+`
+
+const StyledToggle = styled.div`
+  cursor: pointer;
 `
 
 const StyledPickerContainer = styled.div`

@@ -18,7 +18,7 @@ function Task({ task, ...rest }: TaskProps) {
       className="task"
     >
       <StyledTaskName completed={task.completed}>{task.name}</StyledTaskName>
-      <StyledTaskElement completed={task.completed}>
+      <StyledTaskElement completed={task.completed} color={task.element.color}>
         {task.element.name}
       </StyledTaskElement>
       {task.startTime && (
@@ -36,19 +36,24 @@ function Task({ task, ...rest }: TaskProps) {
 
 export default memo(Task)
 
-const StyledTaskElement = styled.p<{ completed: boolean }>`
-  color: ${props => (props.completed ? "grey" : "white")};
+const StyledTaskElement = styled.p<{ completed: boolean; color: string }>`
+  color: "white";
   position: absolute;
   font-size: ${p => p.theme.textXS};
   bottom: ${p => p.theme.paddingXS};
   right: ${p => p.theme.paddingS};
   margin: 0;
+  padding: ${p => p.theme.paddingXS};
+  border-radius: ${p => p.theme.borderRadiusS};
   text-decoration: ${props => (props.completed ? "line-through" : "none")};
+  background-color: ${props => props.color};
+  opacity: ${props => (props.completed ? 0.5 : 1)};
   display: none;
+  white-space: nowrap;
 `
 
 const StyledTaskStart = styled.p<{ completed: boolean }>`
-  color: ${props => (props.completed ? "grey" : "white")};
+  color: ${props => (props.completed ? "lightgrey" : "grey")};
   position: absolute;
   font-size: ${p => p.theme.textXS};
   bottom: ${p => p.theme.paddingML};
@@ -61,7 +66,7 @@ const StyledTaskDuration = styled.p<{ completed: boolean }>`
   position: absolute;
   bottom: ${p => p.theme.paddingXS};
   right: ${p => p.theme.paddingS};
-  color: ${props => (props.completed ? "grey" : "white")};
+  color: ${props => (props.completed ? "lightgrey" : "grey")};
   font-size: ${p => p.theme.textXS};
   font-weight: ${p => p.theme.fontBlack};
   margin: 0;
@@ -75,12 +80,14 @@ const StyledTaskBox = styled.div<{ completed: boolean; color: string }>`
   flex-direction: column;
   max-width: calc(100% - ${p => p.theme.paddingS});
   min-height: 60px;
-  background-color: ${props => (props.completed ? "white" : props.color)};
+  background-color: ${props => (props.completed ? "white" : "white")};
   margin: ${p => p.theme.paddingXS};
   border-radius: ${p => p.theme.borderRadius};
-  border: ${props => (props.completed ? "1px solid" + props.color : "none")};
+  /* border: ${props =>
+    props.completed ? "1px solid" + props.color : "none"}; */
   padding: ${p => p.theme.paddingS};;
-  /* box-shadow: ${props => props.theme.boxShadow}; */
+  box-shadow: ${props =>
+    props.completed ? props.theme.boxShadow : props.theme.boxShadowBold};
 
   &:hover ${StyledTaskElement} {display: block;}
   &:hover ${StyledTaskStart} {display: none;}
@@ -88,7 +95,7 @@ const StyledTaskBox = styled.div<{ completed: boolean; color: string }>`
 `
 
 const StyledTaskName = styled.p<{ completed: boolean }>`
-  color: ${props => (props.completed ? "grey" : "white")};
+  color: ${props => (props.completed ? "lightgrey" : "grey")};
   font-size: ${p => p.theme.textXS};
   font-weight: ${p => p.theme.fontBlack};
   line-height: 12px;

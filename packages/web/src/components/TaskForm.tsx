@@ -83,6 +83,7 @@ function TaskForm({
               setFormState({ elementId: element.id })
             }
             elements={elements}
+            placeholder="Select an element..."
           />
           <Input
             type="time"

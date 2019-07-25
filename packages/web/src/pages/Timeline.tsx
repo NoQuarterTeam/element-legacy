@@ -3,25 +3,29 @@ import { RouteComponentProps } from "@reach/router"
 import dayjs, { Dayjs } from "dayjs"
 // import useAppContext from "../../lib/hooks/useAppContext"
 // import { useLogout } from "../../lib/graphql/user/hooks"
-import styled from "../application/theme"
 import Day from "../components/Day"
 import TimelineHead from "../components/TimelineHead"
 import { useAllTasks } from "../lib/graphql/task/hooks"
-import { getDays, sleep } from "../lib/helpers"
+import { getDays } from "../lib/helpers"
 import DragDropContainer from "../components/DragDropContainer"
 import TaskModal from "../components/TaskModal"
 import HabitModal from "../components/HabitModal"
-import Button from "../components/Button"
-import { TaskFragment } from "../lib/graphql/types"
+// import Button from "../components/Button"
+import { TaskFragment, ElementFragment } from "../lib/graphql/types"
+import { useAllElements } from "../lib/graphql/element/hooks"
+import ElementDropdown from "../components/ElementDropdown"
+import styled from "../application/theme"
 
 const Timeline: FC<RouteComponentProps> = () => {
   // const { user } = useAppContext()
   const [modal, setModal] = useState("")
   const [task, setTask] = useState()
   const [dayClicked, setDayClicked] = useState()
-  const [isLoading, setIsLoading] = useState(true)
+  // const [isLoading, setIsLoading] = useState(true)
+  const [filteredElements, setFilteredElements] = useState()
 
   const allTasks = useAllTasks()
+  const elements = useAllElements()
 
   const timelineRef = useRef<HTMLDivElement>(null)
 
@@ -30,6 +34,13 @@ const Timeline: FC<RouteComponentProps> = () => {
       window.scrollTo(timelineRef.current.scrollWidth / 2.4, 0)
     }
   }, [timelineRef.current])
+
+  useEffect(() => {
+    setFilteredElements(
+      elements &&
+        elements.filter(el => !el.archived).map(element => element.id),
+    )
+  }, [elements])
 
   const openTaskModal = (day: Dayjs, task?: TaskFragment) => {
     setModal("task")
@@ -51,6 +62,37 @@ const Timeline: FC<RouteComponentProps> = () => {
     setModal("")
   }
 
+  const toggleFilteredElement = (element: ElementFragment) => {
+    let newFiltered = filteredElements && filteredElements
+    if (filteredElements && filteredElements.includes(element.id)) {
+      if (element.children && element.children.length > 0) {
+        element.children.map(child => {
+          newFiltered = newFiltered.filter(
+            (elementId: string) => elementId !== child.id,
+          )
+        })
+      }
+      newFiltered = newFiltered.filter(
+        (elementId: string) => elementId !== element.id,
+      )
+    } else {
+      if (element.children && element.children.length > 0) {
+        element.children.map(child => {
+          newFiltered = newFiltered.concat(child.id)
+        })
+      }
+      newFiltered = newFiltered.concat(element.id)
+    }
+    setFilteredElements(newFiltered)
+  }
+
+  const toggleAll = () => {
+    setFilteredElements(
+      elements &&
+        elements.filter(el => !el.archived).map(element => element.id),
+    )
+  }
+
   return (
     <>
       {modal === "task" && (
@@ -60,7 +102,15 @@ const Timeline: FC<RouteComponentProps> = () => {
         <HabitModal day={dayClicked} closeModal={() => closeTaskModal()} />
       )}
 
-      <StyledNav />
+      <StyledNav>
+        <ElementDropdown
+          handleSelectElement={element => toggleFilteredElement(element)}
+          elements={elements}
+          placeholder="Hide/Show Elements"
+          filteredElements={filteredElements && filteredElements}
+          toggleAll={toggleAll}
+        />
+      </StyledNav>
       <StyledTimelineWrapper ref={timelineRef}>
         <TimelineHead openHabitModal={handleHabitModal} />
         <StyledTimeline>
@@ -73,8 +123,11 @@ const Timeline: FC<RouteComponentProps> = () => {
                       key={day.unix()}
                       day={day}
                       month={dayjs(day).format("MMMM")}
-                      tasks={allTasks.filter(t =>
-                        dayjs(t.scheduledDate).isSame(dayjs(day), "day"),
+                      tasks={allTasks.filter(
+                        t =>
+                          dayjs(t.scheduledDate).isSame(dayjs(day), "day") &&
+                          filteredElements &&
+                          filteredElements.includes(t.element.id),
                       )}
                       handleTaskModal={passedTask =>
                         openTaskModal(dayjs(day), passedTask)
@@ -101,6 +154,7 @@ const StyledNav = styled.div`
   position: fixed;
   background-color: ${p => p.theme.colorBackground};
   box-shadow: 1px 1px 7px rgba(0, 0, 0, 0.0655288);
+  display: flex;
 `
 
 const StyledTimelineWrapper = styled.div`
@@ -117,5 +171,4 @@ const StyledDaysWrapper = styled.div`
   display: flex;
   width: fit-content;
   overflow: scroll;
-  height: -webkit-fill-available;
 `

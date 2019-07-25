@@ -15,19 +15,15 @@ export class ElementService {
     return new Promise(async (resolve, reject) => {
       try {
         const elements = await Element.find()
-        // const elementsWithParents = elements.map(el => {
-        // let element = el
-        // if (el.parentElement) {
-        //   const parent = this.findById(el.parentElement.id)
-        //   element = Object.assign(element, parent)
-        // }
-        // elementsWithParents.push(element)
-        // }, {})
         resolve(elements)
       } catch (error) {
         reject(error)
       }
     })
+  }
+
+  findChildren(parentId: string): Promise<Element[]> {
+    return Element.find({ parentId })
   }
 
   create(data: CreateElementInput): Promise<Element> {

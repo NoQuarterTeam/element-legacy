@@ -7,7 +7,7 @@ import Task from "./Task"
 
 import { calculateTotalTime, today } from "../lib/helpers"
 import { TaskFragment, AllProgressDocument } from "../lib/graphql/types"
-import { darken } from "polished"
+import { darken, lighten } from "polished"
 import {
   useCreateTask,
   useUpdateTask,
@@ -143,7 +143,8 @@ const StyledDay = styled.div<{
     props.weekend
       ? p => darken(0.02, p.theme.colorBackground)
       : p => p.theme.colorBackground};
-  background-color: ${props => (props.today ? "rgb(225, 233, 244, 0.8)" : "")};
+  background-color: ${props =>
+    props.today ? lighten(0.35, props.theme.colorBlue) : ""};
 `
 
 const PlaceholderTask = styled.div`
@@ -167,6 +168,6 @@ const AddNewTask = styled.div`
   margin: ${p => p.theme.paddingS};
 
   &:hover ${PlaceholderTask} {
-    background-color: rgb(225, 233, 244, 0.5);
+    background-color: ${p => lighten(0.34, p.theme.colorBlue)};
   }
 `
