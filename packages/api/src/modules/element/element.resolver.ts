@@ -4,7 +4,6 @@ import {
   Arg,
   Authorized,
   Query,
-  Field,
   FieldResolver,
   Root,
 } from "type-graphql"

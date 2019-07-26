@@ -14,6 +14,8 @@ interface ElementDropdownOptionProps {
   handleSelectElement: () => void
   addChild: (element: ElementFragment) => void
   archiveElement: (element: ElementFragment) => void
+  open?: boolean
+  handleShowChildren: () => void
 }
 const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
   element,
@@ -23,6 +25,8 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
   archiveElement,
   hiddenElement,
   addChild,
+  open,
+  handleShowChildren,
   ...props
 }) => {
   return (
@@ -31,6 +35,7 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
         {...props}
         hiddenElement={hiddenElement}
         color={element.color}
+        open={open}
       >
         <StyledOption
           selectedId={selected && selected.id}
@@ -40,6 +45,7 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
         >
           {element.name}
         </StyledOption>
+
         <StyledAdd color={element.color} onClick={() => addChild(element)}>
           +
         </StyledAdd>
@@ -49,12 +55,21 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
           color={element.color}
           // ref={buttonRef}
         />
-        <StyledDelete
-          color={element.color}
-          onClick={() => archiveElement(element)}
-        >
-          x
-        </StyledDelete>
+        {element.children &&
+        element.children.filter(e => !e.archived).length > 0 ? (
+          <StyledArrow
+            onClick={handleShowChildren}
+            open={open}
+            color={element.color}
+          />
+        ) : (
+          <StyledDelete
+            color={element.color}
+            onClick={() => archiveElement(element)}
+          >
+            x
+          </StyledDelete>
+        )}
       </StyledOptionContainer>
     </>
   )
@@ -88,12 +103,30 @@ const StyledOption = styled.p<{
   text-decoration: ${p => (p.hiddenElement ? "line-through" : "inherit")};
 `
 
+const StyledArrow = styled.div<{ open?: boolean; color: string }>`
+  border: solid ${props => lighten(0.1, props.theme.colorText)};
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: ${p => p.theme.paddingXS};
+  content: "";
+  transform: ${props => (props.open ? "rotate(225deg)" : "rotate(45deg)")};
+  width: 0;
+  height: 0;
+  margin-left: ${props => props.theme.paddingM};
+  margin-top: ${props => (props.open ? p => p.theme.paddingS : "-3px")};
+
+  &:hover {
+    transform: ${props =>
+      props.open ? "rotate(225deg) scale(1.1)" : "rotate(45deg) scale(1.1)"};
+  }
+`
+
 const StyledColorCircle = styled.div`
   border-radius: 50%;
   min-height: 16px;
   visibility: hidden;
   min-width: 16px;
-  margin: 0 ${p => p.theme.paddingM};
+  margin: 0 ${p => p.theme.paddingS};
   cursor: pointer;
   background-color: ${props => props.color};
 
@@ -107,7 +140,7 @@ const StyledAdd = styled.p<{ color: string }>`
   font-size: ${p => p.theme.textL};
   line-height: 1rem;
   visibility: hidden;
-  margin: 0 ${p => p.theme.paddingM};
+  margin: 0 ${p => p.theme.paddingS};
 
   &:hover {
     transform: scale(1.1);
@@ -118,20 +151,19 @@ const StyledOptionContainer = styled.div<{
   color: string
   child?: boolean
   hiddenElement?: boolean
+  open?: boolean
 }>`
   position: relative;
   ${p => p.theme.flexCenter};
-  padding: ${p => p.theme.paddingM} ${p => p.theme.paddingL}
-    ${p => p.theme.paddingM} ${p => p.theme.paddingM};
+  padding: ${p => p.theme.paddingS} ${p => p.theme.paddingL}
+    ${p => p.theme.paddingS} ${p => p.theme.paddingM};
   margin: ${p => p.theme.paddingS};
   border-radius: ${p => p.theme.borderRadius};
   cursor: pointer;
   margin-left: ${p => (p.child ? p.theme.paddingL : p.theme.paddingS)};
-  text-decoration: ${p => (p.hiddenElement ? "line-through" : "normal")};
 
   &:hover {
-    background-color: ${p =>
-      p.hiddenElement ? "white" : lighten(0.2, p.color)};
+    background-color: ${p => lighten(0.2, p.color)};
   }
 
   &:hover ${StyledColorCircle} {
@@ -144,6 +176,19 @@ const StyledOptionContainer = styled.div<{
 
   &:hover ${StyledAdd} {
     visibility: visible;
+  }
+
+  &:hover ${StyledArrow} {
+    border: solid ${props => darken(0.2, props.color)};
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: ${p => p.theme.paddingXS};
+    content: "";
+    transform: ${props => (props.open ? "rotate(225deg)" : "rotate(45deg)")};
+    width: 0;
+    height: 0;
+    margin-left: ${props => props.theme.paddingM};
+    margin-top: ${props => (props.open ? p => p.theme.paddingS : "-3px")};
   }
 
   &:hover ${StyledOption} {

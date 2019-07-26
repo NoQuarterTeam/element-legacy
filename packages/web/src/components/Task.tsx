@@ -6,9 +6,10 @@ import { hoursInMins, formatTime } from "../lib/helpers"
 interface TaskProps {
   task: TaskFragment
   isDragging: boolean
+  hidden: boolean
   onClick: (event: any) => void
 }
-function Task({ task, ...rest }: TaskProps) {
+function Task({ task, hidden, ...rest }: TaskProps) {
   return (
     <StyledTaskBox
       {...rest}
@@ -16,6 +17,7 @@ function Task({ task, ...rest }: TaskProps) {
       color={task.element.color}
       id={task.id}
       className="task"
+      hidden={hidden}
     >
       <StyledTaskName completed={task.completed}>{task.name}</StyledTaskName>
       <StyledTaskElement completed={task.completed} color={task.element.color}>
@@ -73,10 +75,14 @@ const StyledTaskDuration = styled.p<{ completed: boolean }>`
   text-decoration: ${props => (props.completed ? "line-through" : "none")};
 `
 
-const StyledTaskBox = styled.div<{ completed: boolean; color: string }>`
+const StyledTaskBox = styled.div<{
+  completed: boolean
+  color: string
+  hidden: boolean
+}>`
+  display: ${props => (props.hidden ? "none" : "flex")};
   position: relative;
   cursor: pointer;
-  display: flex;
   flex-direction: column;
   max-width: calc(100% - ${p => p.theme.paddingS});
   min-height: 60px;

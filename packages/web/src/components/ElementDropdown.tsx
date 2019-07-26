@@ -33,6 +33,7 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
   const [pickerOpen, openColorPicker] = useState(false)
   const [newElement, setNewElement] = useState("")
   const [newChildElement, setNewChildElement] = useState("")
+  const [showChildren, setShowChildren] = useState("")
   const [pickerElement, setPickerElement] = useState<ElementFragment>()
   const [selectedElement, selectSelectedElement] = useState<ElementFragment>()
   const [addingChild, setAddingChild] = useState()
@@ -64,6 +65,7 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
         },
       })
       setNewElement("")
+      setAddingChild("")
     }
   }
 
@@ -91,13 +93,18 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
 
   const selectElement = (element: ElementFragment) => {
     handleSelectElement(element)
-    openDropdown(false)
+    if (!filteredElements) {
+      openDropdown(false)
+    }
+    setAddingChild("")
   }
 
   useOnClickOutside(dropdownRef, () => openDropdown(false))
   useOnClickOutside(pickerRef, () => openColorPicker(false))
 
   const handleChangeComplete = (color: any) => {
+    setAddingChild("")
+
     const elementData = {
       color: color.hex,
     }
@@ -111,6 +118,8 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
   }
 
   const handleArchiveElement = (element: ElementFragment) => {
+    setAddingChild("")
+
     const elementData = {
       archived: true,
     }
@@ -130,6 +139,16 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
 
   const addChild = (element: ElementFragment) => {
     setAddingChild(element.id)
+  }
+
+  const handleToggleAll = () => {
+    toggleAll && toggleAll()
+    setAddingChild("")
+  }
+
+  const handleShowChildren = (elementId: string) => {
+    setAddingChild("")
+    setShowChildren(showChildren && showChildren === elementId ? "" : elementId)
   }
 
   return (
@@ -166,9 +185,7 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
             +
           </StyledAdd>
         </StyledNewElement>
-        {filteredElements && (
-          <StyledToggle onClick={toggleAll}>Toggle all</StyledToggle>
-        )}
+
         {elements &&
           elements
             .filter(e => e.archived === false)
@@ -185,12 +202,18 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
                       archiveElement={handleArchiveElement}
                       hiddenElement={
                         filteredElements &&
-                        !filteredElements.includes(element.id)
+                        filteredElements.includes(element.id)
                       }
                       addChild={addChild}
+                      handleShowChildren={() => handleShowChildren(element.id)}
+                      open={
+                        showChildren && showChildren === element.id
+                          ? true
+                          : false
+                      }
                     />
                     {addingChild === element.id && (
-                      <StyledNewElement>
+                      <StyledNewElement child={true}>
                         <Input
                           placeholder="New child element..."
                           onChange={e => setNewChildElement(e.target.value)}
@@ -208,44 +231,56 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
                     )}
                   </>
                 )}
-                {elements
-                  .filter(e => e.parentId === element.id)
-                  .map(el => (
-                    <div key={el.id}>
-                      <ElementDropdownOption
-                        key={el.id}
-                        element={el}
-                        selected={selectedElement && selectedElement}
-                        handleSelectElement={() => selectElement(el)}
-                        togglePicker={() => selectedPicker(el)}
-                        archiveElement={handleArchiveElement}
-                        child={true}
-                        hiddenElement={
-                          filteredElements && !filteredElements.includes(el.id)
-                        }
-                        addChild={addChild}
-                      />
-                      {addingChild === el.id && (
-                        <StyledNewElement>
-                          <Input
-                            placeholder="New child element..."
-                            onChange={e => setNewChildElement(e.target.value)}
-                            value={newChildElement}
-                            style={{ fontSize: "16px", padding: 0 }}
-                            autoFocus
-                          />
-                          <StyledAdd
-                            newElement={newChildElement}
-                            onClick={() => createNewChildElement(el)}
-                          >
-                            +
-                          </StyledAdd>
-                        </StyledNewElement>
-                      )}
-                    </div>
-                  ))}
+                {showChildren === element.id &&
+                  elements
+                    .filter(
+                      e => e.parentId === element.id && e.archived === false,
+                    )
+                    .map(el => (
+                      <div key={el.id}>
+                        <ElementDropdownOption
+                          key={el.id}
+                          element={el}
+                          selected={selectedElement && selectedElement}
+                          handleSelectElement={() => selectElement(el)}
+                          togglePicker={() => selectedPicker(el)}
+                          archiveElement={handleArchiveElement}
+                          child={true}
+                          hiddenElement={
+                            filteredElements && filteredElements.includes(el.id)
+                          }
+                          addChild={addChild}
+                          handleShowChildren={() => handleShowChildren(el.id)}
+                          open={
+                            showChildren && showChildren === element.id
+                              ? true
+                              : false
+                          }
+                        />
+                        {addingChild === el.id && (
+                          <StyledNewElement child={true}>
+                            <Input
+                              placeholder="New child element..."
+                              onChange={e => setNewChildElement(e.target.value)}
+                              value={newChildElement}
+                              style={{ fontSize: "16px", padding: 0 }}
+                              autoFocus
+                            />
+                            <StyledAdd
+                              newElement={newChildElement}
+                              onClick={() => createNewChildElement(el)}
+                            >
+                              +
+                            </StyledAdd>
+                          </StyledNewElement>
+                        )}
+                      </div>
+                    ))}
               </div>
             ))}
+        {filteredElements && filteredElements.length > 0 && (
+          <StyledToggle onClick={handleToggleAll}>Show all</StyledToggle>
+        )}
       </StyledDropdownMenu>
     </StyledDropdownContainer>
   )
@@ -268,7 +303,6 @@ const StyledDropdownPlaceholder = styled.div<{
   padding: ${p => p.theme.paddingS} ${p => p.theme.paddingM};
   border-radius: ${p => p.theme.borderRadius};
   ${p => p.theme.flexCenter};
-  font-size: ${p => p.theme.textM};
   font-weight: ${p => p.theme.fontBold};
 
   &:after {
@@ -281,7 +315,7 @@ const StyledDropdownPlaceholder = styled.div<{
     width: 0;
     height: 0;
     margin-left: ${p => p.theme.paddingM};
-    margin-top: ${props => (props.open ? p => p.theme.paddingS : 0)};
+    margin-top: ${props => (props.open ? p => p.theme.paddingS : "-3px")};
   }
 `
 
@@ -293,15 +327,16 @@ const StyledDropdownMenu = styled.div<{ open: boolean }>`
   box-shadow: ${props => props.theme.boxShadow};
   border-radius: ${p => p.theme.borderRadiusL};
   background-color: white;
-  width: 350px;
-  max-height: 350px;
+  min-width: 350px;
+  /* max-height: 350px; */
   overflow-y: auto;
   z-index: 100;
 `
 
-const StyledNewElement = styled.div`
+const StyledNewElement = styled.div<{ child?: boolean }>`
   color: white;
-  padding: ${p => p.theme.paddingL};
+  padding-left: ${p => (p.child ? p.theme.paddingM : p.theme.paddingML)};
+  margin-left: ${p => (p.child ? p.theme.paddingL : 0)};
   border-radius: ${p => p.theme.borderRadius};
   ${p => p.theme.flexBetween};
   margin-right: ${p => p.theme.paddingM};
@@ -312,6 +347,7 @@ const StyledAdd = styled.div<{ newElement: string }>`
   font-size: ${p => p.theme.textL};
   color: ${p => p.theme.colorBlue};
   font-weight: ${p => p.theme.fontBlack};
+  margin-right: ${p => p.theme.paddingM};
   visibility: ${props => (props.newElement ? "visible" : "hidden")};
 
   &:hover {
@@ -322,8 +358,8 @@ const StyledAdd = styled.div<{ newElement: string }>`
 const StyledToggle = styled.div`
   position: relative;
   ${p => p.theme.flexCenter};
-  padding: ${p => p.theme.paddingM} ${p => p.theme.paddingL}
-    ${p => p.theme.paddingM} ${p => p.theme.paddingM};
+  padding: ${p => p.theme.paddingS} ${p => p.theme.paddingL}
+    ${p => p.theme.paddingS} ${p => p.theme.paddingM};
   margin: ${p => p.theme.paddingS};
   border-radius: ${p => p.theme.borderRadius};
   cursor: pointer;

@@ -9,6 +9,7 @@ export const Element = gql`
     parentId
     children {
       id
+      archived
     }
   }
 `

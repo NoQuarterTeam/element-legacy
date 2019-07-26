@@ -26,9 +26,17 @@ interface DayProps {
   day: Dayjs
   month: string
   tasks: TaskFragment[]
+  filteredElements: string[]
   handleTaskModal: (task?: TaskFragment) => void
 }
-function Day({ weekend, day, tasks, handleTaskModal, ...props }: DayProps) {
+function Day({
+  weekend,
+  day,
+  tasks,
+  handleTaskModal,
+  filteredElements,
+  ...props
+}: DayProps) {
   const createTask = useCreateTask()
   const updateTask = useUpdateTask()
   const destroyTask = useDeleteTask()
@@ -104,6 +112,10 @@ function Day({ weekend, day, tasks, handleTaskModal, ...props }: DayProps) {
                             isDragging={snapshot.isDragging}
                             task={task}
                             onClick={(event: any) => onTaskClick(event, task)}
+                            hidden={
+                              filteredElements &&
+                              filteredElements.includes(task.element.id)
+                            }
                             // onMouseDown={() => onTaskClick(event, task)}
                           />
                         </div>
@@ -112,7 +124,12 @@ function Day({ weekend, day, tasks, handleTaskModal, ...props }: DayProps) {
                   </Draggable>
                 ))}
             <StyledTotalTime dragging={snapshot.isDraggingOver}>
-              {calculateTotalTime(tasks) && calculateTotalTime(tasks)}
+              {filteredElements &&
+                calculateTotalTime(
+                  tasks.filter(
+                    task => !filteredElements.includes(task.element.id),
+                  ),
+                )}
             </StyledTotalTime>
 
             {provided.placeholder}
