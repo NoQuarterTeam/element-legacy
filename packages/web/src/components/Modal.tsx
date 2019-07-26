@@ -49,7 +49,7 @@ const StyledOverlay = styled.div`
 const StyledTile = styled(Tile)`
   z-index: 101;
   margin: ${p => p.theme.paddingXL};
-  padding: ${p => p.theme.paddingL} ${p => p.theme.paddingXL};
+  padding: ${p => p.theme.paddingXL} ${p => p.theme.paddingXL};
   height: max-content;
   max-width: 600px;
 `

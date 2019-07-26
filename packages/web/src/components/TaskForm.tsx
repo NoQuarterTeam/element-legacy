@@ -66,6 +66,7 @@ function TaskForm({
         placeholder="What is it?"
         required={true}
         variant="large"
+        style={{ marginTop: 0, paddingTop: 0 }}
       />
 
       <StyledCheckboxWrapper>
