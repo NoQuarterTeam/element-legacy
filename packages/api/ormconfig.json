@@ -14,7 +14,7 @@
   {
     "name": "production",
     "type": "postgres",
-    "synchronize": false,
+    "synchronize": true,
     "entities": ["packages/api/dist/modules/**/*.entity.js"],
     "migrations": ["packages/api/dist/db/migrations/*.js"],
     "cli": { "migrationsDir": "src/db/migrations" },
