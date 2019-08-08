@@ -12,7 +12,7 @@ export const isProduction = NODE_ENV === "production"
 
 // WEB URL
 export const webUrl = isProduction
-  ? "https://www.production-url.com"
+  ? "https://priceless-neumann-bde8da.netlify.com/"
   : "http://localhost:3000"
 
 // CORS

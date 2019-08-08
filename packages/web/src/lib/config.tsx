@@ -4,5 +4,5 @@ export const production = env === "production"
 
 export const apiUrl =
   env === "production"
-    ? "https://production-api.com/graphql"
+    ? "https://nq-element.herokuapp.com/graphql"
     : "http://localhost:5000/graphql"
