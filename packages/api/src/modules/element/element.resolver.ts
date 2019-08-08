@@ -6,29 +6,38 @@ import {
   Query,
   FieldResolver,
   Root,
+  Ctx,
 } from "type-graphql"
 
 import { Element } from "./element.entity"
 import { ElementService } from "./element.service"
 // import { ResolverContext } from "../../lib/types"
 import { CreateElementInput } from "./element.input"
+import { UserService } from "../user/user.service"
+import { ResolverContext } from "../../lib/types"
 
 @Resolver(() => Element)
 export class ElementResolver {
-  constructor(private readonly elementService: ElementService) {}
+  constructor(
+    private readonly elementService: ElementService,
+    private readonly userService: UserService,
+  ) {}
 
   // ALL ELEMENTS
   @Authorized()
   @Query(() => [Element], { nullable: true })
-  allElements(): Promise<Element[]> {
-    return this.elementService.findAll()
+  async allElements(@Ctx() { userId }: ResolverContext): Promise<Element[]> {
+    return this.elementService.findAll(userId)
   }
 
   // CREATE ELEMENT
   @Authorized()
   @Mutation(() => Element, { nullable: true })
-  async createElement(@Arg("data") data: CreateElementInput): Promise<Element> {
-    return this.elementService.create(data)
+  async createElement(
+    @Arg("data") data: CreateElementInput,
+    @Ctx() { userId }: ResolverContext,
+  ): Promise<Element> {
+    return this.elementService.create(data, userId)
   }
 
   // UPDATE ELEMENT

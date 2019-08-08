@@ -9,7 +9,6 @@ import ElementDropdown from "./ElementDropdown"
 import { sleep } from "../lib/helpers"
 import { HabitFragment } from "../lib/graphql/types"
 import Input from "./Input"
-import { Dayjs } from "dayjs"
 
 interface HabitFormProps {
   onFormSubmit: (data: any) => Promise<any>
@@ -41,9 +40,9 @@ function HabitForm({ onFormSubmit, habits, day }: HabitFormProps) {
     setLoading(false)
   }
 
-  const habitNames = habits
-    .filter(h => !h.archivedAt)
-    .map(habit => habit.element.name)
+  const habitNames = habits.map(habit => habit.element.name)
+
+  console.log(habitNames)
 
   return (
     <StyledForm onSubmit={handleHabitUpdate}>

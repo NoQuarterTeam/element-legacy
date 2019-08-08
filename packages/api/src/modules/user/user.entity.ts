@@ -6,9 +6,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BeforeInsert,
+  OneToMany,
 } from "typeorm"
+import { Element } from "../element/element.entity"
 import { ObjectType, Field, ID } from "type-graphql"
 import bcrypt from "bcryptjs"
+import { Habit } from "../habit/habit.entity"
+import { Task } from "../task/task.entity"
 
 @ObjectType()
 @Entity()
@@ -37,6 +41,18 @@ export class User extends BaseEntity {
 
   @UpdateDateColumn()
   updatedAt: string
+
+  @Field(() => [Element])
+  @OneToMany(() => Element, element => element.creator)
+  elements: Element[]
+
+  @Field(() => [Habit])
+  @OneToMany(() => Habit, habit => habit.user)
+  habits: Habit[]
+
+  @Field(() => [Task])
+  @OneToMany(() => Task, task => task.user)
+  tasks: Task[]
 
   @BeforeInsert()
   async hashPassword() {

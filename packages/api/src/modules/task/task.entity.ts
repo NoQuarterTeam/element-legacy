@@ -13,6 +13,7 @@ import { ObjectType, Field, ID } from "type-graphql"
 import { CreateElementInput } from "../element/element.input"
 import { Element } from "../element/element.entity"
 import { Progress } from "../progress/progress.entity"
+import { User } from "../user/user.entity"
 
 @ObjectType()
 @Entity()
@@ -60,6 +61,14 @@ export class Task extends BaseEntity {
   // @Field()
   @OneToMany(() => Progress, progress => progress.task)
   progress: Progress
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  userId: string
+
+  @Field(() => User)
+  @ManyToOne(() => User, user => user.tasks)
+  user: User
 
   @Field()
   @CreateDateColumn()

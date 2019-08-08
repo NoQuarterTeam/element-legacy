@@ -1,15 +1,71 @@
 import React, { memo } from "react"
 import styled from "styled-components"
-import { TaskFragment } from "../lib/graphql/types"
+import { TaskFragment, AllProgressDocument } from "../lib/graphql/types"
 import { hoursInMins, formatTime } from "../lib/helpers"
+import {
+  useCreateTask,
+  useDeleteTask,
+  useUpdateTask,
+} from "../lib/graphql/task/hooks"
 
 interface TaskProps {
   task: TaskFragment
   isDragging: boolean
   hidden: boolean
-  onClick: (event: any) => void
+  handleTaskModal: (task: TaskFragment) => void
 }
-function Task({ task, hidden, ...rest }: TaskProps) {
+function Task({ task, hidden, handleTaskModal, ...rest }: TaskProps) {
+  const createTask = useCreateTask()
+  const updateTask = useUpdateTask()
+  const destroyTask = useDeleteTask(task.id)
+
+  const onTaskClick = async (event: any, task: TaskFragment) => {
+    if (!event) {
+      return false
+    }
+
+    if (!event.metaKey && !event.altKey && !event.shiftKey) {
+      handleTaskModal(task)
+    }
+    if (event.metaKey) {
+      // DUPLICATE
+      const data = { ...task, order: task.order }
+
+      delete data.__typename
+      delete data.element
+      delete data.id
+
+      await createTask({
+        refetchQueries: [{ query: AllProgressDocument }],
+
+        variables: {
+          data,
+        },
+      })
+    } else if (event.shiftKey) {
+      // DELETE
+      await destroyTask({
+        refetchQueries: [{ query: AllProgressDocument }],
+        variables: {
+          taskId: task.id,
+        },
+      })
+    } else if (event.altKey) {
+      // COMPLETE
+      const data = { ...task, completed: !task.completed }
+      delete data.__typename
+      delete data.element
+      delete data.id
+      await updateTask({
+        refetchQueries: [{ query: AllProgressDocument }],
+        variables: {
+          taskId: task.id,
+          data,
+        },
+      })
+    }
+  }
+
   return (
     <StyledTaskBox
       {...rest}
@@ -18,6 +74,7 @@ function Task({ task, hidden, ...rest }: TaskProps) {
       id={task.id}
       className="task"
       hidden={hidden}
+      onClick={event => onTaskClick(event, task)}
     >
       <StyledTaskName completed={task.completed}>{task.name}</StyledTaskName>
       <StyledTaskElement completed={task.completed} color={task.element.color}>

@@ -35,7 +35,6 @@ export default memo(Checkbox)
 
 const StyledContainer = styled.div`
   width: 100%;
-  margin: ${p => p.theme.paddingS};
 `
 
 const StyledLabel = styled.label`
@@ -62,8 +61,8 @@ const Icon = styled.svg`
 `
 
 const StyledCheckbox = styled.span`
-  height: 30px;
-  width: 30px;
+  height: 20px;
+  width: 20px;
   cursor: pointer;
   transition: 100ms all;
   border-radius: 3px;
@@ -72,7 +71,6 @@ const StyledCheckbox = styled.span`
 `
 const StyledWrap = styled.label`
   display: flex;
-  padding: ${p => p.theme.paddingM};
 
   ${StyledInput} {
     &:checked ~ span {

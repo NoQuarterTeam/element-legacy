@@ -7,6 +7,8 @@ import { Service } from "typedi"
 import { Task } from "../task/task.entity"
 import { Habit } from "../habit/habit.entity"
 import { HabitService } from "../habit/habit.service"
+import { Ctx } from "type-graphql"
+import { ResolverContext } from "../../lib/types"
 
 @Service()
 export class ProgressService {
@@ -69,14 +71,14 @@ export class ProgressService {
     })
   }
 
-  async updateProgress(task: Task) {
+  async updateProgress(task: Task, userId: string) {
     const progress = await Progress.findOne({
       where: { task: { id: task.id } },
     })
 
     if (task.completed) {
       // check for habit with elementId that is active within the Tasks scheduled date
-      const allHabits = await this.habitService.findAll()
+      const allHabits = await this.habitService.findAll(userId)
 
       const activeHabits = allHabits
         .filter(

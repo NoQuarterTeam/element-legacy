@@ -19,7 +19,7 @@ function Input(
       {label && (
         <StyledLabel labelDirection={labelDirection}>{label}</StyledLabel>
       )}
-      <div>
+      <div style={{ width: "100%" }}>
         <StyledPrefix>{prefix}</StyledPrefix>
         <StyledInput {...inputProps} ref={ref} hasPrefix={!!prefix} />
       </div>
@@ -30,12 +30,13 @@ function Input(
 export default memo(forwardRef(Input))
 
 const StyledContainer = styled.div<{ labelDirection?: string }>`
-  padding: ${p => p.theme.paddingS} 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   ${p => p.labelDirection === "row" && "flex-direction: row"};
   ${p => p.labelDirection === "row" && "justify-content: space-between"};
-  align-items: center;
+  align-items: flex-start;
+  width: 100%;
 `
 
 const StyledLabel = styled.label<{ labelDirection?: string }>`
@@ -57,9 +58,9 @@ const StyledInput = styled.input<{
   border-radius: 0;
   color: ${p => p.theme.colorText};
   font-size: ${p => p.theme.textM};
-  padding: ${p => p.theme.paddingM} 0;
+  padding: 0;
   ${p => p.hasPrefix && "padding-left: 16px"};
-  ${p => p.type === "date" && "padding-bottom: 7px"};
+  // ${p => p.type === "date" && "padding-bottom: 7px"};
   ${p => p.variant === "large" && "font-size: 30px"};
   border-top-left-radius: ${p => p.theme.borderRadius};
   border-top-right-radius: ${p => p.theme.borderRadius};

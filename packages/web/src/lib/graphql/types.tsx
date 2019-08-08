@@ -28,6 +28,8 @@ export interface Element {
   archived: Scalars["Boolean"]
   children?: Maybe<Element[]>
   parentId?: Maybe<Scalars["String"]>
+  creatorId?: Maybe<Scalars["String"]>
+  creator: User
   createdAt: Scalars["DateTime"]
   updatedAt: Scalars["DateTime"]
 }
@@ -39,6 +41,8 @@ export interface Habit {
   elementId: Scalars["String"]
   activeFrom?: Maybe<Scalars["DateTime"]>
   element: Element
+  userId?: Maybe<Scalars["String"]>
+  user: User
   createdAt: Scalars["DateTime"]
   updatedAt: Scalars["DateTime"]
   archivedAt?: Maybe<Scalars["DateTime"]>
@@ -200,6 +204,8 @@ export interface User {
   email: Scalars["String"]
   firstName: Scalars["String"]
   lastName: Scalars["String"]
+  elements: Element[]
+  habits: Habit[]
 }
 
 export interface UserAuthResponse {

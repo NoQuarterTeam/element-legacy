@@ -13,6 +13,7 @@ import {
 import { ObjectType, Field, ID } from "type-graphql"
 import { Task } from "../task/task.entity"
 import { Habit } from "../habit/habit.entity"
+import { User } from "../user/user.entity"
 
 @ObjectType()
 @Entity()
@@ -55,6 +56,14 @@ export class Element extends BaseEntity {
   @Field({ nullable: true })
   @Column({ nullable: true })
   parentId: string
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  creatorId: string
+
+  @Field(() => User)
+  @ManyToOne(() => User, user => user.elements)
+  creator: User
 
   @Field()
   @CreateDateColumn()

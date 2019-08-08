@@ -11,6 +11,7 @@ import {
 
 import { ObjectType, Field, ID } from "type-graphql"
 import { Element } from "../element/element.entity"
+import { User } from "../user/user.entity"
 
 @ObjectType()
 @Entity()
@@ -35,6 +36,14 @@ export class Habit extends BaseEntity {
   @ManyToOne(() => Element, { eager: true })
   @JoinColumn()
   element: Element
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  userId: string
+
+  @Field(() => User)
+  @ManyToOne(() => User, user => user.habits)
+  user: User
 
   @Field()
   @CreateDateColumn()

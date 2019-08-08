@@ -31,6 +31,10 @@ const body = css`
     box-sizing: border-box;
     position: relative;
   }
+
+  *:focus {
+    outline: none;
+  }
 `
 
 export default body

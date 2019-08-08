@@ -7,7 +7,6 @@ import {
   AllTasksQuery,
   AllTasksQueryVariables,
   AllTasksDocument,
-  TaskFragment,
 } from "../types"
 
 export function useCreateTask() {
@@ -45,14 +44,14 @@ export function useUpdateTaskOrder() {
   return useUpdateTaskOrderMutation()
 }
 
-export function useDeleteTask(task: TaskFragment) {
+export function useDeleteTask(taskId: string) {
   return useDeleteTaskMutation({
     update: (cache, { data }) => {
       const tasksData = cache.readQuery<AllTasksQuery, AllTasksQueryVariables>({
         query: AllTasksDocument,
       })
       if (data && tasksData && tasksData.allTasks) {
-        const tasks = tasksData.allTasks.filter(t => t.id !== task.id)
+        const tasks = tasksData.allTasks.filter(t => t.id !== taskId)
         cache.writeQuery({
           query: AllTasksDocument,
           data: {

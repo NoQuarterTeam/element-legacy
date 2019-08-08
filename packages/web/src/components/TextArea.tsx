@@ -21,13 +21,14 @@ const StyledTextArea = styled.textarea`
   border: 0;
   width: 100%;
   resize: none;
+  min-height: 150px;
   outline: 0;
   background-color: transparent;
   transition: all 200ms;
   appearance: none;
   border-radius: 0;
   color: ${p => p.theme.colorText};
-  font-size: ${p => p.theme.textM};
+  font-size: ${p => p.theme.textS};
   padding: ${p => p.theme.paddingM} 0;
   border-top-left-radius: ${p => p.theme.borderRadius};
   border-top-right-radius: ${p => p.theme.borderRadius};

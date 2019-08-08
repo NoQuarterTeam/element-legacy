@@ -16,13 +16,10 @@ import styled from "../application/theme"
 import Nav from "../components/Nav"
 
 const Timeline: FC<RouteComponentProps> = () => {
-  // const { user } = useAppContext()
   const [modal, setModal] = useState("")
   const [task, setTask] = useState()
   const [dayClicked, setDayClicked] = useState()
   const [filteredElements, setFilteredElements] = useState<string[]>([])
-
-  // const [isLoading, setIsLoading] = useState(true)
 
   const allTasks = useAllTasks()
 
@@ -62,10 +59,13 @@ const Timeline: FC<RouteComponentProps> = () => {
       {modal === "habit" && (
         <HabitModal day={dayClicked} closeModal={() => closeTaskModal()} />
       )}
-
       <Nav
         filteredElements={filteredElements}
         handleSetFilteredElements={elements => setFilteredElements(elements)}
+        scrollToToday={() =>
+          timelineRef.current &&
+          window.scrollTo(timelineRef.current.scrollWidth / 2.4, 0)
+        }
       />
       <StyledTimelineWrapper ref={timelineRef}>
         <TimelineHead openHabitModal={handleHabitModal} />
@@ -108,6 +108,7 @@ const StyledTimelineWrapper = styled.div`
 const StyledTimeline = styled.div`
   display: flex;
   flex-direction: column;
+  height: -webkit-fill-available;
 `
 
 const StyledDaysWrapper = styled.div`

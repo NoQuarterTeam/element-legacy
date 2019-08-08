@@ -66,35 +66,45 @@ function TaskForm({
         placeholder="What is it?"
         required={true}
         variant="large"
-        style={{ marginTop: 0, paddingTop: 0 }}
+        autoFocus
+        style={{ marginTop: 0, paddingTop: 0, marginBottom: "1rem" }}
       />
-
-      <StyledCheckboxWrapper>
-        <Checkbox
-          value={formState.completed ? formState.completed : false}
-          onChange={() => setFormState({ completed: !formState.completed })}
-        />
-      </StyledCheckboxWrapper>
 
       <StyledGrid>
         <StyledRow>
+          <StyledLabel>
+            Finished
+            <StyledSpan>⌥ + click</StyledSpan>
+          </StyledLabel>
+          <StyledCheckboxWrapper>
+            <Checkbox
+              value={formState.completed ? formState.completed : false}
+              onChange={() => setFormState({ completed: !formState.completed })}
+            />
+          </StyledCheckboxWrapper>
+        </StyledRow>
+        <StyledRow>
+          <StyledLabel>Element</StyledLabel>
           <ElementDropdown
             selectedElementId={formState.elementId ? formState.elementId : ""}
             handleSelectElement={element =>
               setFormState({ elementId: element.id })
             }
             elements={elements}
-            placeholder="Select an element..."
+            placeholder="Select..."
           />
+        </StyledRow>
+        <StyledRow>
+          <StyledLabel>How long?</StyledLabel>
           <Input
             type="time"
-            label="How long for?"
             labelDirection="row"
             value={formState.estimatedTime ? formState.estimatedTime : ""}
             onChange={e => setFormState({ estimatedTime: e.target.value })}
           />
         </StyledRow>
         <StyledRow>
+          <StyledLabel>What day?</StyledLabel>
           <Input
             type="date"
             value={
@@ -104,9 +114,12 @@ function TaskForm({
             }
             onChange={e => setFormState({ scheduledDate: e.target.value })}
           />
+        </StyledRow>
+
+        <StyledRow>
+          <StyledLabel>What time?</StyledLabel>
           <Input
             type="time"
-            label="What time?"
             labelDirection="row"
             value={formState.startTime ? formState.startTime : ""}
             onChange={e => setFormState({ startTime: e.target.value })}
@@ -114,16 +127,23 @@ function TaskForm({
         </StyledRow>
         <StyledRow>
           <TextArea
-            placeholder="Description"
+            placeholder="Notes"
             type="textarea"
             value={formState.description ? formState.description : ""}
             onChange={e => setFormState({ description: e.target.value })}
           />
         </StyledRow>
-        <StyledRow style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+        <StyledRow
+          style={{
+            marginTop: "1rem",
+            marginBottom: "1rem",
+            justifyContent: "space-between",
+          }}
+        >
           <Button loading={loading} variant="secondary" onClick={onDeleteTask}>
             Delete
           </Button>
+          <StyledSpan>⇧ + click</StyledSpan>
           <Button
             loading={loading}
             variant="secondary"
@@ -131,6 +151,7 @@ function TaskForm({
           >
             Duplicate
           </Button>
+          <StyledSpan>⌘ + click</StyledSpan>
           <Button loading={loading} variant="primary">
             Submit
           </Button>
@@ -153,11 +174,21 @@ const StyledForm = styled.form`
   flex-direction: column;
 `
 
-const StyledCheckboxWrapper = styled.div`
-  position: absolute;
-  top: ${p => p.theme.paddingM};
-  right: 0;
+const StyledLabel = styled.p`
+  min-width: 130px;
+  height: 50px;
+  justify-content: center;
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
 `
+
+const StyledSpan = styled.span`
+  color: ${p => p.theme.colorLabel};
+  font-size: ${p => p.theme.textXS};
+`
+
+const StyledCheckboxWrapper = styled.div``
 
 const StyledError = styled.p`
   color: red;
@@ -171,7 +202,6 @@ const StyledGrid = styled.div`
 
 const StyledRow = styled.div`
   display: flex;
-  justify-content: space-between;
   width: 100%;
   align-items: center;
 `

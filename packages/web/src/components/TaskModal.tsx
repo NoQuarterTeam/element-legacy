@@ -19,7 +19,7 @@ interface TaskModalProps {
 const TaskModal: FC<TaskModalProps> = ({ closeModal, task }) => {
   const createTask = useCreateTask()
   const updateTask = useUpdateTask()
-  const destroyTask = useDeleteTask(task)
+  const destroyTask = useDeleteTask(task.id)
 
   const handleCreateTask = async (taskData: TaskInput) => {
     const data = { ...taskData, order: 100 }

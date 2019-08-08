@@ -11,10 +11,10 @@ export class ElementService {
     return element
   }
 
-  async findAll(): Promise<Element[]> {
+  async findAll(userId: string): Promise<Element[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const elements = await Element.find()
+        const elements = await Element.find({ where: { creatorId: userId } })
         resolve(elements)
       } catch (error) {
         reject(error)
@@ -26,11 +26,12 @@ export class ElementService {
     return Element.find({ parentId })
   }
 
-  create(data: CreateElementInput): Promise<Element> {
+  create(data: CreateElementInput, userId: string): Promise<Element> {
     return new Promise(async (resolve, reject) => {
       try {
         const element = await Element.create({
           ...data,
+          creatorId: userId,
         }).save()
         resolve(element)
       } catch (error) {

@@ -304,6 +304,7 @@ const StyledDropdownPlaceholder = styled.div<{
   border-radius: ${p => p.theme.borderRadius};
   ${p => p.theme.flexCenter};
   font-weight: ${p => p.theme.fontBold};
+  white-space: nowrap;
 
   &:after {
     border: solid ${p => lighten(0.1, p.theme.colorText)};
@@ -322,9 +323,10 @@ const StyledDropdownPlaceholder = styled.div<{
 const StyledDropdownMenu = styled.div<{ open: boolean }>`
   visibility: ${props => (props.open ? "visible" : "hidden")};
   position: absolute;
+  padding-top: ${p => p.theme.paddingM};
   top: ${p => p.theme.paddingXL};
   left: -${p => p.theme.paddingM};
-  box-shadow: ${props => props.theme.boxShadow};
+  box-shadow: ${props => props.theme.boxShadowBold};
   border-radius: ${p => p.theme.borderRadiusL};
   background-color: white;
   min-width: 350px;

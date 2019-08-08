@@ -22,7 +22,10 @@ export class Progress extends BaseEntity {
   // date: Date
 
   @Field(() => Task)
-  @ManyToOne(() => Task, task => task.progress, { eager: true, cascade: true })
+  @ManyToOne(() => Task, task => task.progress, {
+    eager: true,
+    onDelete: "CASCADE",
+  })
   task: Task
 
   @Field()

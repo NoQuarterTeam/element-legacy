@@ -12,7 +12,7 @@ import HabitForm from "./HabitForm"
 import FlexGrid from "./styled/FlexGrid"
 import styled from "styled-components"
 import { darken, lighten } from "polished"
-import { calculateHabitProgress } from "../lib/helpers"
+import { calculateHabitProgress, allActiveHabits } from "../lib/helpers"
 import { Dayjs } from "dayjs"
 import dayjs from "dayjs"
 
@@ -82,7 +82,7 @@ const HabitModal: FC<HabitModalProps> = ({ closeModal, day }) => {
       {habits && (
         <HabitForm
           onFormSubmit={handleCreateHabit}
-          habits={habits}
+          habits={allActiveHabits(dayjs(day), habits)}
           day={day.format("YYYY-MM-DD")}
         />
       )}

@@ -3,7 +3,6 @@ import {
   AllHabitsQuery,
   AllHabitsDocument,
   useAllHabitsQuery,
-  AllHabitsQueryVariables,
   useArchiveHabitMutation,
 } from "../types"
 
@@ -50,7 +49,7 @@ export function useArchiveHabit() {
           cache.writeQuery({
             query: AllHabitsDocument,
             data: {
-              allHabits: [...allHabits, data.archiveHabit],
+              allHabits: [...allHabits],
             },
           })
         }

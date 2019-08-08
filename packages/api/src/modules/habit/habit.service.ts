@@ -15,10 +15,10 @@ export class HabitService {
     return habit
   }
 
-  async findAll(): Promise<Habit[]> {
+  async findAll(userId: string): Promise<Habit[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const habits = await Habit.find()
+        const habits = await Habit.find({ where: { userId } })
         resolve(habits)
       } catch (error) {
         reject(error)
@@ -26,7 +26,7 @@ export class HabitService {
     })
   }
 
-  create(data: HabitInput): Promise<Habit> {
+  create(data: HabitInput, userId: string): Promise<Habit> {
     return new Promise(async (resolve, reject) => {
       try {
         if (data.elementId) {
@@ -34,6 +34,7 @@ export class HabitService {
           const habit = await Habit.create({
             ...data,
             element,
+            userId,
           }).save()
           resolve(habit)
         }
