@@ -14,14 +14,19 @@ import HabitModal from "../components/HabitModal"
 import { TaskFragment } from "../lib/graphql/types"
 import styled from "../application/theme"
 import Nav from "../components/Nav"
+import { useTimelineContext } from "../components/providers/TimelineProvider"
+import ShareModal from "../components/ShareModal"
 
 const Timeline: FC<RouteComponentProps> = () => {
-  const [modal, setModal] = useState("")
+  // TODO: SET TASK IN TimelineProvider
   const [task, setTask] = useState()
   const [dayClicked, setDayClicked] = useState()
-  const [filteredElements, setFilteredElements] = useState<string[]>([])
 
-  const allTasks = useAllTasks()
+  // TODO: SET filteredElements IN TimelineProvider
+  const [filteredElements, setFilteredElements] = useState<string[]>([])
+  const { selectedUserId, handleSetModal, modal } = useTimelineContext()
+
+  const allTasks = useAllTasks(selectedUserId)
 
   const timelineRef = useRef<HTMLDivElement>(null)
 
@@ -32,7 +37,7 @@ const Timeline: FC<RouteComponentProps> = () => {
   }, [timelineRef.current])
 
   const openTaskModal = (day: Dayjs, task?: TaskFragment) => {
-    setModal("task")
+    handleSetModal("task")
     if (task) {
       setTask(task)
     } else {
@@ -42,13 +47,17 @@ const Timeline: FC<RouteComponentProps> = () => {
   }
 
   const handleHabitModal = (day: Dayjs) => {
-    setModal("habit")
+    handleSetModal("habit")
     setDayClicked(day)
   }
 
   const closeTaskModal = () => {
     setTask("")
-    setModal("")
+    handleSetModal("")
+  }
+
+  const closeShareModal = () => {
+    handleSetModal("")
   }
 
   return (
@@ -59,9 +68,15 @@ const Timeline: FC<RouteComponentProps> = () => {
       {modal === "habit" && (
         <HabitModal day={dayClicked} closeModal={() => closeTaskModal()} />
       )}
+      {modal === "share" && (
+        <ShareModal
+          // element={elementToShare}
+          closeModal={() => closeShareModal()}
+        />
+      )}
       <Nav
         filteredElements={filteredElements}
-        handleSetFilteredElements={elements => setFilteredElements(elements)}
+        handleSetFilteredElements={setFilteredElements}
         scrollToToday={() =>
           timelineRef.current &&
           window.scrollTo(timelineRef.current.scrollWidth / 2.4, 0)

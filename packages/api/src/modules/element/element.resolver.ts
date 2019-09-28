@@ -13,21 +13,20 @@ import { Element } from "./element.entity"
 import { ElementService } from "./element.service"
 // import { ResolverContext } from "../../lib/types"
 import { CreateElementInput } from "./element.input"
-import { UserService } from "../user/user.service"
 import { ResolverContext } from "../../lib/types"
 
 @Resolver(() => Element)
 export class ElementResolver {
-  constructor(
-    private readonly elementService: ElementService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly elementService: ElementService) {}
 
   // ALL ELEMENTS
   @Authorized()
   @Query(() => [Element], { nullable: true })
-  async allElements(@Ctx() { userId }: ResolverContext): Promise<Element[]> {
-    return this.elementService.findAll(userId)
+  async allElements(
+    @Ctx() { userId }: ResolverContext,
+    @Arg("selectedUserId") selectedUserId: string,
+  ): Promise<Element[]> {
+    return this.elementService.findAll(userId, selectedUserId)
   }
 
   // CREATE ELEMENT

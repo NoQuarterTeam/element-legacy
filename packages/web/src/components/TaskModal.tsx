@@ -11,21 +11,22 @@ import {
 } from "../lib/graphql/types"
 import Modal from "./Modal"
 import TaskForm from "./TaskForm"
+import { useTimelineContext } from "./providers/TimelineProvider"
 
 interface TaskModalProps {
   task: TaskFragment
   closeModal: () => void
 }
 const TaskModal: FC<TaskModalProps> = ({ closeModal, task }) => {
+  const { selectedUserId } = useTimelineContext()
   const createTask = useCreateTask()
-  const updateTask = useUpdateTask()
-  const destroyTask = useDeleteTask(task.id)
+  const updateTask = useUpdateTask(task.userId)
+  const destroyTask = useDeleteTask(task.id, selectedUserId)
 
   const handleCreateTask = async (taskData: TaskInput) => {
     const data = { ...taskData, order: 100 }
     await createTask({
       refetchQueries: [{ query: AllProgressDocument }],
-
       variables: {
         data,
       },
@@ -42,7 +43,6 @@ const TaskModal: FC<TaskModalProps> = ({ closeModal, task }) => {
 
     await createTask({
       refetchQueries: [{ query: AllProgressDocument }],
-
       variables: {
         data,
       },

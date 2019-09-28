@@ -3,7 +3,7 @@ import styled, { css, ThemeInterface } from "../application/theme"
 import { capitalize } from "../lib/helpers"
 
 export type Variant = "primary" | "secondary" | "tertiary"
-export type Color = "blue" | "pink" | "header"
+export type Color = "blue" | "pink" | "header" | "purple" | "yellow"
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant
@@ -15,7 +15,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 function Button({
   variant = "primary",
-  color = "blue",
+  color = "yellow",
   loading = false,
   disabled = false,
   ...props

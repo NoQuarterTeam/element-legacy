@@ -3,8 +3,8 @@ import gql from "graphql-tag"
 import { Element } from "./fragments"
 
 export const GET_ALL_ELEMENTS = gql`
-  query AllElements {
-    allElements {
+  query AllElements($selectedUserId: String!) {
+    allElements(selectedUserId: $selectedUserId) {
       ...Element
     }
   }

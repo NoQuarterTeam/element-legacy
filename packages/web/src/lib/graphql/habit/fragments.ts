@@ -4,6 +4,7 @@ export const Habit = gql`
   fragment Habit on Habit {
     id
     element {
+      id
       name
       color
     }

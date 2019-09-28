@@ -12,6 +12,7 @@ export const Task = gql`
     order
     scheduledDate
     elementId
+    userId
     element {
       id
       color

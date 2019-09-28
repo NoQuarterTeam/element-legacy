@@ -5,6 +5,10 @@ import { ElementFragment } from "../lib/graphql/types"
 import { useAllElements } from "../lib/graphql/element/hooks"
 import logo from "../public/logo.png"
 import { useLogout } from "../lib/graphql/user/hooks"
+import { Select } from "@noquarter/ui"
+import { useGetSharedUsersByUser } from "../lib/graphql/sharedElement/hooks"
+import { useTimelineContext } from "./providers/TimelineProvider"
+import useAppContext from "../lib/hooks/useAppContext"
 
 interface NavProps {
   filteredElements: string[]
@@ -17,15 +21,20 @@ const Nav: FC<NavProps> = ({
   handleSetFilteredElements,
   scrollToToday,
 }) => {
-  const elements = useAllElements()
+  const { user } = useAppContext()
+
+  const { handleSelectUser, selectedUserId } = useTimelineContext()
+  const elements = useAllElements(selectedUserId)
+  const sharedUsers = useGetSharedUsersByUser(user.id)
   const logout = useLogout()
 
+  // TODO: MOVE OUT TO LIB
   const toggleFilteredElement = (element: ElementFragment) => {
     let newFiltered = filteredElements && filteredElements
 
     if (!elements) return false
     if (filteredElements.length === 0) {
-      // if all elements are shown and one is clicked add all other to show only the clicked and its children
+      // if all elements are shown and one is clicked add all others to show only the clicked and its children
       newFiltered = elements.map(element => element.id)
 
       if (element.children && element.children.length > 0) {
@@ -73,10 +82,34 @@ const Nav: FC<NavProps> = ({
       handleSetFilteredElements([])
     }
   }
+
+  const selectUserOptions =
+    sharedUsers &&
+    sharedUsers.map(user => ({
+      label: user.firstName,
+      value: user.id,
+    }))
+
   return (
     <StyledNav>
       <StyledLogo src={logo} onClick={scrollToToday} />
       <StyledRow>
+        <Select
+          value={selectedUserId}
+          onChange={e => handleSelectUser(e.target.value)}
+          options={
+            selectUserOptions
+              ? [
+                  {
+                    label: user.firstName,
+                    value: user.id,
+                  },
+                  ...selectUserOptions,
+                ]
+              : []
+          }
+          style={{ padding: "0px", paddingLeft: "10px", margin: "0" }}
+        />
         <ElementDropdown
           handleSelectElement={element => toggleFilteredElement(element)}
           elements={elements}
@@ -97,7 +130,7 @@ const Nav: FC<NavProps> = ({
 }
 
 const StyledNav = styled.div`
-  width: 100%;
+  /* width: 100%; */
   z-index: 98;
   position: fixed;
   background-color: ${p => p.theme.colorBackground};
@@ -107,11 +140,13 @@ const StyledNav = styled.div`
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
+  margin: 0 2rem;
+  border-radius: ${p => p.theme.borderRadius};
 `
 
 const StyledLogoutButton = styled.a`
-  color: ${p => darken(0.3, p.theme.colorBlue)};
-  background-color: ${p => p.theme.colorBlue};
+  color: ${p => darken(0.3, p.theme.colorYellow)};
+  background-color: ${p => p.theme.colorYellow};
   cursor: pointer;
   padding: ${p => p.theme.paddingS} ${p => p.theme.paddingM};
   border-radius: ${p => p.theme.borderRadius};
@@ -122,8 +157,8 @@ const StyledLogoutButton = styled.a`
 `
 
 const StyledFeedbackButton = styled.a`
-  color: ${p => darken(0.3, p.theme.colorPink)};
-  background-color: ${p => p.theme.colorPink};
+  color: ${p => darken(0.3, p.theme.colorPurple)};
+  background-color: ${p => p.theme.colorPurple};
   cursor: pointer;
   padding: ${p => p.theme.paddingS} ${p => p.theme.paddingM};
   border-radius: ${p => p.theme.borderRadius};

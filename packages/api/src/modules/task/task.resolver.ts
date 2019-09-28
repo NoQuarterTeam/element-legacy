@@ -12,8 +12,11 @@ export class TaskResolver {
   // ALL TASKS
   @Authorized()
   @Query(() => [Task], { nullable: true })
-  allTasks(@Ctx() { userId }: ResolverContext): Promise<Task[]> {
-    return this.taskService.findAll(userId)
+  allTasks(
+    @Ctx() { userId }: ResolverContext,
+    @Arg("selectedUserId", { nullable: true }) selectedUserId?: string,
+  ): Promise<Task[]> {
+    return this.taskService.findAll(userId, selectedUserId)
   }
 
   // CREATE TASK
@@ -32,9 +35,8 @@ export class TaskResolver {
   async updateTask(
     @Arg("taskId") taskId: string,
     @Arg("data") data: TaskInput,
-    @Ctx() { userId }: ResolverContext,
   ): Promise<Task> {
-    return this.taskService.update(taskId, data, userId)
+    return this.taskService.update(taskId, data)
   }
 
   // UPDATE TASK ORDER
@@ -43,9 +45,8 @@ export class TaskResolver {
   async updateTaskOrder(
     @Arg("taskId") taskId: string,
     @Arg("data") data: OrderTaskInput,
-    @Ctx() { userId }: ResolverContext,
   ): Promise<Task> {
-    return this.taskService.update(taskId, data, userId)
+    return this.taskService.update(taskId, data)
   }
 
   // DESTROY TASK

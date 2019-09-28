@@ -21,8 +21,11 @@ const theme: (small: boolean, isDark: boolean) => ThemeInterface = (
   colorOverlay: isDark ? "rgba(200, 200, 200, 0.1)" : "rgba(0, 0, 0, 0.1);",
   colorLabel: isDark ? "#81878a" : "#b1bbc4",
   colorText: isDark ? "#ebecec" : "#37352f",
-  colorWarning: isDark ? "#ebecec" : "rgba(221, 0, 129, 0.2)",
+  colorWarning: isDark ? "#ebecec" : "rgba(221, 0, 129)",
+  colorRed: "rgba(221, 0, 129, 0.2)",
   colorPrimary: "#F4CA87",
+  colorPurple: "#A836FF",
+  colorYellow: "#FFD336",
   colorPink: "#ed60d3",
   colorBlue: "#4586ff",
   fontBlack: 900,
@@ -70,6 +73,8 @@ export interface ThemeInterface {
   colorLabel: string
   colorShadow: string
   colorPlaceholder: string
+  colorWarning: string
+  colorRed: string
   colorPink: string
   colorBlue: string
   fontBlack: number

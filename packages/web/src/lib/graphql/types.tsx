@@ -20,6 +20,17 @@ export interface CreateElementInput {
   parentId?: Maybe<Scalars["String"]>
 }
 
+export interface CreateSharedElementInput {
+  userId?: Maybe<Scalars["String"]>
+  creatorId?: Maybe<Scalars["String"]>
+  elementId?: Maybe<Scalars["String"]>
+}
+
+export interface CreateSharedElementsInput {
+  emails: Scalars["String"][]
+  elementId: Scalars["String"]
+}
+
 export interface Element {
   __typename?: "Element"
   id: Scalars["ID"]
@@ -29,7 +40,8 @@ export interface Element {
   children?: Maybe<Element[]>
   parentId?: Maybe<Scalars["String"]>
   creatorId?: Maybe<Scalars["String"]>
-  creator: User
+  creator?: Maybe<User>
+  sharedElements?: Maybe<SharedElement[]>
   createdAt: Scalars["DateTime"]
   updatedAt: Scalars["DateTime"]
 }
@@ -68,6 +80,8 @@ export interface Mutation {
   createHabit?: Maybe<Habit>
   updateHabit?: Maybe<Habit>
   archiveHabit?: Maybe<Habit>
+  createSharedElements?: Maybe<SharedElement[]>
+  destroySharedElement?: Maybe<Scalars["Boolean"]>
   createTask?: Maybe<Task>
   updateTask?: Maybe<Task>
   updateTaskOrder?: Maybe<Task>
@@ -105,6 +119,15 @@ export interface MutationArchiveHabitArgs {
   habitId: Scalars["String"]
 }
 
+export interface MutationCreateSharedElementsArgs {
+  data: CreateSharedElementsInput
+}
+
+export interface MutationDestroySharedElementArgs {
+  elementId: Scalars["String"]
+  email: Scalars["String"]
+}
+
 export interface MutationCreateTaskArgs {
   data: TaskInput
 }
@@ -138,6 +161,7 @@ export interface MutationUpdateUserArgs {
 export interface OrderTaskInput {
   order: Scalars["Float"]
   scheduledDate: Scalars["DateTime"]
+  userId: Scalars["String"]
 }
 
 export interface Progress {
@@ -153,8 +177,27 @@ export interface Query {
   allElements?: Maybe<Element[]>
   allHabits?: Maybe<Habit[]>
   allProgress?: Maybe<Progress[]>
+  allSharedElements?: Maybe<SharedElement[]>
+  allSharedUsers?: Maybe<User[]>
+  allSharedUsersByUser?: Maybe<User[]>
   allTasks?: Maybe<Task[]>
   me?: Maybe<User>
+}
+
+export interface QueryAllElementsArgs {
+  selectedUserId: Scalars["String"]
+}
+
+export interface QueryAllSharedUsersArgs {
+  elementId: Scalars["String"]
+}
+
+export interface QueryAllSharedUsersByUserArgs {
+  userId: Scalars["String"]
+}
+
+export interface QueryAllTasksArgs {
+  selectedUserId?: Maybe<Scalars["String"]>
 }
 
 export interface RegisterInput {
@@ -162,6 +205,17 @@ export interface RegisterInput {
   lastName: Scalars["String"]
   email: Scalars["String"]
   password: Scalars["String"]
+}
+
+export interface SharedElement {
+  __typename?: "SharedElement"
+  id: Scalars["ID"]
+  elementId: Scalars["String"]
+  element: Element
+  userId: Scalars["String"]
+  user: User
+  createdAt: Scalars["DateTime"]
+  updatedAt: Scalars["DateTime"]
 }
 
 export interface Task {
@@ -176,6 +230,8 @@ export interface Task {
   order: Scalars["Float"]
   elementId: Scalars["String"]
   element: Element
+  userId: Scalars["String"]
+  user: User
   createdAt: Scalars["DateTime"]
   updatedAt: Scalars["DateTime"]
 }
@@ -188,6 +244,7 @@ export interface TaskInput {
   completed?: Maybe<Scalars["Boolean"]>
   scheduledDate?: Maybe<Scalars["DateTime"]>
   elementId?: Maybe<Scalars["String"]>
+  userId: Scalars["String"]
   order?: Maybe<Scalars["Float"]>
 }
 
@@ -206,6 +263,8 @@ export interface User {
   lastName: Scalars["String"]
   elements: Element[]
   habits: Habit[]
+  sharedElements?: Maybe<SharedElement[]>
+  tasks: Task[]
 }
 
 export interface UserAuthResponse {
@@ -215,14 +274,16 @@ export interface UserAuthResponse {
 }
 export type ElementFragment = { __typename?: "Element" } & Pick<
   Element,
-  "id" | "name" | "color" | "archived" | "parentId"
+  "id" | "name" | "color" | "archived" | "parentId" | "creatorId"
 > & {
     children: Maybe<
       ({ __typename?: "Element" } & Pick<Element, "id" | "archived">)[]
     >
   }
 
-export interface AllElementsQueryVariables {}
+export interface AllElementsQueryVariables {
+  selectedUserId: Scalars["String"]
+}
 
 export type AllElementsQuery = { __typename?: "Query" } & {
   allElements: Maybe<({ __typename?: "Element" } & ElementFragment)[]>
@@ -248,7 +309,9 @@ export type UpdateElementMutation = { __typename?: "Mutation" } & {
 export type HabitFragment = { __typename?: "Habit" } & Pick<
   Habit,
   "id" | "activeFrom" | "archivedAt"
-> & { element: { __typename?: "Element" } & Pick<Element, "name" | "color"> }
+> & {
+    element: { __typename?: "Element" } & Pick<Element, "id" | "name" | "color">
+  }
 
 export interface AllHabitsQueryVariables {}
 
@@ -288,6 +351,60 @@ export type AllProgressQuery = { __typename?: "Query" } & {
   allProgress: Maybe<({ __typename?: "Progress" } & ProgressFragment)[]>
 }
 
+export type SharedElementFragment = { __typename?: "SharedElement" } & Pick<
+  SharedElement,
+  "id"
+> & {
+    user: { __typename?: "User" } & Pick<User, "id" | "firstName">
+    element: { __typename?: "Element" } & Pick<Element, "id"> & {
+        creator: Maybe<{ __typename?: "User" } & Pick<User, "id" | "firstName">>
+      }
+  }
+
+export interface AllSharedElementsQueryVariables {}
+
+export type AllSharedElementsQuery = { __typename?: "Query" } & {
+  allSharedElements: Maybe<
+    ({ __typename?: "SharedElement" } & SharedElementFragment)[]
+  >
+}
+
+export interface AllSharedUsersQueryVariables {
+  elementId: Scalars["String"]
+}
+
+export type AllSharedUsersQuery = { __typename?: "Query" } & {
+  allSharedUsers: Maybe<({ __typename?: "User" } & UserFragment)[]>
+}
+
+export interface AllSharedUsersByUserQueryVariables {
+  userId: Scalars["String"]
+}
+
+export type AllSharedUsersByUserQuery = { __typename?: "Query" } & {
+  allSharedUsersByUser: Maybe<({ __typename?: "User" } & UserFragment)[]>
+}
+
+export interface CreateSharedElementsMutationVariables {
+  data: CreateSharedElementsInput
+}
+
+export type CreateSharedElementsMutation = { __typename?: "Mutation" } & {
+  createSharedElements: Maybe<
+    ({ __typename?: "SharedElement" } & SharedElementFragment)[]
+  >
+}
+
+export interface DeleteSharedElementMutationVariables {
+  email: Scalars["String"]
+  elementId: Scalars["String"]
+}
+
+export type DeleteSharedElementMutation = { __typename?: "Mutation" } & Pick<
+  Mutation,
+  "destroySharedElement"
+>
+
 export type TaskFragment = { __typename: "Task" } & Pick<
   Task,
   | "id"
@@ -299,6 +416,7 @@ export type TaskFragment = { __typename: "Task" } & Pick<
   | "order"
   | "scheduledDate"
   | "elementId"
+  | "userId"
 > & {
     element: { __typename?: "Element" } & Pick<
       Element,
@@ -306,7 +424,9 @@ export type TaskFragment = { __typename: "Task" } & Pick<
     >
   }
 
-export interface AllTasksQueryVariables {}
+export interface AllTasksQueryVariables {
+  selectedUserId: Scalars["String"]
+}
 
 export type AllTasksQuery = { __typename?: "Query" } & {
   allTasks: Maybe<({ __typename?: "Task" } & TaskFragment)[]>
@@ -403,6 +523,7 @@ export const ElementFragmentDoc = gql`
     color
     archived
     parentId
+    creatorId
     children {
       id
       archived
@@ -413,6 +534,7 @@ export const HabitFragmentDoc = gql`
   fragment Habit on Habit {
     id
     element {
+      id
       name
       color
     }
@@ -432,6 +554,22 @@ export const ProgressFragmentDoc = gql`
     }
   }
 `
+export const SharedElementFragmentDoc = gql`
+  fragment SharedElement on SharedElement {
+    id
+    user {
+      id
+      firstName
+    }
+    element {
+      id
+      creator {
+        id
+        firstName
+      }
+    }
+  }
+`
 export const TaskFragmentDoc = gql`
   fragment Task on Task {
     __typename
@@ -444,6 +582,7 @@ export const TaskFragmentDoc = gql`
     order
     scheduledDate
     elementId
+    userId
     element {
       id
       color
@@ -463,8 +602,8 @@ export const UserFragmentDoc = gql`
   }
 `
 export const AllElementsDocument = gql`
-  query AllElements {
-    allElements {
+  query AllElements($selectedUserId: String!) {
+    allElements(selectedUserId: $selectedUserId) {
       ...Element
     }
   }
@@ -609,9 +748,109 @@ export function useAllProgressQuery(
     baseOptions,
   )
 }
+export const AllSharedElementsDocument = gql`
+  query AllSharedElements {
+    allSharedElements {
+      ...SharedElement
+    }
+  }
+  ${SharedElementFragmentDoc}
+`
+
+export function useAllSharedElementsQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<
+    AllSharedElementsQueryVariables
+  >,
+) {
+  return ReactApolloHooks.useQuery<
+    AllSharedElementsQuery,
+    AllSharedElementsQueryVariables
+  >(AllSharedElementsDocument, baseOptions)
+}
+export const AllSharedUsersDocument = gql`
+  query AllSharedUsers($elementId: String!) {
+    allSharedUsers(elementId: $elementId) {
+      ...User
+    }
+  }
+  ${UserFragmentDoc}
+`
+
+export function useAllSharedUsersQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<AllSharedUsersQueryVariables>,
+) {
+  return ReactApolloHooks.useQuery<
+    AllSharedUsersQuery,
+    AllSharedUsersQueryVariables
+  >(AllSharedUsersDocument, baseOptions)
+}
+export const AllSharedUsersByUserDocument = gql`
+  query AllSharedUsersByUser($userId: String!) {
+    allSharedUsersByUser(userId: $userId) {
+      ...User
+    }
+  }
+  ${UserFragmentDoc}
+`
+
+export function useAllSharedUsersByUserQuery(
+  baseOptions?: ReactApolloHooks.QueryHookOptions<
+    AllSharedUsersByUserQueryVariables
+  >,
+) {
+  return ReactApolloHooks.useQuery<
+    AllSharedUsersByUserQuery,
+    AllSharedUsersByUserQueryVariables
+  >(AllSharedUsersByUserDocument, baseOptions)
+}
+export const CreateSharedElementsDocument = gql`
+  mutation CreateSharedElements($data: CreateSharedElementsInput!) {
+    createSharedElements(data: $data) {
+      ...SharedElement
+    }
+  }
+  ${SharedElementFragmentDoc}
+`
+export type CreateSharedElementsMutationFn = ReactApollo.MutationFn<
+  CreateSharedElementsMutation,
+  CreateSharedElementsMutationVariables
+>
+
+export function useCreateSharedElementsMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    CreateSharedElementsMutation,
+    CreateSharedElementsMutationVariables
+  >,
+) {
+  return ReactApolloHooks.useMutation<
+    CreateSharedElementsMutation,
+    CreateSharedElementsMutationVariables
+  >(CreateSharedElementsDocument, baseOptions)
+}
+export const DeleteSharedElementDocument = gql`
+  mutation DeleteSharedElement($email: String!, $elementId: String!) {
+    destroySharedElement(email: $email, elementId: $elementId)
+  }
+`
+export type DeleteSharedElementMutationFn = ReactApollo.MutationFn<
+  DeleteSharedElementMutation,
+  DeleteSharedElementMutationVariables
+>
+
+export function useDeleteSharedElementMutation(
+  baseOptions?: ReactApolloHooks.MutationHookOptions<
+    DeleteSharedElementMutation,
+    DeleteSharedElementMutationVariables
+  >,
+) {
+  return ReactApolloHooks.useMutation<
+    DeleteSharedElementMutation,
+    DeleteSharedElementMutationVariables
+  >(DeleteSharedElementDocument, baseOptions)
+}
 export const AllTasksDocument = gql`
-  query AllTasks {
-    allTasks {
+  query AllTasks($selectedUserId: String!) {
+    allTasks(selectedUserId: $selectedUserId) {
       ...Task
     }
   }

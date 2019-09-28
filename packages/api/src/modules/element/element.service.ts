@@ -11,10 +11,29 @@ export class ElementService {
     return element
   }
 
-  async findAll(userId: string): Promise<Element[]> {
+  async findAll(userId: string, selectedUserId: string): Promise<Element[]> {
     return new Promise(async (resolve, reject) => {
       try {
-        const elements = await Element.find({ where: { creatorId: userId } })
+        const elementsQuery = await Element.createQueryBuilder("element")
+
+        if (userId === selectedUserId) {
+          elementsQuery
+            .leftJoin("element.sharedElements", "sharedElement")
+            .where("element.creatorId = :userId", { userId })
+            .orWhere("sharedElement.userId = :userId", {
+              userId,
+            })
+        } else {
+          elementsQuery
+            .innerJoinAndSelect("element.sharedElements", "sharedElement")
+            .where("sharedElement.userId = :selectedUserId", { selectedUserId })
+            .orWhere("element.creatorId = :selectedUserId", {
+              selectedUserId,
+            })
+        }
+
+        const elements = elementsQuery.getMany()
+
         resolve(elements)
       } catch (error) {
         reject(error)

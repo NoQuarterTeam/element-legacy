@@ -14,15 +14,18 @@ import { useAllHabits } from "../lib/graphql/habit/hooks"
 import { useAllProgress } from "../lib/graphql/progress/hooks"
 import { FC } from "react"
 import { darken, lighten } from "polished"
+import { useTimelineContext } from "./providers/TimelineProvider"
+import useAppContext from "../lib/hooks/useAppContext"
 dayjs.extend(advancedFormat)
 
 interface TimelineHeadProps {
   openHabitModal: (day: Dayjs) => void
 }
 const TimelineHead: FC<TimelineHeadProps> = ({ openHabitModal }) => {
+  const { user } = useAppContext()
+  const { selectedUserId } = useTimelineContext()
   const habits = useAllHabits()
   const allProgress = useAllProgress()
-  if (!allProgress) return null
 
   return (
     <StyledMonthsHeadContainer>
@@ -44,28 +47,44 @@ const TimelineHead: FC<TimelineHeadProps> = ({ openHabitModal }) => {
                     <StyledDayHeader key={day.unix()} today={today(day)}>
                       {dayjs(day).format("ddd Do")}
                     </StyledDayHeader>
-                    <StyledHabits
-                      today={today(day)}
-                      count={habits && allActiveHabits(day, habits).length}
-                      onClick={() => openHabitModal(day)}
-                    >
-                      {allProgress &&
-                        habits &&
-                        calculateHabitProgress(day, allProgress, habits).map(
-                          (result: any[], index) => {
-                            return (
-                              <Circle
-                                key={index}
-                                completed={result[1]}
-                                count={
-                                  habits && allActiveHabits(day, habits).length
-                                }
-                                past={dayjs(day).isBefore(dayjs())}
-                              />
-                            )
-                          },
-                        )}
-                    </StyledHabits>
+                    {allProgress &&
+                      user.id === selectedUserId &&
+                      habits &&
+                      allActiveHabits(day, habits).length !== 0 && (
+                        <StyledHabits
+                          today={today(day)}
+                          count={habits && allActiveHabits(day, habits).length}
+                          onClick={() => openHabitModal(day)}
+                        >
+                          {calculateHabitProgress(day, allProgress, habits).map(
+                            (result: any[], index) => {
+                              return (
+                                <Circle
+                                  key={index}
+                                  completed={result[1]}
+                                  count={
+                                    habits &&
+                                    allActiveHabits(day, habits).length
+                                  }
+                                  past={dayjs(day).isBefore(dayjs())}
+                                />
+                              )
+                            },
+                          )}
+                        </StyledHabits>
+                      )}
+                    {today(day) &&
+                      user.id === selectedUserId &&
+                      (habits && allActiveHabits(day, habits).length === 0) && (
+                        <StyledAddHabits onClick={() => openHabitModal(day)}>
+                          Add habit
+                        </StyledAddHabits>
+                      )}
+                    {today(day) && user.id === selectedUserId && !habits && (
+                      <StyledAddHabits onClick={() => openHabitModal(day)}>
+                        Add habit
+                      </StyledAddHabits>
+                    )}
                   </StyledContainer>
                 ))}
             </StyledDaysHeader>
@@ -132,7 +151,7 @@ const StyledContainer = styled.div<{ weekend: boolean; today: boolean }>`
       ? p => darken(0.02, p.theme.colorBackground)
       : p => p.theme.colorBackground};
   background-color: ${props =>
-    props.today ? lighten(0.35, props.theme.colorBlue) : ""};
+    props.today ? lighten(0.35, props.theme.colorPurple) : ""};
 `
 
 const StyledHabits = styled.div<{ today: boolean; count: any }>`
@@ -143,6 +162,12 @@ const StyledHabits = styled.div<{ today: boolean; count: any }>`
   padding: ${p => p.theme.paddingM};
   padding-left: ${props =>
     props.count > 6 ? 8 + 0.73 * props.count + "px" : "8px"};
+  margin: ${p => p.theme.paddingS};
+
+  &:hover {
+    background-color: ${p => lighten(0.34, p.theme.colorPurple)};
+    border-radius: ${p => p.theme.borderRadius};
+  }
 `
 
 const Circle = styled.div<{ completed: boolean; count: any; past: boolean }>`
@@ -154,7 +179,22 @@ const Circle = styled.div<{ completed: boolean; count: any; past: boolean }>`
     props.completed
       ? "#A3ED9E"
       : props.past
-      ? darken(0.1, props.theme.colorWarning)
+      ? darken(0.1, props.theme.colorRed)
       : darken(0.1, props.theme.colorBackground)};
   z-index: ${props => (props.completed ? 1 : 0)};
+`
+
+const StyledAddHabits = styled.p`
+  font-size: ${p => p.theme.textXS};
+  background-color: ${props => lighten(0.2, props.theme.colorPlaceholder)};
+  color: ${p => lighten(0.5, p.theme.colorText)};
+  border-radius: ${p => p.theme.borderRadiusS};
+  text-align: center;
+  padding: ${p => p.theme.paddingS};
+  margin: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${props => lighten(0.1, props.theme.colorPlaceholder)};
+  }
 `

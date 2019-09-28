@@ -7,8 +7,6 @@ import { Service } from "typedi"
 import { Task } from "../task/task.entity"
 import { Habit } from "../habit/habit.entity"
 import { HabitService } from "../habit/habit.service"
-import { Ctx } from "type-graphql"
-import { ResolverContext } from "../../lib/types"
 
 @Service()
 export class ProgressService {

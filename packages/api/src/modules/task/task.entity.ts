@@ -62,8 +62,8 @@ export class Task extends BaseEntity {
   @OneToMany(() => Progress, progress => progress.task)
   progress: Progress
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Field()
+  @Column()
   userId: string
 
   @Field(() => User)

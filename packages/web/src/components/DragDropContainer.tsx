@@ -3,12 +3,14 @@ import { TaskFragment, AllProgressDocument } from "../lib/graphql/types"
 import { DragDropContext } from "react-beautiful-dnd"
 import { useUpdateTaskOrder } from "../lib/graphql/task/hooks"
 import { getDayTasksAndOrder, reorderTasks, move } from "../lib/helpers"
+import useAppContext from "../lib/hooks/useAppContext"
 
 interface DDProps {
   allTasks: TaskFragment[]
 }
 const DragDropContainer: FC<DDProps> = ({ children, allTasks }) => {
   const updateTaskOrder = useUpdateTaskOrder()
+  const { user } = useAppContext()
 
   const onDragEnd = ({ source, destination }: any) => {
     if (!destination) return
@@ -21,7 +23,11 @@ const DragDropContainer: FC<DDProps> = ({ children, allTasks }) => {
           updateTaskOrder({
             variables: {
               taskId: task.id,
-              data: { order: task.order, scheduledDate: task.scheduledDate },
+              data: {
+                userId: task.userId,
+                order: task.order,
+                scheduledDate: task.scheduledDate,
+              },
             },
             optimisticResponse: {
               __typename: "Mutation",
@@ -48,7 +54,11 @@ const DragDropContainer: FC<DDProps> = ({ children, allTasks }) => {
               refetchQueries: [{ query: AllProgressDocument }],
               variables: {
                 taskId: task.id,
-                data: { order: task.order, scheduledDate: task.scheduledDate },
+                data: {
+                  order: task.order,
+                  scheduledDate: task.scheduledDate,
+                  userId: user.id,
+                },
               },
               optimisticResponse: {
                 __typename: "Mutation",

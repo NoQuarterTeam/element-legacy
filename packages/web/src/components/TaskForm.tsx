@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from "react"
 import styled from "../application/theme"
 
+import useAppContext from "../lib/hooks/useAppContext"
 import { TaskFragment } from "../lib/graphql/types"
 import useFormState from "../lib/hooks/useFormState"
 import { sleep } from "../lib/helpers"
 import { useAllElements } from "../lib/graphql/element/hooks"
+import { useGetSharedUsersByUser } from "../lib/graphql/sharedElement/hooks"
 
+import { Select } from "@noquarter/ui"
 import Input from "./Input"
 import Button from "./Button"
 import ElementDropdown from "./ElementDropdown"
 import Checkbox from "./Checkbox"
 import dayjs from "dayjs"
 import TextArea from "./TextArea"
+import { useTimelineContext } from "./providers/TimelineProvider"
 
 interface TaskFormProps {
   onFormSubmit: (data: any) => Promise<any>
@@ -27,12 +31,19 @@ function TaskForm({
 }: TaskFormProps) {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
-  const elements = useAllElements()
+
+  const { selectedUserId } = useTimelineContext()
+
+  const { user } = useAppContext()
+  const sharedUsers = useGetSharedUsersByUser(user.id)
+
+  const elements = useAllElements(selectedUserId)
 
   const initialState = {
     name: task ? task.name : "",
     completed: task ? task.completed : false,
     elementId: task.element ? task.element.id : "",
+    userId: task.userId ? task.userId : selectedUserId,
     scheduledDate: task.scheduledDate ? task.scheduledDate : "",
     estimatedTime: task.estimatedTime ? task.estimatedTime : "",
     startTime: task.startTime ? task.startTime : "",
@@ -58,6 +69,17 @@ function TaskForm({
     })
   }
 
+  const handleUserSelect = (userId: string) => {
+    setFormState({ ...formState, userId })
+  }
+
+  const selectUserOptions =
+    sharedUsers &&
+    sharedUsers.map(user => ({
+      label: user.firstName,
+      value: user.id,
+    }))
+
   return (
     <StyledForm onSubmit={handleTaskUpdate}>
       <Input
@@ -70,19 +92,16 @@ function TaskForm({
         style={{ marginTop: 0, paddingTop: 0, marginBottom: "1rem" }}
       />
 
+      <StyledFinish>
+        <StyledCheckboxWrapper>
+          <Checkbox
+            value={formState.completed ? formState.completed : false}
+            onChange={() => setFormState({ completed: !formState.completed })}
+          />
+        </StyledCheckboxWrapper>
+      </StyledFinish>
+
       <StyledGrid>
-        <StyledRow>
-          <StyledLabel>
-            Finished
-            <StyledSpan>⌥ + click</StyledSpan>
-          </StyledLabel>
-          <StyledCheckboxWrapper>
-            <Checkbox
-              value={formState.completed ? formState.completed : false}
-              onChange={() => setFormState({ completed: !formState.completed })}
-            />
-          </StyledCheckboxWrapper>
-        </StyledRow>
         <StyledRow>
           <StyledLabel>Element</StyledLabel>
           <ElementDropdown
@@ -92,6 +111,30 @@ function TaskForm({
             }
             elements={elements}
             placeholder="Select..."
+          />
+        </StyledRow>
+        <StyledRow>
+          <StyledLabel>Who?</StyledLabel>
+          <Select
+            value={formState.userId}
+            onChange={e => handleUserSelect(e.target.value)}
+            options={
+              selectUserOptions
+                ? [
+                    {
+                      label: user.firstName,
+                      value: user.id,
+                    },
+                    ...selectUserOptions,
+                  ]
+                : []
+            }
+            style={{
+              padding: "0px",
+              paddingLeft: "10px",
+              margin: "0",
+              width: "auto",
+            }}
           />
         </StyledRow>
         <StyledRow>
@@ -204,4 +247,10 @@ const StyledRow = styled.div`
   display: flex;
   width: 100%;
   align-items: center;
+`
+
+const StyledFinish = styled.div`
+  position: absolute;
+  top: ${p => p.theme.paddingM};
+  right: ${p => p.theme.paddingM};
 `

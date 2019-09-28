@@ -10,6 +10,7 @@ import useOnClickOutside from "../lib/hooks/useOnOutsideClick"
 import ElementDropdownOption from "./ElementDropdownOption"
 import Input from "./Input"
 import { lighten } from "@noquarter/ui"
+import { useTimelineContext } from "./providers/TimelineProvider"
 
 interface ElementDropdownProps {
   selectedElementId?: string
@@ -20,14 +21,15 @@ interface ElementDropdownProps {
   toggleAll?: () => void
 }
 const ElementDropdown: FC<ElementDropdownProps> = ({
-  selectedElementId,
   handleSelectElement,
+  selectedElementId,
   elements,
   placeholder,
   filteredElements,
   toggleAll,
 }) => {
-  const createElement = useCreateElement()
+  const { selectedUserId } = useTimelineContext()
+  const createElement = useCreateElement(selectedUserId)
   const updateElement = useUpdateElement()
   const [dropdownOpen, openDropdown] = useState(false)
   const [pickerOpen, openColorPicker] = useState(false)
@@ -189,6 +191,9 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
         {elements &&
           elements
             .filter(e => e.archived === false)
+            .sort((a, b) => {
+              return a.name.localeCompare(b.name)
+            })
             .map((element, index) => (
               <div key={element.id}>
                 {!element.parentId && (
@@ -347,7 +352,7 @@ const StyledNewElement = styled.div<{ child?: boolean }>`
 const StyledAdd = styled.div<{ newElement: string }>`
   cursor: pointer;
   font-size: ${p => p.theme.textL};
-  color: ${p => p.theme.colorBlue};
+  color: ${p => p.theme.colorPurple};
   font-weight: ${p => p.theme.fontBlack};
   margin-right: ${p => p.theme.paddingM};
   visibility: ${props => (props.newElement ? "visible" : "hidden")};

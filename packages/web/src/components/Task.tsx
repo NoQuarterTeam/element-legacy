@@ -7,6 +7,8 @@ import {
   useDeleteTask,
   useUpdateTask,
 } from "../lib/graphql/task/hooks"
+import { darken } from "polished"
+import { useTimelineContext } from "./providers/TimelineProvider"
 
 interface TaskProps {
   task: TaskFragment
@@ -15,9 +17,10 @@ interface TaskProps {
   handleTaskModal: (task: TaskFragment) => void
 }
 function Task({ task, hidden, handleTaskModal, ...rest }: TaskProps) {
+  const { selectedUserId } = useTimelineContext()
   const createTask = useCreateTask()
   const updateTask = useUpdateTask()
-  const destroyTask = useDeleteTask(task.id)
+  const destroyTask = useDeleteTask(task.id, selectedUserId)
 
   const onTaskClick = async (event: any, task: TaskFragment) => {
     if (!event) {
@@ -104,8 +107,8 @@ const StyledTaskElement = styled.p<{ completed: boolean; color: string }>`
   margin: 0;
   padding: ${p => p.theme.paddingXS};
   border-radius: ${p => p.theme.borderRadiusS};
-  text-decoration: ${props => (props.completed ? "line-through" : "none")};
   background-color: ${props => props.color};
+  color: ${props => darken(0.5, props.color)};
   opacity: ${props => (props.completed ? 0.5 : 1)};
   display: none;
   white-space: nowrap;

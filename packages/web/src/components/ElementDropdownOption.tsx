@@ -4,6 +4,10 @@ import styled from "../application/theme"
 import { lighten } from "@noquarter/ui"
 import { ElementFragment } from "../lib/graphql/types"
 import { darken } from "polished"
+import { useTimelineContext } from "./providers/TimelineProvider"
+import useAppContext from "../lib/hooks/useAppContext"
+
+import AddUser from "../public/create-group-button.svg"
 
 interface ElementDropdownOptionProps {
   element: ElementFragment
@@ -26,13 +30,23 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
   hiddenElement,
   addChild,
   open,
+  child,
   handleShowChildren,
   ...props
 }) => {
+  const { handleSetModal, handleSetElement } = useTimelineContext()
+  const { user } = useAppContext()
+
+  const handleShare = () => {
+    handleSetModal("share")
+    handleSetElement(element)
+  }
+
   return (
     <>
       <StyledOptionContainer
         {...props}
+        child={child}
         hiddenElement={hiddenElement}
         color={element.color}
         open={open}
@@ -46,26 +60,48 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
           {element.name}
         </StyledOption>
 
-        <StyledAdd color={element.color} onClick={() => addChild(element)}>
-          +
-        </StyledAdd>
-        <StyledColorCircle
-          id={element.id}
-          onClick={() => togglePicker(element)}
-          color={element.color}
-          // ref={buttonRef}
-        />
+        {user.id === element.creatorId && (
+          <StyledShare color={element.color} onClick={handleShare}>
+            <StyledAddUser width="20" height="20" src={AddUser} />
+          </StyledShare>
+        )}
+
+        {user.id === element.creatorId && !child && (
+          <StyledAdd color={element.color} onClick={() => addChild(element)}>
+            +
+          </StyledAdd>
+        )}
+
+        {user.id === element.creatorId && (
+          <StyledColorCircle
+            id={element.id}
+            onClick={() => togglePicker(element)}
+            color={element.color}
+            // ref={buttonRef}
+          />
+        )}
+
         {element.children &&
+        user.id === element.creatorId &&
         element.children.filter(e => !e.archived).length > 0 ? (
           <StyledArrow
             onClick={handleShowChildren}
             open={open}
             color={element.color}
+            hiddenElement={hiddenElement}
           />
+        ) : user.id === element.creatorId ? (
+          <StyledDelete
+            color={element.color}
+            onClick={() => archiveElement(element)}
+          >
+            x
+          </StyledDelete>
         ) : (
           <StyledDelete
             color={element.color}
             onClick={() => archiveElement(element)}
+            // onClick={() => removeSelf from Shared}
           >
             x
           </StyledDelete>
@@ -100,11 +136,19 @@ const StyledOption = styled.p<{
       ? p => p.theme.fontBlack
       : p => p.theme.fontBold};
   width: 100%;
-  text-decoration: ${p => (p.hiddenElement ? "line-through" : "inherit")};
+  color: ${p => (p.hiddenElement ? p.theme.colorLabel : p.theme.colorText)};
 `
 
-const StyledArrow = styled.div<{ open?: boolean; color: string }>`
-  border: solid ${props => lighten(0.1, props.theme.colorText)};
+const StyledArrow = styled.div<{
+  open?: boolean
+  color: string
+  hiddenElement?: boolean
+}>`
+  border: solid
+    ${props =>
+      props.hiddenElement
+        ? props.theme.colorLabel
+        : lighten(0.1, props.theme.colorText)};
   border-width: 0 3px 3px 0;
   display: inline-block;
   padding: ${p => p.theme.paddingXS};
@@ -147,6 +191,18 @@ const StyledAdd = styled.p<{ color: string }>`
   }
 `
 
+const StyledShare = styled.p<{ color: string }>`
+  color: ${p => darken(0.2, p.color)};
+  font-size: ${p => p.theme.textL};
+  line-height: 1rem;
+  visibility: hidden;
+  margin: 0 ${p => p.theme.paddingS};
+
+  &:hover {
+    transform: scale(1.1);
+  }
+`
+
 const StyledOptionContainer = styled.div<{
   color: string
   child?: boolean
@@ -178,6 +234,10 @@ const StyledOptionContainer = styled.div<{
     visibility: visible;
   }
 
+  &:hover ${StyledShare} {
+    visibility: visible;
+  }
+
   &:hover ${StyledArrow} {
     border: solid ${props => darken(0.2, props.color)};
     border-width: 0 3px 3px 0;
@@ -194,4 +254,8 @@ const StyledOptionContainer = styled.div<{
   &:hover ${StyledOption} {
     color: ${p => darken(0.2, p.color)};
   }
+`
+
+const StyledAddUser = styled.img`
+  fill: green;
 `

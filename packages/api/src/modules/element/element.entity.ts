@@ -14,6 +14,7 @@ import { ObjectType, Field, ID } from "type-graphql"
 import { Task } from "../task/task.entity"
 import { Habit } from "../habit/habit.entity"
 import { User } from "../user/user.entity"
+import { SharedElement } from "../sharedElement/sharedElement.entity"
 
 @ObjectType()
 @Entity()
@@ -61,9 +62,15 @@ export class Element extends BaseEntity {
   @Column({ nullable: true })
   creatorId: string
 
-  @Field(() => User)
-  @ManyToOne(() => User, user => user.elements)
+  @Field(() => User, { nullable: true })
+  @ManyToOne(() => User, user => user.elements, {
+    eager: true,
+  })
   creator: User
+
+  @Field(() => [SharedElement], { nullable: true })
+  @OneToMany(() => SharedElement, sharedElements => sharedElements.element)
+  sharedElements: SharedElement[]
 
   @Field()
   @CreateDateColumn()

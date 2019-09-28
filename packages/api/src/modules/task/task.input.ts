@@ -24,6 +24,9 @@ export class TaskInput implements Partial<Task> {
   @Field({ nullable: true })
   elementId?: string
 
+  @Field()
+  userId: string
+
   @Field({ nullable: true })
   order?: number
 }
@@ -35,4 +38,7 @@ export class OrderTaskInput implements Partial<Task> {
 
   @Field()
   scheduledDate: Date
+
+  @Field()
+  userId: string
 }

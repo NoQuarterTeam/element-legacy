@@ -51,5 +51,5 @@ const StyledTile = styled(Tile)`
   margin: ${p => p.theme.paddingXL};
   padding: ${p => p.theme.paddingXL} ${p => p.theme.paddingXL};
   height: max-content;
-  max-width: 600px;
+  max-width: 500px;
 `

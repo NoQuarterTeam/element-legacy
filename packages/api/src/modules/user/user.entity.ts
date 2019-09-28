@@ -7,12 +7,14 @@ import {
   UpdateDateColumn,
   BeforeInsert,
   OneToMany,
+  ManyToOne,
 } from "typeorm"
 import { Element } from "../element/element.entity"
 import { ObjectType, Field, ID } from "type-graphql"
 import bcrypt from "bcryptjs"
 import { Habit } from "../habit/habit.entity"
 import { Task } from "../task/task.entity"
+import { SharedElement } from "../sharedElement/sharedElement.entity"
 
 @ObjectType()
 @Entity()
@@ -49,6 +51,10 @@ export class User extends BaseEntity {
   @Field(() => [Habit])
   @OneToMany(() => Habit, habit => habit.user)
   habits: Habit[]
+
+  @Field(() => [SharedElement], { nullable: true })
+  @OneToMany(() => SharedElement, sharedElements => sharedElements.user)
+  sharedElements: SharedElement[]
 
   @Field(() => [Task])
   @OneToMany(() => Task, task => task.user)

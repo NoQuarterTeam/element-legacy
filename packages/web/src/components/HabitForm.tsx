@@ -9,6 +9,7 @@ import ElementDropdown from "./ElementDropdown"
 import { sleep } from "../lib/helpers"
 import { HabitFragment } from "../lib/graphql/types"
 import Input from "./Input"
+import { useTimelineContext } from "./providers/TimelineProvider"
 
 interface HabitFormProps {
   onFormSubmit: (data: any) => Promise<any>
@@ -18,7 +19,8 @@ interface HabitFormProps {
 function HabitForm({ onFormSubmit, habits, day }: HabitFormProps) {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
-  const elements = useAllElements()
+  const { selectedUserId } = useTimelineContext()
+  const elements = useAllElements(selectedUserId)
 
   const { formState, setFormState } = useFormState({
     elementId: "",
@@ -40,9 +42,7 @@ function HabitForm({ onFormSubmit, habits, day }: HabitFormProps) {
     setLoading(false)
   }
 
-  const habitNames = habits.map(habit => habit.element.name)
-
-  console.log(habitNames)
+  const habitIds = habits.map(habit => habit.element.id)
 
   return (
     <StyledForm onSubmit={handleHabitUpdate}>
@@ -53,7 +53,7 @@ function HabitForm({ onFormSubmit, habits, day }: HabitFormProps) {
             setFormState({ elementId: element.id })
           }
           elements={
-            elements && elements.filter(el => !habitNames.includes(el.name))
+            elements && elements.filter(el => !habitIds.includes(el.id))
           }
           placeholder="Add a habit"
         />

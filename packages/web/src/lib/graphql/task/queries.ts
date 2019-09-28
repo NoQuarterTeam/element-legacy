@@ -3,8 +3,8 @@ import gql from "graphql-tag"
 import { Task } from "./fragments"
 
 export const GET_ALL_TASKS = gql`
-  query AllTasks {
-    allTasks {
+  query AllTasks($selectedUserId: String!) {
+    allTasks(selectedUserId: $selectedUserId) {
       ...Task
     }
   }

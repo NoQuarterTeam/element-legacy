@@ -106,7 +106,7 @@ const StyledDay = styled.div<{
       ? p => darken(0.02, p.theme.colorBackground)
       : p => p.theme.colorBackground};
   background-color: ${props =>
-    props.today ? lighten(0.35, props.theme.colorBlue) : ""};
+    props.today ? lighten(0.35, props.theme.colorPurple) : ""};
 `
 
 const PlaceholderTask = styled.div`
@@ -130,6 +130,6 @@ const AddNewTask = styled.div`
   margin: ${p => p.theme.paddingS};
 
   &:hover ${PlaceholderTask} {
-    background-color: ${p => lighten(0.34, p.theme.colorBlue)};
+    background-color: ${p => lighten(0.34, p.theme.colorPurple)};
   }
 `
