@@ -102,16 +102,19 @@ const StyledTaskElement = styled.p<{ completed: boolean; color: string }>`
   color: "white";
   position: absolute;
   font-size: ${p => p.theme.textXS};
-  bottom: ${p => p.theme.paddingXS};
+  top: ${p => p.theme.paddingS};
   right: ${p => p.theme.paddingS};
   margin: 0;
   padding: ${p => p.theme.paddingXS};
-  border-radius: ${p => p.theme.borderRadiusS};
   background-color: ${props => props.color};
-  color: ${props => darken(0.5, props.color)};
   opacity: ${props => (props.completed ? 0.5 : 1)};
-  display: none;
+  height: 20px;
+  width: 5px;
+  border-radius: 5px;
   white-space: nowrap;
+  overflow: hidden;
+  color: ${props => props.color};
+  transition: width 0.1s ease-out;
 `
 
 const StyledTaskStart = styled.p<{ completed: boolean }>`
@@ -119,7 +122,7 @@ const StyledTaskStart = styled.p<{ completed: boolean }>`
   position: absolute;
   font-size: ${p => p.theme.textXS};
   bottom: ${p => p.theme.paddingML};
-  right: ${p => p.theme.paddingS};
+  right: ${p => p.theme.paddingML};
   margin: 0;
   text-decoration: ${props => (props.completed ? "line-through" : "none")};
 `
@@ -127,7 +130,7 @@ const StyledTaskStart = styled.p<{ completed: boolean }>`
 const StyledTaskDuration = styled.p<{ completed: boolean }>`
   position: absolute;
   bottom: ${p => p.theme.paddingXS};
-  right: ${p => p.theme.paddingS};
+  right: ${p => p.theme.paddingML};
   color: ${props => (props.completed ? "lightgrey" : "grey")};
   font-size: ${p => p.theme.textXS};
   font-weight: ${p => p.theme.fontBlack};
@@ -155,7 +158,13 @@ const StyledTaskBox = styled.div<{
   box-shadow: ${props =>
     props.completed ? props.theme.boxShadow : props.theme.boxShadowBold};
 
-  &:hover ${StyledTaskElement} {display: block;}
+  &:hover ${StyledTaskElement} {
+    border-radius: ${p => p.theme.borderRadiusS};
+    height: 20px;
+    width: 50px;
+    color: ${p => darken(0.3, p.color)};
+
+  }
   &:hover ${StyledTaskStart} {display: none;}
   &:hover ${StyledTaskDuration} {display: none;}
 `

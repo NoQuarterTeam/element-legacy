@@ -2,6 +2,7 @@ import { Element } from "./element.entity"
 import { CreateElementInput } from "./element.input"
 
 import { Service } from "typedi"
+import { Brackets } from "typeorm"
 
 @Service()
 export class ElementService {
@@ -25,11 +26,18 @@ export class ElementService {
             })
         } else {
           elementsQuery
-            .innerJoinAndSelect("element.sharedElements", "sharedElement")
-            .where("sharedElement.userId = :selectedUserId", { selectedUserId })
-            .orWhere("element.creatorId = :selectedUserId", {
-              selectedUserId,
-            })
+            .leftJoin("element.sharedElements", "sharedElement")
+            .where(
+              new Brackets(qb => {
+                // where element has been shared to selectedUser by currentUser
+                qb.where("element.creatorId = :userId", { userId }).andWhere(
+                  "sharedElement.userId = :selectedUserId",
+                  {
+                    selectedUserId,
+                  },
+                )
+              }),
+            )
         }
 
         const elements = elementsQuery.getMany()

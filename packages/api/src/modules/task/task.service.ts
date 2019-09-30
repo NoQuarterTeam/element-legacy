@@ -6,6 +6,7 @@ import { ElementService } from "../element/element.service"
 import { ProgressService } from "../progress/progress.service"
 import { SharedElementService } from "../sharedElement/sharedElement.service"
 import { UserService } from "../user/user.service"
+import { Brackets } from "typeorm"
 
 @Service()
 export class TaskService {
@@ -25,35 +26,43 @@ export class TaskService {
 
     if (userId != selectedUserId) {
       tasksQuery
-        .leftJoinAndSelect("task.element", "element")
-        .leftJoinAndSelect("element.sharedElements", "sharedElement")
-        .andWhere("sharedElement.userId = :selectedUserId", { selectedUserId }) // and element been shared to selected User
-        .orWhere("element.creatorId = :selectedUserId", {
-          selectedUserId,
-        }) // or element was created by selected user
-        .where("task.userId = :selectedUserId", { selectedUserId }) // where task is selected User
+        .innerJoinAndSelect("task.element", "element")
+        .innerJoinAndSelect("element.sharedElements", "sharedElement")
+        // and where task belongs to selectedUser
+        .where("task.userId = :selectedUserId", { selectedUserId })
+        .andWhere(
+          new Brackets(test => {
+            test
+              .where(
+                new Brackets(qb => {
+                  // where element has been shared to selectedUser by currentUser
+                  qb.where("sharedElement.userId = :selectedUserId", {
+                    selectedUserId,
+                  }).andWhere("element.creatorId = :userId", {
+                    userId,
+                  })
+                }),
+              )
+              // or element has been shared to currentUser by anyone
+              .orWhere(
+                new Brackets(qb => {
+                  qb.where("sharedElement.userId = :userId", {
+                    userId,
+                  })
+                  // .andWhere("element.creatorId = :selectedUserId", {
+                  //   selectedUserId,
+                  // })
+                }),
+              )
+          }),
+        )
+
       const tasks = tasksQuery.getMany()
       return tasks
     } else {
       const tasks = Task.find({ where: { userId } })
       return tasks
     }
-
-    //   const sharedElements = await this.sharedElementService.findAll(userId)
-    //   const sharedElementsForSelected = sharedElements.filter(
-    //     shared => shared.element.creatorId === selectedUserId,
-    //   )
-
-    //   return Task.find({
-    //     where: {
-    //       elementId: In(
-    //         sharedElementsForSelected.map(shared => shared.elementId),
-    //       ),
-    //     },
-    //   })
-    // } else {
-    //   return Task.find({ where: { userId } })
-    // }
   }
 
   async create(data: TaskInput, userId: string): Promise<Task | null> {

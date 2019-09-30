@@ -82,7 +82,6 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
         )}
 
         {element.children &&
-        user.id === element.creatorId &&
         element.children.filter(e => !e.archived).length > 0 ? (
           <StyledArrow
             onClick={handleShowChildren}
@@ -100,10 +99,10 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
         ) : (
           <StyledDelete
             color={element.color}
-            onClick={() => archiveElement(element)}
+            // onClick={() => archiveElement(element)}
             // onClick={() => removeSelf from Shared}
           >
-            x
+            -
           </StyledDelete>
         )}
       </StyledOptionContainer>
