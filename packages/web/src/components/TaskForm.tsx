@@ -183,11 +183,17 @@ function TaskForm({
             justifyContent: "space-between",
           }}
         >
-          <Button loading={loading} variant="secondary" onClick={onDeleteTask}>
+          <Button
+            type="button"
+            loading={loading}
+            variant="secondary"
+            onClick={onDeleteTask}
+          >
             Delete
           </Button>
           <StyledSpan>⇧ + click</StyledSpan>
           <Button
+            type="button"
             loading={loading}
             variant="secondary"
             onClick={onDuplicateTask}
@@ -195,7 +201,7 @@ function TaskForm({
             Duplicate
           </Button>
           <StyledSpan>⌘ + click</StyledSpan>
-          <Button loading={loading} variant="primary">
+          <Button type="submit" loading={loading} variant="primary">
             Submit
           </Button>
         </StyledRow>
