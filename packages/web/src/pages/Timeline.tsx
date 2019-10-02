@@ -20,11 +20,20 @@ import ShareModal from "../components/ShareModal"
 const Timeline: FC<RouteComponentProps> = () => {
   // TODO: SET TASK IN TimelineProvider
   const [task, setTask] = useState()
+
   const [dayClicked, setDayClicked] = useState()
 
   // TODO: SET filteredElements IN TimelineProvider
   const [filteredElements, setFilteredElements] = useState<string[]>([])
-  const { selectedUserId, handleSetModal, modal } = useTimelineContext()
+  const {
+    selectedUserId,
+    handleSetModal,
+    modal,
+    daysForward,
+    daysBack,
+    handleDaysBack,
+    handleDaysForward,
+  } = useTimelineContext()
 
   const allTasks = useAllTasks(selectedUserId)
 
@@ -88,7 +97,13 @@ const Timeline: FC<RouteComponentProps> = () => {
           {allTasks && (
             <DragDropContainer allTasks={allTasks}>
               <StyledDaysWrapper>
-                {getDays(dayjs().subtract(20, "day"), 40).map(day => {
+                <StyledBack onClick={() => handleDaysBack(daysBack + 20)}>
+                  {"<"}
+                </StyledBack>
+                {getDays(
+                  dayjs().subtract(daysBack, "day"),
+                  daysBack + daysForward,
+                ).map(day => {
                   return (
                     <Day
                       key={day.unix()}
@@ -105,6 +120,11 @@ const Timeline: FC<RouteComponentProps> = () => {
                     />
                   )
                 })}
+                <StyledForward
+                  onClick={() => handleDaysForward(daysForward + 20)}
+                >
+                  {">"}
+                </StyledForward>
               </StyledDaysWrapper>
             </DragDropContainer>
           )}
@@ -130,4 +150,22 @@ const StyledDaysWrapper = styled.div`
   display: flex;
   width: fit-content;
   overflow: scroll;
+`
+
+const StyledBack = styled.p`
+  position: absolute;
+  top: 50%;
+  left: 0;
+  font-size: 50px;
+  z-index: 100;
+  cursor: pointer;
+`
+
+const StyledForward = styled.p`
+  position: absolute;
+  top: 50%;
+  right: 0;
+  font-size: 50px;
+  z-index: 100;
+  cursor: pointer;
 `
