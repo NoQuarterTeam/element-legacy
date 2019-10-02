@@ -29,13 +29,22 @@ export class ElementService {
             .leftJoin("element.sharedElements", "sharedElement")
             .where(
               new Brackets(qb => {
+                // where element has been shared to currentUser by selectedUser
+                qb.where("element.creatorId = :selectedUserId", {
+                  selectedUserId,
+                }).andWhere("sharedElement.userId = :userId", {
+                  userId,
+                })
+              }),
+            )
+            .orWhere(
+              new Brackets(qb => {
                 // where element has been shared to selectedUser by currentUser
-                qb.where("element.creatorId = :userId", { userId }).andWhere(
-                  "sharedElement.userId = :selectedUserId",
-                  {
-                    selectedUserId,
-                  },
-                )
+                qb.where("element.creatorId = :userId", {
+                  userId,
+                }).andWhere("sharedElement.userId = :selectedUserId", {
+                  selectedUserId,
+                })
               }),
             )
         }

@@ -60,13 +60,13 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
           {element.name}
         </StyledOption>
 
-        {user.id === element.creatorId && (
-          <StyledShare color={element.color} onClick={handleShare}>
-            <StyledAddUser width="20" height="20" src={AddUser} />
-          </StyledShare>
-        )}
+        {/* {user.id === element.creatorId && ( */}
+        <StyledShare color={element.color} onClick={handleShare}>
+          <StyledAddUser width="20" height="20" src={AddUser} />
+        </StyledShare>
+        {/* )} */}
 
-        {user.id === element.creatorId && !child && (
+        {!child && (
           <StyledAdd color={element.color} onClick={() => addChild(element)}>
             +
           </StyledAdd>
