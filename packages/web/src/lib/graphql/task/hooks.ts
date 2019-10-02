@@ -48,7 +48,7 @@ export function useUpdateTask(oldUserId?: string) {
         try {
           const newUserId = data.updateTask.userId
 
-          if (newUserId !== oldUserId) {
+          if (newUserId && oldUserId && newUserId !== oldUserId) {
             try {
               const tasksQuery = cache.readQuery<AllTasksQuery>({
                 query: AllTasksDocument,
@@ -64,6 +64,25 @@ export function useUpdateTask(oldUserId?: string) {
                   variables: { selectedUserId: newUserId },
                   data: {
                     allTasks: [...allTasks, data.updateTask],
+                  },
+                })
+              }
+              const tasksQueryOld = cache.readQuery<AllTasksQuery>({
+                query: AllTasksDocument,
+                variables: { selectedUserId: oldUserId },
+              })
+
+              if (tasksQueryOld && tasksQueryOld.allTasks) {
+                const updatedTasks = tasksQueryOld.allTasks.filter(
+                  t => data.updateTask && t.id !== data.updateTask.id,
+                )
+                // Delete from old user
+                cache.writeQuery({
+                  query: AllTasksDocument,
+                  variables: { selectedUserId: oldUserId },
+                  data: {
+                    ...tasksQueryOld,
+                    allTasks: updatedTasks,
                   },
                 })
               }
