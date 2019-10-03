@@ -24,7 +24,10 @@ const Modal: FC<ModalProps> = ({ children, onClose }) => {
   return (
     <StyledModal tabIndex={-1}>
       <StyledOverlay onClick={onClose} />
-      <StyledTile>{children}</StyledTile>
+      <StyledTile>
+        <StyledClose onClick={onClose}>X</StyledClose>
+        {children}
+      </StyledTile>
     </StyledModal>
   )
 }
@@ -58,8 +61,6 @@ const StyledTile = styled(Tile)`
   height: 100vh;
   width: 100vw;
   position: fixed;
-  /* top: 0; */
-  /* left: 0; */
   overflow: hidden;
   border-radius: 0;
 
@@ -68,5 +69,17 @@ const StyledTile = styled(Tile)`
     margin: ${(p: any) => p.theme.paddingXL};
     height: max-content;
     max-width: 500px;
+  `};
+`
+
+const StyledClose = styled.button`
+  position: absolute;
+  right: ${p => p.theme.paddingM};
+  top: ${p => p.theme.paddingM};
+  cursor: pointer;
+  font-size: 20px;
+
+  ${media.greaterThan("md")`
+    display: none;
   `};
 `

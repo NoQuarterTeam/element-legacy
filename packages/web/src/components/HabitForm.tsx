@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import styled from "../application/theme"
+import styled, { media } from "../application/theme"
 
 import useFormState from "../lib/hooks/useFormState"
 import { useAllElements } from "../lib/graphql/element/hooks"
@@ -78,12 +78,17 @@ export default HabitForm
 
 const StyledForm = styled.form`
   position: relative;
-  height: 100%;
+  height: auto;
   width: 100%;
   margin: 0 auto;
   ${p => p.theme.flexCenter};
   align-items: flex-start;
   flex-direction: column;
+
+  ${media.greaterThan("md")`
+    height: 100%;
+    width: 100%;
+  `}
 `
 
 const StyledError = styled.p`
