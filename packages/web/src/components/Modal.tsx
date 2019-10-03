@@ -14,11 +14,17 @@ const Modal: FC<ModalProps> = ({ children, onClose }) => {
     if (e.key === "Escape") onClose()
   })
   useEffect(() => {
-    document.body.style.overflowY = "hidden"
-    document.body.style.position = "fixed"
+    if (window.screen.width > 805) {
+      document.body.style.overflowY = "hidden"
+    } else {
+      document.body.style.position = "fixed"
+    }
     return () => {
-      document.body.style.overflowY = "scroll"
-      document.body.style.position = "relative"
+      if (window.screen.width > 805) {
+        document.body.style.overflowY = "scroll"
+      } else {
+        document.body.style.position = "relative"
+      }
     }
   }, [])
   return (
@@ -38,6 +44,7 @@ const StyledModal = styled(Center)`
   position: fixed;
   z-index: 99;
   background-color: ${p => p.theme.colorOverlay};
+  overflow: scroll;
 
   ${media.greaterThan("md")`
     top: 0;
@@ -60,7 +67,7 @@ const StyledTile = styled(Tile)`
   margin: 0;
   height: 100vh;
   width: 100vw;
-  position: fixed;
+  /* position: fixed; */
   overflow: hidden;
   border-radius: 0;
 

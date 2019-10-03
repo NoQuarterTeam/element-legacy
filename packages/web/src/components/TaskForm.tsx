@@ -45,7 +45,7 @@ function TaskForm({
     elementId: task.element ? task.element.id : "",
     userId: task.userId ? task.userId : selectedUserId,
     scheduledDate: task.scheduledDate ? task.scheduledDate : "",
-    estimatedTime: task.estimatedTime ? task.estimatedTime : "",
+    estimatedTime: task.estimatedTime ? task.estimatedTime : "00:00",
     startTime: task.startTime ? task.startTime : "",
     description: task.description ? task.description : "",
   }
@@ -89,7 +89,12 @@ function TaskForm({
         required={true}
         variant="large"
         autoFocus
-        style={{ marginTop: 0, paddingTop: 0, marginBottom: "1rem" }}
+        style={{
+          width: "90%",
+          marginTop: 0,
+          paddingTop: 0,
+          marginBottom: "1rem",
+        }}
       />
 
       <StyledFinish>

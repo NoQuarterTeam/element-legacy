@@ -84,10 +84,10 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
         {element.children &&
         element.children.filter(e => !e.archived).length > 0 ? (
           <StyledArrow
-            onClick={handleShowChildren}
             open={open}
             color={element.color}
             hiddenElement={hiddenElement}
+            onClick={handleShowChildren}
           />
         ) : user.id === element.creatorId ? (
           <StyledDelete
@@ -155,7 +155,7 @@ const StyledArrow = styled.div<{
   transform: ${props => (props.open ? "rotate(225deg)" : "rotate(45deg)")};
   width: 0;
   height: 0;
-  margin-left: ${props => props.theme.paddingM};
+  margin-left: 0;
   margin-top: ${props => (props.open ? p => p.theme.paddingS : "-3px")};
 
   &:hover {

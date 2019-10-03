@@ -174,7 +174,10 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
           </div>
         </StyledPickerContainer>
       )}
-      <StyledDropdownMenu open={dropdownOpen} filter={filteredElements}>
+      <StyledDropdownMenu
+        open={dropdownOpen}
+        filter={filteredElements ? "true" : "false"}
+      >
         <StyledNewElement>
           <Input
             placeholder="New Element..."
@@ -325,7 +328,7 @@ const StyledDropdownPlaceholder = styled.div<{
   }
 `
 
-const StyledDropdownMenu = styled.div<{ open: boolean; filter: boolean }>`
+const StyledDropdownMenu = styled.div<{ open: boolean; filter: string }>`
   visibility: ${props => (props.open ? "visible" : "hidden")};
   position: fixed;
   padding-top: ${p => p.theme.paddingM};
@@ -337,8 +340,8 @@ const StyledDropdownMenu = styled.div<{ open: boolean; filter: boolean }>`
   z-index: 100;
   width: 100vw;
   left: 0;
-  top: ${p => (p.filter ? "50px" : "auto")};
-  bottom: ${p => (p.filter ? "auto" : "0")};
+  top: ${p => (p.filter === "true" ? "50px" : "auto")};
+  bottom: ${p => (p.filter === "true" ? "auto" : "0")};
 
   ${media.greaterThan("md")`
     position: absolute; 

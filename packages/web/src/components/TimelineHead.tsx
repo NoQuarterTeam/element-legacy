@@ -122,7 +122,7 @@ const StyledMonthHeader = styled.h3`
   display: flex;
   flex-direction: row;
   position: sticky;
-  width: 64px;
+  width: max-content;
   margin-bottom: ${p => p.theme.paddingM};
   left: ${p => p.theme.paddingML};
   margin-left: ${p => p.theme.paddingML};
