@@ -68,7 +68,7 @@ const StyledTile = styled(Tile)`
   height: 100vh;
   width: 100vw;
   /* position: fixed; */
-  overflow: hidden;
+  /* overflow: hidden; */
   border-radius: 0;
 
   ${media.greaterThan("md")`

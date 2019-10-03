@@ -309,7 +309,7 @@ const StyledDropdownPlaceholder = styled.div<{
     props.color ? lighten(0.2, props.color) : p => p.theme.colorPlaceholder};
   cursor: pointer;
   padding: ${p => p.theme.paddingS} ${p => p.theme.paddingM};
-  border-radius: ${p => p.theme.borderRadius};
+  // border-radius: ${p => p.theme.borderRadius};
   ${p => p.theme.flexCenter};
   font-weight: ${p => p.theme.fontBold};
   white-space: nowrap;
@@ -333,7 +333,7 @@ const StyledDropdownMenu = styled.div<{ open: boolean; filter: string }>`
   position: fixed;
   padding-top: ${p => p.theme.paddingM};
   box-shadow: ${props => props.theme.boxShadowBold};
-  border-radius: ${p => p.theme.borderRadiusL};
+  /* border-radius: ${p => p.theme.borderRadiusL}; */
   background-color: white;
   min-width: 350px;
   overflow-y: auto;
