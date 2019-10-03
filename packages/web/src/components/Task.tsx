@@ -1,11 +1,6 @@
 import React, { memo } from "react"
 import styled from "styled-components"
-import {
-  TaskFragment,
-  AllProgressDocument,
-  AllTasksDocument,
-  AllTasksQuery,
-} from "../lib/graphql/types"
+import { TaskFragment, AllProgressDocument } from "../lib/graphql/types"
 import { hoursInMins, formatTime } from "../lib/helpers"
 import {
   useCreateTask,

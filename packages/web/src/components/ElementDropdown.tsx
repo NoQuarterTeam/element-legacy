@@ -1,6 +1,6 @@
 import React, { createRef, FC, useEffect, useState } from "react"
 import { TwitterPicker } from "react-color"
-import styled from "../application/theme"
+import styled, { media } from "../application/theme"
 import {
   useCreateElement,
   useUpdateElement,
@@ -174,7 +174,7 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
           </div>
         </StyledPickerContainer>
       )}
-      <StyledDropdownMenu open={dropdownOpen}>
+      <StyledDropdownMenu open={dropdownOpen} filter={filteredElements}>
         <StyledNewElement>
           <Input
             placeholder="New Element..."
@@ -325,19 +325,27 @@ const StyledDropdownPlaceholder = styled.div<{
   }
 `
 
-const StyledDropdownMenu = styled.div<{ open: boolean }>`
+const StyledDropdownMenu = styled.div<{ open: boolean; filter: boolean }>`
   visibility: ${props => (props.open ? "visible" : "hidden")};
-  position: absolute;
+  position: fixed;
   padding-top: ${p => p.theme.paddingM};
-  top: ${p => p.theme.paddingXL};
-  left: -${p => p.theme.paddingM};
   box-shadow: ${props => props.theme.boxShadowBold};
   border-radius: ${p => p.theme.borderRadiusL};
   background-color: white;
   min-width: 350px;
-  /* max-height: 350px; */
   overflow-y: auto;
   z-index: 100;
+  width: 100vw;
+  left: 0;
+  top: ${p => (p.filter ? "50px" : "auto")};
+  bottom: ${p => (p.filter ? "auto" : "0")};
+
+  ${media.greaterThan("md")`
+    position: absolute; 
+    left: -${p => p.theme.paddingM};
+    width: auto;
+    top: ${p => p.theme.paddingXL};
+  `};
 `
 
 const StyledNewElement = styled.div<{ child?: boolean }>`
