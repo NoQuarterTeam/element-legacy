@@ -345,8 +345,9 @@ const StyledDropdownMenu = styled.div<{ open: boolean; filter: string }>`
 
   ${media.greaterThan("md")`
     position: absolute; 
-    left: -${(p: any) => p.theme.paddingM};
-    width: auto;
+    left: -${(p: any) => p.theme.paddingXL};
+    width: fit-content;
+    height: max-content;
     top: ${(p: any) => p.theme.paddingXL};
   `};
 `
