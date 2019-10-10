@@ -3,6 +3,8 @@ import { CreateElementInput } from "./element.input"
 
 import { Service } from "typedi"
 import { Brackets } from "typeorm"
+import { SharedElement } from "../sharedElement/sharedElement.entity"
+import { element } from "prop-types"
 
 @Service()
 export class ElementService {

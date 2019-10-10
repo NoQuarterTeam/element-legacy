@@ -85,12 +85,18 @@ const TimelineHead: FC<TimelineHeadProps> = ({ openHabitModal }) => {
                         user.id === selectedUserId &&
                         (habits &&
                           allActiveHabits(day, habits).length === 0) && (
-                          <StyledAddHabits onClick={() => openHabitModal(day)}>
+                          <StyledAddHabits
+                            onClick={() => openHabitModal(day)}
+                            today={today(day)}
+                          >
                             Add habit
                           </StyledAddHabits>
                         )}
                       {today(day) && user.id === selectedUserId && !habits && (
-                        <StyledAddHabits onClick={() => openHabitModal(day)}>
+                        <StyledAddHabits
+                          onClick={() => openHabitModal(day)}
+                          today={today(day)}
+                        >
                           Add habit
                         </StyledAddHabits>
                       )}
@@ -123,10 +129,13 @@ const StyledMonthHeader = styled.h3`
   flex-direction: row;
   position: sticky;
   width: max-content;
-  margin-bottom: ${p => p.theme.paddingM};
+  padding: ${p => p.theme.paddingXL} 0;
   left: ${p => p.theme.paddingML};
   margin-left: ${p => p.theme.paddingML};
   z-index: 1;
+  font-size: ${p => p.theme.textL};
+  /* font-weight: ${p => p.theme.fontSemiBold}; */
+  color: black;
 `
 
 const StyledDaysHeader = styled.div`
@@ -135,68 +144,62 @@ const StyledDaysHeader = styled.div`
 `
 
 const StyledDayHeader = styled.h3<{ today: boolean }>`
-  font-weight: ${props => (props.today ? "800" : "400")};
-  font-size: ${props => (props.today ? "15px" : "12px")};
-  width: 88px;
-  height: 190px;
+  font-size: ${p => (p.today ? p.theme.textM : p.theme.textS)};
+  /* font-weight: ${p =>
+    p.today ? p.theme.fontSemiBold : p.theme.fontNormal}; */
+  color: ${p => (p.today ? "black" : p.theme.colorText)};
+  width: 98px;
   margin: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 160px;
-  margin-top: -160px;
+  padding-top: ${p => (p.today ? "134px" : "140px")};
+  margin-top: -140px;
 `
 
 const StyledContainer = styled.div<{ weekend: boolean; today: boolean }>`
   display: flex;
   flex-direction: column;
-  background-color: ${props =>
-    props.weekend
-      ? p => darken(0.02, p.theme.colorBackground)
+  padding-top: 140px;
+  margin-top: -140px;
+  background-color: ${p =>
+    p.weekend
+      ? p => lighten(0.025, p.theme.colorLightBlue)
       : p => p.theme.colorBackground};
-  padding-top: 168px;
-  margin-top: -168px;
-  background-color: ${props =>
-    props.weekend
-      ? p => darken(0.02, p.theme.colorBackground)
-      : p => p.theme.colorBackground};
-  background-color: ${props =>
-    props.today ? lighten(0.35, props.theme.colorPurple) : ""};
+  background-color: ${p => (p.today ? p.theme.colorLightBlue : "")};
 `
 
 const StyledHabits = styled.div<{ today: boolean; count: any }>`
   display: flex;
-  max-width: 88px;
+  /* max-width: 88px; */
   justify-content: ${props => (props.count > 6 ? "center" : "space-evenly")};
   cursor: pointer;
   padding: ${p => p.theme.paddingM};
   padding-left: ${props =>
     props.count > 6 ? 8 + 0.73 * props.count + "px" : "8px"};
-  margin: ${p => p.theme.paddingS};
 
   &:hover {
-    background-color: ${p => lighten(0.34, p.theme.colorPurple)};
-    border-radius: ${p => p.theme.borderRadius};
+    background-color: ${p => lighten(0.02, p.theme.colorLightBlue)};
   }
 `
 
 const Circle = styled.div<{ completed: boolean; count: any; past: boolean }>`
   min-width: 11px;
   min-height: 11px;
-  margin-left: ${props => (props.count > 6 ? -0.3 * props.count + "px" : 0)};
+  margin-left: ${p => (p.count > 6 ? -0.3 * p.count + "px" : 0)};
   border-radius: 50%;
-  background-color: ${props =>
-    props.completed
-      ? "#A3ED9E"
-      : props.past
-      ? darken(0.1, props.theme.colorRed)
-      : darken(0.1, props.theme.colorBackground)};
-  z-index: ${props => (props.completed ? 1 : 0)};
+  background-color: ${p =>
+    p.completed
+      ? "#8CCEA7"
+      : p.past
+      ? p.theme.colorRed
+      : darken(0.1, p.theme.colorBackground)};
+  z-index: ${p => (p.completed ? 1 : 0)};
 `
 
-const StyledAddHabits = styled.p`
+const StyledAddHabits = styled.p<{ today: boolean }>`
   font-size: ${p => p.theme.textXS};
-  background-color: ${props => lighten(0.2, props.theme.colorPlaceholder)};
+  background-color: ${p => lighten(0.2, p.theme.colorPlaceholder)};
   color: ${p => lighten(0.5, p.theme.colorText)};
   border-radius: ${p => p.theme.borderRadiusS};
   text-align: center;
@@ -205,6 +208,7 @@ const StyledAddHabits = styled.p`
   cursor: pointer;
 
   &:hover {
-    background-color: ${props => lighten(0.1, props.theme.colorPlaceholder)};
+    background-color: ${p =>
+      darken(0.01, lighten(0.02, p.theme.colorLightBlue))};
   }
 `

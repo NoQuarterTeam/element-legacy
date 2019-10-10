@@ -1,6 +1,8 @@
 import { css } from "../../application/theme"
 
 const body = css`
+  @import url(//fonts.googleapis.com/earlyaccess/laosanspro.css);
+
   body,
   h1,
   h2,
@@ -15,6 +17,7 @@ const body = css`
     padding: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
   }
 
   ul,
@@ -27,7 +30,7 @@ const body = css`
   }
 
   * {
-    font-family: "Open sans", sans-serif;
+    font-family: "Lao Sans Pro", sans-serif;
     box-sizing: border-box;
     position: relative;
   }

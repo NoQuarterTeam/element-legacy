@@ -136,9 +136,7 @@ const Timeline: FC<RouteComponentProps> = () => {
 
 export default Timeline
 
-const StyledTimelineWrapper = styled.div`
-  padding-top: 100px;
-`
+const StyledTimelineWrapper = styled.div``
 
 const StyledTimeline = styled.div`
   display: flex;

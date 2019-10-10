@@ -7,7 +7,7 @@ import {
   useDeleteTask,
   useUpdateTask,
 } from "../lib/graphql/task/hooks"
-import { darken } from "polished"
+import { darken, complement, readableColor, lighten } from "polished"
 import { useTimelineContext } from "./providers/TimelineProvider"
 
 interface TaskProps {
@@ -85,7 +85,7 @@ function Task({ task, hidden, handleTaskModal, ...rest }: TaskProps) {
       </StyledTaskElement>
       {task.startTime && (
         <StyledTaskStart completed={task.completed}>
-          @ {task.startTime}
+          @{task.startTime}
         </StyledTaskStart>
       )}
       <StyledTaskDuration completed={task.completed}>
@@ -99,43 +99,51 @@ function Task({ task, hidden, handleTaskModal, ...rest }: TaskProps) {
 export default memo(Task)
 
 const StyledTaskElement = styled.p<{ completed: boolean; color: string }>`
-  color: "white";
   position: absolute;
   font-size: ${p => p.theme.textXS};
-  top: ${p => p.theme.paddingS};
-  right: ${p => p.theme.paddingS};
+  top: 0;
+  right: 0;
   margin: 0;
-  padding: ${p => p.theme.paddingXS};
-  background-color: ${props => props.color};
-  opacity: ${props => (props.completed ? 0.5 : 1)};
+  padding: 0;
+  background-color: ${p => p.color};
+  opacity: ${p => (p.completed ? 0.5 : 1)};
   height: 20px;
-  width: 5px;
-  border-radius: 5px;
+  width: 4px;
   white-space: nowrap;
   overflow: hidden;
-  color: ${props => props.color};
+  color: ${p => p.color};
   transition: width 0.1s ease-out;
+  text-align: center;
 `
 
 const StyledTaskStart = styled.p<{ completed: boolean }>`
-  color: ${props => (props.completed ? "lightgrey" : "grey")};
+  color: ${p => (p.completed ? "lightgrey" : p.theme.colorText)};
   position: absolute;
   font-size: ${p => p.theme.textXS};
   bottom: ${p => p.theme.paddingML};
-  right: ${p => p.theme.paddingML};
+  right: ${p => p.theme.paddingXS};
   margin: 0;
-  text-decoration: ${props => (props.completed ? "line-through" : "none")};
+  text-decoration: ${p => (p.completed ? "line-through" : "none")};
 `
 
 const StyledTaskDuration = styled.p<{ completed: boolean }>`
   position: absolute;
   bottom: ${p => p.theme.paddingXS};
-  right: ${p => p.theme.paddingML};
-  color: ${props => (props.completed ? "lightgrey" : "grey")};
+  right: ${p => p.theme.paddingXS};
+  color: ${p => (p.completed ? "lightgrey" : p.theme.colorText)};
   font-size: ${p => p.theme.textXS};
-  font-weight: ${p => p.theme.fontBlack};
   margin: 0;
-  text-decoration: ${props => (props.completed ? "line-through" : "none")};
+  text-decoration: ${p => (p.completed ? "line-through" : "none")};
+`
+
+const StyledTaskName = styled.p<{ completed: boolean }>`
+  color: ${p => (p.completed ? "lightgrey" : p.theme.colorText)};
+  font-size: ${p => p.theme.textXS};
+  text-decoration: ${p => (p.completed ? "line-through" : "none")};
+  overflow: hidden;
+  max-height: 24px;
+  line-height: 12px;
+  width: 92%;
 `
 
 const StyledTaskBox = styled.div<{
@@ -143,38 +151,29 @@ const StyledTaskBox = styled.div<{
   color: string
   hidden: boolean
 }>`
-  display: ${props => (props.hidden ? "none" : "flex")};
+  display: ${p => (p.hidden ? "none" : "flex")};
   position: relative;
   cursor: pointer;
   flex-direction: column;
   max-width: calc(100% - ${p => p.theme.paddingS});
-  min-height: 60px;
-  background-color: ${props => (props.completed ? "white" : "white")};
-  margin: ${p => p.theme.paddingXS};
-  border-radius: ${p => p.theme.borderRadius};
-  /* border: ${props =>
-    props.completed ? "1px solid" + props.color : "none"}; */
-  padding: ${p => p.theme.paddingS};;
-  box-shadow: ${props =>
-    props.completed ? props.theme.boxShadow : props.theme.boxShadowBold};
+  min-height: 64px;
+  background-color: white;
+  margin: ${p => p.theme.paddingS} ${p => p.theme.paddingS};
+  padding: ${p => p.theme.paddingXS};
+  box-shadow: ${p => (p.completed ? p.theme.boxShadow : p.theme.boxShadowBold)};
+  filter: ${p => (p.completed ? "blur(0.5px)" : null)};
+  opacity: ${p => (p.completed ? 0.8 : 1)};
 
   &:hover ${StyledTaskElement} {
-    border-radius: ${p => p.theme.borderRadiusS};
     height: 20px;
-    width: 50px;
-    color: ${p => darken(0.3, p.color)};
+    width: 100%;
+    text-overflow: ellipsis;
+    padding: ${p => p.theme.paddingXS};
 
+    color: ${p =>
+      readableColor(p.color, darken(0.3, p.color), lighten(0.35, p.color))};
   }
-  &:hover ${StyledTaskStart} {display: none;}
-  &:hover ${StyledTaskDuration} {display: none;}
-`
-
-const StyledTaskName = styled.p<{ completed: boolean }>`
-  color: ${props => (props.completed ? "lightgrey" : "grey")};
-  font-size: ${p => p.theme.textXS};
-  font-weight: ${p => p.theme.fontBlack};
-  line-height: 12px;
-  text-decoration: ${props => (props.completed ? "line-through" : "none")};
-  overflow: hidden;
-  max-height: 24px;
+  &:hover ${StyledTaskName} {
+    display: none;
+  }
 `

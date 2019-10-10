@@ -19,6 +19,7 @@ interface ElementDropdownProps {
   handleSelectElement: (element: ElementFragment) => void
   filteredElements?: string[]
   toggleAll?: () => void
+  open?: boolean
 }
 const ElementDropdown: FC<ElementDropdownProps> = ({
   handleSelectElement,
@@ -27,11 +28,12 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
   placeholder,
   filteredElements,
   toggleAll,
+  open,
 }) => {
   const { selectedUserId } = useTimelineContext()
   const createElement = useCreateElement(selectedUserId)
   const updateElement = useUpdateElement()
-  const [dropdownOpen, openDropdown] = useState(false)
+  const [dropdownOpen, openDropdown] = useState(false || open)
   const [pickerOpen, openColorPicker] = useState(false)
   const [newElement, setNewElement] = useState("")
   const [newChildElement, setNewChildElement] = useState("")
@@ -49,6 +51,10 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
       selectSelectedElement(el)
     }
   }, [elements, selectedElementId])
+
+  useEffect(() => {
+    openDropdown(open)
+  }, [open])
 
   const createNewElement = async () => {
     if (newElement !== "") {
@@ -155,13 +161,15 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
 
   return (
     <StyledDropdownContainer ref={dropdownRef}>
-      <StyledDropdownPlaceholder
-        open={dropdownOpen}
-        onClick={() => openDropdown(!dropdownOpen)}
-        color={selectedElement && selectedElement.color}
-      >
-        {selectedElement ? selectedElement.name : placeholder}
-      </StyledDropdownPlaceholder>
+      {!filteredElements && (
+        <StyledDropdownPlaceholder
+          open={dropdownOpen}
+          onClick={() => openDropdown(!dropdownOpen)}
+          color={selectedElement && selectedElement.color}
+        >
+          {selectedElement ? selectedElement.name : placeholder}
+        </StyledDropdownPlaceholder>
+      )}
 
       {pickerOpen && (
         <StyledPickerContainer>
@@ -344,11 +352,10 @@ const StyledDropdownMenu = styled.div<{ open: boolean; filter: string }>`
   bottom: ${p => (p.filter === "true" ? "auto" : "0")};
 
   ${media.greaterThan("md")`
-    position: absolute; 
-    left: -${(p: any) => p.theme.paddingXL};
-    bottom: auto;
+    position: fixed; 
+    bottom: 0;
     width: fit-content;
-    top: ${(p: any) => p.theme.paddingXL};
+    top: 0
   `};
 `
 

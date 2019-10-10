@@ -20,17 +20,19 @@ const theme: (small: boolean, isDark: boolean) => ThemeInterface = (
   colorShadow: isDark ? "rgba(0, 0, 0, 0.1)" : "rgba(200, 200, 200, 0.1)",
   colorOverlay: isDark ? "rgba(200, 200, 200, 0.1)" : "rgba(0, 0, 0, 0.1);",
   colorLabel: isDark ? "#81878a" : "#b1bbc4",
-  colorText: isDark ? "#ebecec" : "#37352f",
+  colorText: isDark ? "#ebecec" : "#484848",
   colorWarning: isDark ? "#ebecec" : "rgba(221, 0, 129)",
-  colorRed: "rgba(221, 0, 129, 0.2)",
+  colorRed: "#FF9292",
   colorPrimary: "#F4CA87",
   colorPurple: "#A836FF",
   colorYellow: "#FFD336",
   colorPink: "#ed60d3",
   colorBlue: "#4586ff",
-  fontBlack: 900,
-  fontBold: 400,
-  fontNormal: 200,
+  colorLightBlue: "#E8F7FF",
+  fontBold: 900,
+  fontSemiBold: 900,
+  fontNormal: 400,
+  fontThin: 200,
   paddingL: "20px",
   paddingML: "15px",
   paddingM: "10px",
@@ -43,11 +45,11 @@ const theme: (small: boolean, isDark: boolean) => ThemeInterface = (
   borderRadiusS: "4px",
   boxShadow: "1px 1px 4px 1px rgba(200, 200, 200, 0.1)",
   boxShadowBold: "1px 1px 4px 1px rgba(200, 200, 200, 0.3)",
+  textXL: small ? "2.25rem" : "2.75rem",
   textL: small ? "1.5rem" : "1.75rem",
   textM: small ? "1rem" : "1.125rem",
-  textS: small ? "0.75rem" : "0.875rem",
-  textXL: small ? "2rem" : "2.25rem",
-  textXS: "0.66rem",
+  textS: small ? "0.75rem" : "0.8125rem",
+  textXS: "0.6875rem",
   flexCenter: `
     display: flex;
     align-items: center;
@@ -77,8 +79,10 @@ export interface ThemeInterface {
   colorRed: string
   colorPink: string
   colorBlue: string
-  fontBlack: number
+  colorLightBlue: string
+  fontThin: number
   fontBold: number
+  fontSemiBold: number
   fontNormal: number
   paddingL: string
   paddingM: string

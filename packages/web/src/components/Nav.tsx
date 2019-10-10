@@ -1,14 +1,16 @@
-import React, { FC } from "react"
+import React, { FC, useState } from "react"
 import styled, { darken } from "../application/theme"
 import ElementDropdown from "./ElementDropdown"
 import { ElementFragment } from "../lib/graphql/types"
 import { useAllElements } from "../lib/graphql/element/hooks"
 import logo from "../public/logo.png"
+import textLogo from "../public/textLogo.png"
+
 import { useLogout } from "../lib/graphql/user/hooks"
-import { Select } from "@noquarter/ui"
 import { useGetSharedUsersByUser } from "../lib/graphql/sharedElement/hooks"
 import { useTimelineContext } from "./providers/TimelineProvider"
 import useAppContext from "../lib/hooks/useAppContext"
+import { linearGradient } from "polished"
 
 interface NavProps {
   filteredElements: string[]
@@ -26,6 +28,7 @@ const Nav: FC<NavProps> = ({
   const { handleSelectUser, selectedUserId } = useTimelineContext()
   const elements = useAllElements(selectedUserId)
   const sharedUsers = useGetSharedUsersByUser(user.id)
+  const [elementsOpen, setElementsOpen] = useState(false)
   const logout = useLogout()
 
   // TODO: MOVE OUT TO LIB
@@ -83,65 +86,103 @@ const Nav: FC<NavProps> = ({
     }
   }
 
-  const selectUserOptions =
-    sharedUsers &&
-    sharedUsers.map(user => ({
-      label: user.firstName,
-      value: user.id,
-    }))
+  const colors = ["#FF9292", "#245A7A", "#F7B002"]
 
   return (
     <StyledNav>
-      <StyledLogo src={logo} onClick={scrollToToday} />
-      <StyledRow>
-        <Select
-          value={selectedUserId}
-          onChange={e => handleSelectUser(e.target.value)}
-          options={
-            selectUserOptions
-              ? [
-                  {
-                    label: user.firstName,
-                    value: user.id,
-                  },
-                  ...selectUserOptions,
-                ]
-              : []
-          }
-          style={{ padding: "0px", paddingLeft: "10px", margin: "0" }}
-        />
+      <StyledBlur />
+      <StyledContainer>
+        <StyledLogo src={logo} onClick={scrollToToday} />
+        <StyledUser
+          key={user.id}
+          onClick={() => handleSelectUser(user.id)}
+          color={colors[0]}
+        >
+          {user.firstName.charAt(0)}
+          {user.lastName.charAt(0)}
+        </StyledUser>
+        {sharedUsers &&
+          sharedUsers.map((sharedUser, index) => (
+            <StyledUser
+              key={sharedUser.id}
+              onClick={() => handleSelectUser(sharedUser.id)}
+              color={colors[index + 1]}
+            >
+              {sharedUser.firstName.charAt(0)}
+              {sharedUser.lastName.charAt(0)}
+            </StyledUser>
+          ))}
+      </StyledContainer>
+      <StyledContainer>
+        <StyledElementsOpen onClick={() => setElementsOpen(!elementsOpen)}>
+          <span role="img" aria-label="elements">
+            📚
+          </span>
+          <br />
+          ELEMENTS
+        </StyledElementsOpen>
         <ElementDropdown
+          open={elementsOpen}
           handleSelectElement={element => toggleFilteredElement(element)}
           elements={elements}
           placeholder="Filter elements"
           filteredElements={filteredElements && filteredElements}
           toggleAll={toggleAll}
         />
+        {/* 
         <StyledFeedbackButton
           href="https://www.notion.so/noquarter/Tell-me-how-you-really-feel-3210d7178b704f1dbf977ff82cbb543d"
           target="_blank"
         >
           Feedback
         </StyledFeedbackButton>
-        <StyledLogoutButton onClick={logout}>Logout</StyledLogoutButton>
-      </StyledRow>
+        <StyledLogoutButton onClick={logout}>Logout</StyledLogoutButton> */}
+        <StyledTextLogo src={textLogo} onClick={scrollToToday} />
+      </StyledContainer>
     </StyledNav>
   )
 }
 
 const StyledNav = styled.div`
-  /* width: 100%; */
-  z-index: 98;
   position: fixed;
-  background-color: ${p => p.theme.colorBackground};
-  box-shadow: 1px 1px 7px rgba(0, 0, 0, 0.0655288);
+  height: 100vh;
+  right: 0;
+  top: 0;
+  z-index: 98;
   display: flex;
+  flex-direction: column;
   padding: ${p => p.theme.paddingM};
   align-items: center;
   justify-content: space-between;
+`
+
+const StyledBlur = styled.div`
+  position: absolute;
+  height: 100vh;
+  width: 100%;
+  right: 0;
+  top: 0;
+  background-color: ${p =>
+    linearGradient({
+      colorStops: [`transparent 0%`, `${p.theme.colorBackground} 15%`],
+      toDirection: "to right",
+      fallback: "#FFF",
+    })};
+  filter: blur(2px);
+`
+
+const StyledUser = styled.div<{ color: string }>`
+  display: flex;
+  height: 55px;
+  width: 55px;
+  border-radius: 50%;
+  background-color: red;
+  justify-content: center;
+  align-items: center;
+  background-color: ${p => p.color};
+  color: white;
   cursor: pointer;
-  margin: 0 2rem;
-  border-radius: ${p => p.theme.borderRadius};
+  margin: ${p => p.theme.paddingS} 0;
 `
 
 const StyledLogoutButton = styled.a`
@@ -168,12 +209,31 @@ const StyledFeedbackButton = styled.a`
   margin-left: 10px;
 `
 
-const StyledRow = styled.div`
+const StyledContainer = styled.div`
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `
 
 const StyledLogo = styled.img`
-  height: 30px;
+  width: 88px;
+  margin: 0 ${p => p.theme.paddingM} ${p => p.theme.paddingL};
+  cursor: pointer;
+`
+const StyledTextLogo = styled.img`
+  width: 60px;
+  margin: ${p => p.theme.paddingXL} 0 ${p => p.theme.paddingM};
+  cursor: pointer;
+`
+
+const StyledElementsOpen = styled.div`
+  text-align: center;
+  cursor: pointer;
+  font-size: ${p => p.theme.textS};
+  span {
+    font-size: ${p => p.theme.textL};
+  }
 `
 
 export default Nav

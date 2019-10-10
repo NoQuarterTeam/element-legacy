@@ -7,7 +7,7 @@ import Task from "./Task"
 
 import { calculateTotalTime, today } from "../lib/helpers"
 import { TaskFragment } from "../lib/graphql/types"
-import { darken, lighten } from "polished"
+import { lighten, darken } from "polished"
 
 // import { Droppable, Draggable } from 'react-beautiful-dnd';
 
@@ -98,29 +98,26 @@ const StyledDay = styled.div<{
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 88px;
+  width: 98px;
   height: 880px;
   font-size: ${p => p.theme.textS};
-  background-color: ${props =>
-    props.weekend
-      ? p => darken(0.02, p.theme.colorBackground)
+  background-color: ${p =>
+    p.weekend
+      ? p => lighten(0.025, p.theme.colorLightBlue)
       : p => p.theme.colorBackground};
-  background-color: ${props =>
-    props.today ? lighten(0.35, props.theme.colorPurple) : ""};
+  background-color: ${p => (p.today ? p.theme.colorLightBlue : "")};
 `
 
 const PlaceholderTask = styled.div`
   min-width: calc(100% - ${p => p.theme.paddingS});
-  height: 56px;
-  border-radius: ${p => p.theme.borderRadius};
+  height: 64px;
 `
 
 const StyledTotalTime = styled.div<{ dragging: boolean }>`
   color: ${p => p.theme.colorLabel};
-  font-weight: 600;
   display: flex;
   justify-content: center;
-  margin-top: ${props => (props.dragging ? "65px" : 0)};
+  margin-top: ${p => (p.dragging ? "74px" : 0)};
 `
 
 const AddNewTask = styled.div`
@@ -130,6 +127,6 @@ const AddNewTask = styled.div`
   margin: ${p => p.theme.paddingS};
 
   &:hover ${PlaceholderTask} {
-    background-color: ${p => lighten(0.34, p.theme.colorPurple)};
+    background-color: ${p => darken(0.02, p.theme.colorLightBlue)};
   }
 `

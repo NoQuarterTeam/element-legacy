@@ -83,12 +83,16 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
 
         {element.children &&
         element.children.filter(e => !e.archived).length > 0 ? (
-          <StyledArrow
-            open={open}
-            color={element.color}
-            hiddenElement={hiddenElement}
+          <div
+            style={{ padding: "0 10px", marginBottom: "5px" }}
             onClick={handleShowChildren}
-          />
+          >
+            <StyledArrow
+              open={open}
+              color={element.color}
+              hiddenElement={hiddenElement}
+            />
+          </div>
         ) : user.id === element.creatorId ? (
           <StyledDelete
             color={element.color}
