@@ -217,7 +217,6 @@ const StyledOptionContainer = styled.div<{
   padding: ${p => p.theme.paddingS} ${p => p.theme.paddingL}
     ${p => p.theme.paddingS} ${p => p.theme.paddingM};
   margin: ${p => p.theme.paddingS};
-  border-radius: ${p => p.theme.borderRadius};
   cursor: pointer;
   margin-left: ${p => (p.child ? p.theme.paddingL : p.theme.paddingS)};
 

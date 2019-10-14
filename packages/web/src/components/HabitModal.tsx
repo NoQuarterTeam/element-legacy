@@ -93,12 +93,12 @@ const HabitModal: FC<HabitModalProps> = ({ closeModal, day }) => {
 export default HabitModal
 
 const StyledHeader = styled.h2`
-  color: ${p => p.theme.colorLabel};
+  color: black;
 `
 
 const StyledInfo = styled.p`
   margin: ${p => p.theme.paddingS} 0 ${p => p.theme.paddingL};
-  color: ${p => p.theme.colorLabel};
+  color: black;
 `
 
 const StyledDelete = styled.p<{ color: string }>`
@@ -120,7 +120,6 @@ const StyledOptionContainer = styled.div<{ color: string; completed: boolean }>`
   position: relative;
   ${p => p.theme.flexCenter};
   padding: ${p => p.theme.paddingM} ${p => p.theme.paddingL};
-  border-radius: ${p => p.theme.borderRadius};
   cursor: pointer;
   margin: ${p => p.theme.paddingS} 0;
   color: ${p => darken(0.2, p.color)};

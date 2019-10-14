@@ -215,18 +215,18 @@ export const calculateHabitProgress = (
 
 // DAYJS set month is broken!!
 export const monthNames = [
-  "January.",
-  "February.",
-  "March.",
-  "April.",
-  "May.",
-  "June.",
-  "July.",
-  "August.",
-  "September.",
-  "October.",
-  "November.",
-  "December.",
+  "JAN.",
+  "FEB.",
+  "MAR.",
+  "APR.",
+  "MAY.",
+  "JUN.",
+  "JUL.",
+  "AUG.",
+  "SEPT.",
+  "OCT.",
+  "NOV.",
+  "DEC.",
 ]
 
 // const isToday? = (day) => {

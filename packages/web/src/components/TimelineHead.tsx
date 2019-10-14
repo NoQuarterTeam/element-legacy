@@ -133,8 +133,8 @@ const StyledMonthHeader = styled.h3`
   left: ${p => p.theme.paddingML};
   margin-left: ${p => p.theme.paddingML};
   z-index: 1;
-  font-size: ${p => p.theme.textL};
-  /* font-weight: ${p => p.theme.fontSemiBold}; */
+  font-size: ${p => p.theme.textXL};
+  /* font-weight: ${p => p.theme.fontSemiBold};  */
   color: black;
 `
 
@@ -163,10 +163,7 @@ const StyledContainer = styled.div<{ weekend: boolean; today: boolean }>`
   padding-top: 140px;
   margin-top: -140px;
   background-color: ${p =>
-    p.weekend
-      ? p => lighten(0.025, p.theme.colorLightBlue)
-      : p => p.theme.colorBackground};
-  background-color: ${p => (p.today ? p.theme.colorLightBlue : "")};
+    p.today ? p.theme.colorLightBlue : p.theme.colorBackground};
 `
 
 const StyledHabits = styled.div<{ today: boolean; count: any }>`
@@ -189,11 +186,7 @@ const Circle = styled.div<{ completed: boolean; count: any; past: boolean }>`
   margin-left: ${p => (p.count > 6 ? -0.3 * p.count + "px" : 0)};
   border-radius: 50%;
   background-color: ${p =>
-    p.completed
-      ? "#8CCEA7"
-      : p.past
-      ? p.theme.colorRed
-      : darken(0.1, p.theme.colorBackground)};
+    p.completed ? "#8CCEA7" : p.past ? p.theme.colorRed : "#EAEBEF"};
   z-index: ${p => (p.completed ? 1 : 0)};
 `
 

@@ -114,6 +114,16 @@ const Nav: FC<NavProps> = ({
           ))}
       </StyledContainer>
       <StyledContainer>
+        <StyledFeedbackButton
+          href="https://www.notion.so/noquarter/Tell-me-how-you-really-feel-3210d7178b704f1dbf977ff82cbb543d"
+          target="_blank"
+        >
+          <span role="img" aria-label="feedback">
+            💌
+          </span>
+          <br />
+          FEEDBACK
+        </StyledFeedbackButton>
         <StyledElementsOpen onClick={() => setElementsOpen(!elementsOpen)}>
           <span role="img" aria-label="elements">
             📚
@@ -151,7 +161,6 @@ const StyledNav = styled.div`
   z-index: 98;
   display: flex;
   flex-direction: column;
-  padding: ${p => p.theme.paddingM};
   align-items: center;
   justify-content: space-between;
 `
@@ -162,13 +171,8 @@ const StyledBlur = styled.div`
   width: 100%;
   right: 0;
   top: 0;
-  background-color: ${p =>
-    linearGradient({
-      colorStops: [`transparent 0%`, `${p.theme.colorBackground} 15%`],
-      toDirection: "to right",
-      fallback: "#FFF",
-    })};
-  filter: blur(2px);
+  background-color: rgba(254, 254, 254, 0.4);
+  backdrop-filter: blur(10px);
 `
 
 const StyledUser = styled.div<{ color: string }>`
@@ -182,7 +186,7 @@ const StyledUser = styled.div<{ color: string }>`
   background-color: ${p => p.color};
   color: white;
   cursor: pointer;
-  margin: ${p => p.theme.paddingS} 0;
+  margin: ${p => p.theme.paddingM} 0;
 `
 
 const StyledLogoutButton = styled.a`
@@ -198,15 +202,16 @@ const StyledLogoutButton = styled.a`
 `
 
 const StyledFeedbackButton = styled.a`
-  color: ${p => darken(0.3, p.theme.colorPurple)};
-  background-color: ${p => p.theme.colorPurple};
+  text-align: center;
   cursor: pointer;
-  padding: ${p => p.theme.paddingS} ${p => p.theme.paddingM};
-  border-radius: ${p => p.theme.borderRadius};
-  ${p => p.theme.flexCenter};
-  font-weight: ${p => p.theme.fontBold};
-  white-space: nowrap;
-  margin-left: 10px;
+  font-size: ${p => p.theme.textS};
+  text-decoration: none;
+  margin-bottom: ${p => p.theme.paddingL};
+  color: black;
+
+  span {
+    font-size: ${p => p.theme.textL};
+  }
 `
 
 const StyledContainer = styled.div`
@@ -217,13 +222,13 @@ const StyledContainer = styled.div`
 `
 
 const StyledLogo = styled.img`
-  width: 88px;
-  margin: 0 ${p => p.theme.paddingM} ${p => p.theme.paddingL};
+  width: 112px;
+  margin: ${p => p.theme.paddingL} 0 ${p => p.theme.paddingXL};
   cursor: pointer;
 `
 const StyledTextLogo = styled.img`
   width: 60px;
-  margin: ${p => p.theme.paddingXL} 0 ${p => p.theme.paddingM};
+  margin: ${p => p.theme.paddingXL} 0 ${p => p.theme.paddingL};
   cursor: pointer;
 `
 

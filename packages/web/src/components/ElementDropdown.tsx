@@ -9,7 +9,7 @@ import { ElementFragment } from "../lib/graphql/types"
 import useOnClickOutside from "../lib/hooks/useOnOutsideClick"
 import ElementDropdownOption from "./ElementDropdownOption"
 import Input from "./Input"
-import { lighten } from "@noquarter/ui"
+
 import { useTimelineContext } from "./providers/TimelineProvider"
 
 interface ElementDropdownProps {
@@ -182,6 +182,11 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
           </div>
         </StyledPickerContainer>
       )}
+      <StyledDropdownOpenBlur
+        open={dropdownOpen}
+        filter={filteredElements ? "true" : "false"}
+        onClick={() => openDropdown(!dropdownOpen)}
+      />
       <StyledDropdownMenu
         open={dropdownOpen}
         filter={filteredElements ? "true" : "false"}
@@ -312,35 +317,44 @@ const StyledDropdownPlaceholder = styled.div<{
   open: boolean
   color?: string
 }>`
-  color: ${p => lighten(0.1, p.theme.colorText)};
-  background-color: ${props =>
-    props.color ? lighten(0.2, props.color) : p => p.theme.colorPlaceholder};
+  color: black;
+  background-color: white;
+  border: ${p => p.theme.border};
   cursor: pointer;
   padding: ${p => p.theme.paddingS} ${p => p.theme.paddingM};
   // border-radius: ${p => p.theme.borderRadius};
-  ${p => p.theme.flexCenter};
-  font-weight: ${p => p.theme.fontBold};
+  ${p => p.theme.flexStart};
   white-space: nowrap;
+  min-width: 150px;
 
-  &:after {
-    border: solid ${p => lighten(0.1, p.theme.colorText)};
-    border-width: 0 3px 3px 0;
-    display: inline-block;
-    padding: ${p => p.theme.paddingXS};
-    content: "";
-    transform: ${props => (props.open ? "rotate(225deg)" : "rotate(45deg)")};
-    width: 0;
-    height: 0;
-    margin-left: ${p => p.theme.paddingM};
-    margin-top: ${props => (props.open ? p => p.theme.paddingS : "-3px")};
-  }
+  // &:after {
+  //   border: solid black;
+  //   border-width: 0 3px 3px 0;
+  //   display: inline-block;
+  //   padding: ${p => p.theme.paddingXS};
+  //   content: "";
+  //   transform: ${props => (props.open ? "rotate(225deg)" : "rotate(45deg)")};
+  //   width: 0;
+  //   height: 0;
+  //   margin-left: ${p => p.theme.paddingM};
+  //   margin-top: ${props => (props.open ? p => p.theme.paddingS : "-3px")};
+  // }
+`
+
+const StyledDropdownOpenBlur = styled.div<{ open: boolean; filter: string }>`
+  visibility: ${props => (props.open && !props.filter ? "visible" : "hidden")};
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(5px);
+  position: fixed;
 `
 
 const StyledDropdownMenu = styled.div<{ open: boolean; filter: string }>`
   visibility: ${props => (props.open ? "visible" : "hidden")};
   position: fixed;
   padding-top: ${p => p.theme.paddingM};
-  box-shadow: ${props => props.theme.boxShadowBold};
   /* border-radius: ${p => p.theme.borderRadiusL}; */
   background-color: white;
   min-width: 350px;
@@ -350,6 +364,9 @@ const StyledDropdownMenu = styled.div<{ open: boolean; filter: string }>`
   left: 0;
   top: ${p => (p.filter === "true" ? "50px" : "auto")};
   bottom: ${p => (p.filter === "true" ? "auto" : "0")};
+  color: black;
+  background-color: white;
+  border: ${p => p.theme.border};
 
   ${media.greaterThan("md")`
     position: fixed; 

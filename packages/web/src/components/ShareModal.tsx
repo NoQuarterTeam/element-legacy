@@ -5,7 +5,7 @@ import Modal from "./Modal"
 import { ReactMultiEmail, isEmail } from "react-multi-email"
 import "react-multi-email/style.css"
 import { useTimelineContext } from "./providers/TimelineProvider"
-import { Button } from "@noquarter/ui"
+import Button from "./Button"
 import styled from "../application/theme"
 
 import {
@@ -156,7 +156,6 @@ const StyledOptionContainer = styled.div`
   position: relative;
   ${p => p.theme.flexCenter};
   padding: ${p => p.theme.paddingM} ${p => p.theme.paddingL};
-  border-radius: ${p => p.theme.borderRadius};
   cursor: pointer;
   margin: ${p => p.theme.paddingS} 0;
   color: ${p => darken(0.2, p.theme.colorLabel)};

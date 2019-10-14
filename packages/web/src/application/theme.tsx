@@ -28,7 +28,7 @@ const theme: (small: boolean, isDark: boolean) => ThemeInterface = (
   colorYellow: "#FFD336",
   colorPink: "#ed60d3",
   colorBlue: "#4586ff",
-  colorLightBlue: "#E8F7FF",
+  colorLightBlue: "rgba(210,236,252,0.4)",
   fontBold: 900,
   fontSemiBold: 900,
   fontNormal: 400,
@@ -43,13 +43,14 @@ const theme: (small: boolean, isDark: boolean) => ThemeInterface = (
   borderRadius: "8px",
   borderRadiusL: "16px",
   borderRadiusS: "4px",
-  boxShadow: "1px 1px 4px 1px rgba(200, 200, 200, 0.1)",
+  border: "2px solid black",
+  boxShadow: "1px 1px 4px 1px rgba(200, 200, 200, 0.2)",
   boxShadowBold: "1px 1px 4px 1px rgba(200, 200, 200, 0.3)",
   textXL: small ? "2.25rem" : "2.75rem",
   textL: small ? "1.5rem" : "1.75rem",
   textM: small ? "1rem" : "1.125rem",
   textS: small ? "0.75rem" : "0.8125rem",
-  textXS: "0.6875rem",
+  textXS: "0.72rem",
   flexCenter: `
     display: flex;
     align-items: center;
@@ -70,6 +71,7 @@ const theme: (small: boolean, isDark: boolean) => ThemeInterface = (
 export interface ThemeInterface {
   colorPage: string
   borderRadius: string
+  border: string
   colorBackground: string
   colorText: string
   colorLabel: string

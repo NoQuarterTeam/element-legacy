@@ -9,6 +9,9 @@ import { useAllElements } from "../lib/graphql/element/hooks"
 import { useGetSharedUsersByUser } from "../lib/graphql/sharedElement/hooks"
 
 import { Select } from "@noquarter/ui"
+import { Duplicate } from "styled-icons/boxicons-regular/Duplicate"
+import { DeleteOutline } from "styled-icons/material/DeleteOutline"
+
 import Input from "./Input"
 import Button from "./Button"
 import ElementDropdown from "./ElementDropdown"
@@ -118,7 +121,7 @@ function TaskForm({
             placeholder="Select..."
           />
         </StyledRow>
-        <StyledRow>
+        <StyledRow style={{ width: "fit-content" }}>
           <StyledLabel>Who?</StyledLabel>
           <Select
             value={formState.userId}
@@ -135,10 +138,16 @@ function TaskForm({
                 : []
             }
             style={{
-              padding: "0px",
-              paddingLeft: "10px",
+              padding: "4px 0px 4px 10px",
               margin: "0",
+              marginLeft: "-5px",
               width: "auto",
+              minWidth: "150px",
+              color: "black",
+              borderRadius: "0",
+              backgroundColor: "white",
+              border: "2px solid black",
+              fontSize: "16px",
             }}
           />
         </StyledRow>
@@ -179,6 +188,9 @@ function TaskForm({
             type="textarea"
             value={formState.description ? formState.description : ""}
             onChange={e => setFormState({ description: e.target.value })}
+            style={{
+              fontSize: "1rem",
+            }}
           />
         </StyledRow>
         <StyledRow
@@ -188,27 +200,23 @@ function TaskForm({
             justifyContent: "space-between",
           }}
         >
-          <Button
-            type="button"
-            loading={loading}
-            variant="secondary"
-            onClick={onDeleteTask}
-          >
-            Delete
-          </Button>
-          <StyledSpan>⇧ + click</StyledSpan>
-          <Button
-            type="button"
-            loading={loading}
-            variant="secondary"
-            onClick={onDuplicateTask}
-          >
-            Duplicate
-          </Button>
-          <StyledSpan>⌘ + click</StyledSpan>
           <Button type="submit" loading={loading} variant="primary">
             Submit
           </Button>
+          <div>
+            <Duplicate
+              onClick={onDuplicateTask}
+              color="black"
+              width="30px"
+              cursor="pointer"
+            />
+            <DeleteOutline
+              onClick={onDeleteTask}
+              color="black"
+              width="30px"
+              cursor="pointer"
+            />
+          </div>
         </StyledRow>
       </StyledGrid>
       {error && <StyledError>{error}</StyledError>}
@@ -237,11 +245,6 @@ const StyledLabel = styled.p`
   flex-direction: column;
 `
 
-const StyledSpan = styled.span`
-  color: ${p => p.theme.colorLabel};
-  font-size: ${p => p.theme.textXS};
-`
-
 const StyledCheckboxWrapper = styled.div``
 
 const StyledError = styled.p`
@@ -262,6 +265,6 @@ const StyledRow = styled.div`
 
 const StyledFinish = styled.div`
   position: absolute;
-  top: ${p => p.theme.paddingM};
-  right: ${p => p.theme.paddingM};
+  top: 0;
+  right: 0;
 `

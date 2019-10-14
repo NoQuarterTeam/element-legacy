@@ -16,6 +16,7 @@ import styled from "../application/theme"
 import Nav from "../components/Nav"
 import { useTimelineContext } from "../components/providers/TimelineProvider"
 import ShareModal from "../components/ShareModal"
+import intersect from "../public/Intersect.png"
 
 const Timeline: FC<RouteComponentProps> = () => {
   // TODO: SET TASK IN TimelineProvider
@@ -94,6 +95,7 @@ const Timeline: FC<RouteComponentProps> = () => {
       <StyledTimelineWrapper ref={timelineRef}>
         <TimelineHead openHabitModal={handleHabitModal} />
         <StyledTimeline>
+          <StyledSun src={intersect} />
           {allTasks && (
             <DragDropContainer allTasks={allTasks}>
               <StyledDaysWrapper>
@@ -166,4 +168,13 @@ const StyledForward = styled.p`
   font-size: 50px;
   z-index: 100;
   cursor: pointer;
+`
+
+const StyledSun = styled.img`
+  position: fixed;
+  right: 0px;
+  bottom: -20px;
+  height: 200px;
+  filter: blur(25px);
+  opacity: 0.95;
 `

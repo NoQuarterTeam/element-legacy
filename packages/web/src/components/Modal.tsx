@@ -67,6 +67,9 @@ const StyledTile = styled(Tile)`
   margin: 0;
   height: 100vh;
   width: 100vw;
+  color: black;
+  background-color: white;
+  border: ${p => p.theme.border};
   /* position: fixed; */
   /* overflow: hidden; */
   border-radius: 0;

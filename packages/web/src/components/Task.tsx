@@ -106,14 +106,15 @@ const StyledTaskElement = styled.p<{ completed: boolean; color: string }>`
   margin: 0;
   padding: 0;
   background-color: ${p => p.color};
-  opacity: ${p => (p.completed ? 0.5 : 1)};
+  opacity: ${p => (p.completed ? 0.2 : 1)};
   height: 20px;
-  width: 4px;
+  width: 8px;
   white-space: nowrap;
   overflow: hidden;
   color: ${p => p.color};
   transition: width 0.1s ease-out;
   text-align: center;
+  border-radius: ${p => `0 ${p.theme.borderRadius} 0 ${p.theme.borderRadius}`};
 `
 
 const StyledTaskStart = styled.p<{ completed: boolean }>`
@@ -123,7 +124,7 @@ const StyledTaskStart = styled.p<{ completed: boolean }>`
   bottom: ${p => p.theme.paddingML};
   right: ${p => p.theme.paddingXS};
   margin: 0;
-  text-decoration: ${p => (p.completed ? "line-through" : "none")};
+  /* text-decoration: ${p => (p.completed ? "line-through" : "none")}; */
 `
 
 const StyledTaskDuration = styled.p<{ completed: boolean }>`
@@ -133,16 +134,16 @@ const StyledTaskDuration = styled.p<{ completed: boolean }>`
   color: ${p => (p.completed ? "lightgrey" : p.theme.colorText)};
   font-size: ${p => p.theme.textXS};
   margin: 0;
-  text-decoration: ${p => (p.completed ? "line-through" : "none")};
+  /* text-decoration: ${p => (p.completed ? "line-through" : "none")}; */
 `
 
 const StyledTaskName = styled.p<{ completed: boolean }>`
   color: ${p => (p.completed ? "lightgrey" : p.theme.colorText)};
   font-size: ${p => p.theme.textXS};
-  text-decoration: ${p => (p.completed ? "line-through" : "none")};
+  /* text-decoration: ${p => (p.completed ? "line-through" : "none")}; */
   overflow: hidden;
-  max-height: 24px;
-  line-height: 12px;
+  max-height: 26px;
+  line-height: 13px;
   width: 92%;
 `
 
@@ -160,15 +161,20 @@ const StyledTaskBox = styled.div<{
   background-color: white;
   margin: ${p => p.theme.paddingS} ${p => p.theme.paddingS};
   padding: ${p => p.theme.paddingXS};
-  box-shadow: ${p => (p.completed ? p.theme.boxShadow : p.theme.boxShadowBold)};
-  filter: ${p => (p.completed ? "blur(0.5px)" : null)};
+  box-shadow: ${p => (p.completed ? p.theme.boxShadow : p.theme.boxShadow)};
+  filter: ${p => (p.completed ? "blur(0.6px)" : null)};
   opacity: ${p => (p.completed ? 0.8 : 1)};
+  border-radius: ${p => p.theme.borderRadius};
 
   &:hover ${StyledTaskElement} {
     height: 20px;
     width: 100%;
     text-overflow: ellipsis;
     padding: ${p => p.theme.paddingXS};
+    border-radius: ${p =>
+      `${p.theme.borderRadius} ${p.theme.borderRadius} 0 ${
+        p.theme.borderRadius
+      }`};
 
     color: ${p =>
       readableColor(p.color, darken(0.3, p.color), lighten(0.35, p.color))};

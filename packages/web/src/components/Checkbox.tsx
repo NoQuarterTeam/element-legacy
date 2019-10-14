@@ -61,12 +61,11 @@ const Icon = styled.svg`
 `
 
 const StyledCheckbox = styled.span`
-  height: 20px;
-  width: 20px;
+  height: 30px;
+  width: 30px;
   cursor: pointer;
   transition: 100ms all;
-  border-radius: 3px;
-  border: 2px solid ${p => p.theme.colorText};
+  border: ${p => p.theme.border};
   ${p => p.theme.flexCenter};
 `
 const StyledWrap = styled.label`

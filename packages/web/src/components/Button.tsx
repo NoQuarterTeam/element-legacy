@@ -72,11 +72,13 @@ const StyledButton = styled.button<ButtonProps>`
   letter-spacing: 1px;
   color: white;
   text-align: center;
-  border-radius: 5px;
   font-size: ${p => p.theme.textM};
   cursor: ${p => (p.disabled ? "not-allowed" : "pointer")};
   width: ${p => (!p.full ? "auto" : "100%")};
   opacity: ${p => (p.disabled ? 0.5 : 1)};
+  color: black;
+  background-color: white;
+  border: ${p => p.theme.border};
 
   &:focus,
   &:hover {

@@ -101,16 +101,13 @@ const StyledDay = styled.div<{
   width: 98px;
   height: 880px;
   font-size: ${p => p.theme.textS};
-  background-color: ${p =>
-    p.weekend
-      ? p => lighten(0.025, p.theme.colorLightBlue)
-      : p => p.theme.colorBackground};
-  background-color: ${p => (p.today ? p.theme.colorLightBlue : "")};
+  background-color: ${p => (p.today ? p.theme.colorLightBlue : "transparent")};
 `
 
 const PlaceholderTask = styled.div`
   min-width: calc(100% - ${p => p.theme.paddingS});
   height: 64px;
+  border-radius: ${p => p.theme.borderRadius};
 `
 
 const StyledTotalTime = styled.div<{ dragging: boolean }>`
