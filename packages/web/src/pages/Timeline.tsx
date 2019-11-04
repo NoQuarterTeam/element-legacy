@@ -96,7 +96,7 @@ const Timeline: FC<RouteComponentProps> = () => {
       },
       variables: {
         selectedUserId,
-        daysBack: -daysForward,
+        daysBack: -daysForward + 1,
         daysForward: daysForward + 20,
       },
     })
