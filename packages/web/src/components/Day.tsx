@@ -9,6 +9,8 @@ import { calculateTotalTime, today } from "../lib/helpers"
 import { TaskFragment } from "../lib/graphql/types"
 import { darken } from "polished"
 import dayjs from "dayjs"
+import { useTimelineContext } from "./providers/TimelineProvider"
+import useAppContext from "../lib/hooks/useAppContext"
 
 // import { AppContext } from '../application/context';
 
@@ -28,10 +30,16 @@ function Day({
   filteredElements,
   ...props
 }: DayProps) {
+  const { selectedUserId } = useTimelineContext()
+  const { user } = useAppContext()
+
   return (
     <StyledBorder
       monday={dayjs(day).day() === 1}
       first={dayjs(day).date() === 1}
+      currentUser={
+        selectedUserId && user && selectedUserId === user.id ? true : false
+      }
     >
       <Droppable
         droppableId={day.toString()}
@@ -97,12 +105,16 @@ function Day({
 
 export default memo(Day)
 
-const StyledBorder = styled.div<{ monday: boolean; first: boolean }>`
+const StyledBorder = styled.div<{
+  monday: boolean
+  first: boolean
+  currentUser: boolean
+}>`
   display: flex;
   border-left: ${p => p.monday && "5px #efefef dotted"};
   border-left: ${p => p.first && `5px ${p.theme.colorLightBlue} dotted`};
-  min-height: calc(100vh - 176px);
-  /* height: fit-content; */
+  min-height: ${p =>
+    p.currentUser ? `calc(100vh - 176px)` : `calc(100vh - 145px)`};
 `
 
 const StyledDay = styled.div<{
