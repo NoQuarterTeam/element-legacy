@@ -10,7 +10,11 @@ import DragDropContainer from "../components/DragDropContainer"
 import TaskModal from "../components/TaskModal"
 import HabitModal from "../components/HabitModal"
 
-import { TaskFragment } from "../lib/graphql/types"
+import {
+  TaskFragment,
+  useAllTasksQuery,
+  AllTasksDocument,
+} from "../lib/graphql/types"
 import styled from "../application/theme"
 import Nav from "../components/Nav"
 import { useTimelineContext } from "../components/providers/TimelineProvider"
@@ -18,13 +22,17 @@ import ShareModal from "../components/ShareModal"
 // import { useSubscription } from "react-apollo-hooks"
 import { ArrowCircleLeft } from "styled-icons/fa-solid/ArrowCircleLeft"
 import { ArrowCircleRight } from "styled-icons/fa-solid/ArrowCircleRight"
+import { useAllTasks } from "../lib/graphql/task/hooks"
 
 // import gql from "graphql-tag"
 
 const Timeline: FC<RouteComponentProps> = () => {
   // TODO: SET TASK IN TimelineProvider
   const [task, setTask] = useState()
-  const [initialLoad, setInitialLoad] = useState("")
+  const [initialLoad, setInitialLoad] = useState(false)
+
+  const [daysBack, setDaysBack] = useState(20)
+  const [daysForward, setDaysForward] = useState(20)
 
   const [dayClicked, setDayClicked] = useState()
 
@@ -60,20 +68,60 @@ const Timeline: FC<RouteComponentProps> = () => {
   // `)
 
   // TODO: SET filteredElements IN TimelineProvider
+
   const [filteredElements, setFilteredElements] = useState<string[]>([])
   const {
     handleSetModal,
     modal,
-    daysForward,
-    daysBack,
     handleDaysBack,
     handleDaysForward,
-    allTasks,
-    isLoading,
     selectedUserId,
   } = useTimelineContext()
 
+  const { data, fetchMore } = useAllTasksQuery({
+    variables: { selectedUserId, daysBack: 20, daysForward: 20 },
+  })
+  const allTasks = data && data.allTasks ? data.allTasks : []
+
   const timelineRef = useRef<HTMLDivElement>(null)
+
+  const handleForward = () => {
+    fetchMore({
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult || !prev.allTasks || !fetchMoreResult.allTasks)
+          return prev
+        return Object.assign({}, prev, {
+          allTasks: [...prev.allTasks, ...fetchMoreResult.allTasks],
+        })
+      },
+      variables: {
+        selectedUserId,
+        daysBack: -daysForward,
+        daysForward: daysForward + 20,
+      },
+    })
+    setDaysForward(daysForward + 20)
+    handleDaysForward(daysForward + 20)
+  }
+
+  const handleBack = () => {
+    fetchMore({
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult || !prev.allTasks || !fetchMoreResult.allTasks)
+          return prev
+        return Object.assign({}, prev, {
+          allTasks: [...prev.allTasks, ...fetchMoreResult.allTasks],
+        })
+      },
+      variables: {
+        selectedUserId,
+        daysBack: daysBack + 20,
+        daysForward: -daysBack - 1,
+      },
+    })
+    setDaysBack(daysBack + 20)
+    handleDaysBack(daysBack + 20)
+  }
 
   useEffect(() => {
     if (!initialLoad && timelineRef.current) {
@@ -84,22 +132,22 @@ const Timeline: FC<RouteComponentProps> = () => {
         const num = 17.5 * 98
         window.scrollTo(num, 0)
       }
-      setInitialLoad(selectedUserId)
+      setInitialLoad(true)
     }
-  }, [isLoading])
+  }, [])
 
   useEffect(() => {
-    if (timelineRef.current) {
+    if (timelineRef.current && initialLoad) {
       if (isMobileDevice()) {
         window.scrollTo(20.5 * 98, 0)
       } else {
-        window.scrollTo(18.5 * 98, 0)
+        window.scrollTo(17.5 * 98, 0)
       }
     }
   }, [daysBack])
 
   useEffect(() => {
-    if (timelineRef.current) {
+    if (timelineRef.current && initialLoad) {
       if (isMobileDevice()) {
         const num = timelineRef.current.scrollWidth - 98 * 31
         window.scrollTo(num, 0)
@@ -155,7 +203,7 @@ const Timeline: FC<RouteComponentProps> = () => {
           timelineRef.current && window.scrollTo((daysBack - 2.5) * 98, 0)
         }
       />
-      {isLoading && allTasks && (
+      {allTasks && (
         <StyledTimelineWrapper ref={timelineRef}>
           <TimelineHead openHabitModal={handleHabitModal} />
           <StyledTimeline>
@@ -163,7 +211,7 @@ const Timeline: FC<RouteComponentProps> = () => {
 
             <DragDropContainer allTasks={allTasks}>
               <StyledDaysWrapper>
-                <StyledBack onClick={() => handleDaysBack(daysBack + 20)}>
+                <StyledBack onClick={handleBack}>
                   <ArrowCircleLeft width={60} color={"grey"} />
                 </StyledBack>
                 {getDays(
@@ -187,9 +235,7 @@ const Timeline: FC<RouteComponentProps> = () => {
                   )
                 })}
 
-                <StyledForward
-                  onClick={() => handleDaysForward(daysForward + 20)}
-                >
+                <StyledForward onClick={handleForward}>
                   <ArrowCircleRight width={60} color={"grey"} />
                 </StyledForward>
               </StyledDaysWrapper>

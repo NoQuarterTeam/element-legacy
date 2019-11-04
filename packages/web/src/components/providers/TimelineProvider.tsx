@@ -2,9 +2,7 @@ import React, { FC, useState, createContext } from "react"
 import useAppContext from "../../lib/hooks/useAppContext"
 import { useCallback } from "react"
 import { useContext } from "react"
-import { ElementFragment, TaskFragment } from "../../lib/graphql/types"
-import { useAllTasks } from "../../lib/graphql/task/hooks"
-import useDebounce from "../../lib/hooks/useDebounce"
+import { ElementFragment } from "../../lib/graphql/types"
 
 const TimelineProvider: FC = ({ children }) => {
   const { user } = useAppContext()
@@ -19,9 +17,7 @@ const TimelineProvider: FC = ({ children }) => {
   const handleSetElement = useCallback(setSelectedElement, [setSelectedElement])
   const handleDaysForward = useCallback(setDaysForward, [setDaysForward])
   const handleDaysBack = useCallback(setDaysBack, [setDaysBack])
-  const allTasks = useAllTasks(selectedUserId)
-
-  const isLoading = useDebounce(allTasks, 500)
+  // const allTasks = useAllTasks(selectedUserId)
 
   return (
     <TimelineContextProvider
@@ -36,8 +32,6 @@ const TimelineProvider: FC = ({ children }) => {
         daysBack,
         handleDaysForward,
         handleDaysBack,
-        allTasks,
-        isLoading,
       }}
     >
       {children}
@@ -58,8 +52,6 @@ interface TimelineContext {
   daysBack: number
   handleDaysForward: (days: number) => void
   handleDaysBack: (days: number) => void
-  allTasks: TaskFragment[]
-  isLoading: boolean
 }
 
 const TimelineContext = createContext<TimelineContext | undefined>(undefined)

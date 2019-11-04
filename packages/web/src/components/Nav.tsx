@@ -24,7 +24,7 @@ const Nav: FC<NavProps> = ({
 }) => {
   const { user } = useAppContext()
 
-  const { handleSelectUser } = useTimelineContext()
+  const { handleSelectUser, selectedUserId } = useTimelineContext()
   const elements = useAllElements(user.id)
   const sharedUsers = useGetSharedUsersByUser(user.id)
   const [elementsOpen, setElementsOpen] = useState(false)
@@ -96,6 +96,7 @@ const Nav: FC<NavProps> = ({
           key={user.id}
           onClick={() => handleSelectUser(user.id)}
           color={colors[0]}
+          selected={selectedUserId === user.id}
         >
           {user.firstName.charAt(0)}
           {user.lastName.charAt(0)}
@@ -106,6 +107,7 @@ const Nav: FC<NavProps> = ({
               key={sharedUser.id}
               onClick={() => handleSelectUser(sharedUser.id)}
               color={colors[index + 1]}
+              selected={selectedUserId === sharedUser.id}
             >
               {sharedUser.firstName.charAt(0)}
               {sharedUser.lastName.charAt(0)}
@@ -176,7 +178,7 @@ const StyledBlur = styled.div`
   /* backdrop-filter: blur(10px); */
 `
 
-const StyledUser = styled.div<{ color: string }>`
+const StyledUser = styled.div<{ color: string; selected: boolean }>`
   display: flex;
   height: 65px;
   width: 65px;
@@ -189,6 +191,7 @@ const StyledUser = styled.div<{ color: string }>`
   cursor: pointer;
   margin: ${p => p.theme.paddingM} 0;
   border: 2px solid black;
+  opacity: ${p => !p.selected && 0.5};
 `
 
 // const StyledLogoutButton = styled.a`

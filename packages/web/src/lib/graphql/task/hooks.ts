@@ -35,10 +35,16 @@ export function useCreateTask() {
   })
 }
 
-export function useAllTasks(selectedUserId: string) {
-  const { data } = useAllTasksQuery({ variables: { selectedUserId } })
+export function useAllTasks(
+  selectedUserId: string,
+  daysBack: number,
+  daysForward: number,
+) {
+  const { data, fetchMore } = useAllTasksQuery({
+    variables: { selectedUserId, daysBack, daysForward },
+  })
   const allTasks = data && data.allTasks ? data.allTasks : []
-  return allTasks
+  return { allTasks, fetchMore }
 }
 
 export function useUpdateTask(oldUserId?: string) {
@@ -54,10 +60,8 @@ export function useUpdateTask(oldUserId?: string) {
                 query: AllTasksDocument,
                 variables: { selectedUserId: newUserId },
               })
-
               if (tasksQuery && tasksQuery.allTasks) {
                 const { allTasks } = tasksQuery
-
                 // ADD to new user
                 cache.writeQuery({
                   query: AllTasksDocument,
@@ -71,7 +75,6 @@ export function useUpdateTask(oldUserId?: string) {
                 query: AllTasksDocument,
                 variables: { selectedUserId: oldUserId },
               })
-
               if (tasksQueryOld && tasksQueryOld.allTasks) {
                 const updatedTasks = tasksQueryOld.allTasks.filter(
                   t => data.updateTask && t.id !== data.updateTask.id,
@@ -91,7 +94,6 @@ export function useUpdateTask(oldUserId?: string) {
                 query: AllTasksDocument,
                 variables: { selectedUserId: oldUserId },
               })
-
               if (tasksQueryOld && tasksQueryOld.allTasks) {
                 const updatedTasks = tasksQueryOld.allTasks.filter(
                   t => data.updateTask && t.id !== data.updateTask.id,

@@ -44,8 +44,15 @@ export class TaskResolver {
   allTasks(
     @Ctx() { userId }: ResolverContext,
     @Arg("selectedUserId", { nullable: true }) selectedUserId?: string,
+    @Arg("daysBack", { nullable: true }) daysBack?: number,
+    @Arg("daysForward", { nullable: true }) daysForward?: number,
   ): Promise<Task[]> {
-    return this.taskService.findAll(userId, selectedUserId)
+    return this.taskService.findAll(
+      userId,
+      selectedUserId,
+      daysBack,
+      daysForward,
+    )
   }
 
   // CREATE TASK

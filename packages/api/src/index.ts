@@ -48,7 +48,7 @@ async function main() {
       }),
       subscriptions: {
         path: "/graphql",
-        onConnect: connectionParams => {
+        onConnect: (connectionParams: any) => {
           if (connectionParams.authorization) {
             return validateToken(
               connectionParams.authorization.split("Bearer ")[1],

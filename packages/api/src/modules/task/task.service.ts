@@ -6,7 +6,8 @@ import { ElementService } from "../element/element.service"
 import { ProgressService } from "../progress/progress.service"
 import { SharedElementService } from "../sharedElement/sharedElement.service"
 import { UserService } from "../user/user.service"
-import { Brackets } from "typeorm"
+import { Brackets, Between } from "typeorm"
+import dayjs from "dayjs"
 
 @Service()
 export class TaskService {
@@ -21,15 +22,34 @@ export class TaskService {
     return Task.findOneOrFail(taskId)
   }
 
-  async findAll(userId: string, selectedUserId?: string): Promise<Task[]> {
+  async findAll(
+    userId: string,
+    selectedUserId?: string,
+    daysBack?: number,
+    daysForward?: number,
+  ): Promise<Task[]> {
     const tasksQuery = await Task.createQueryBuilder("task")
+    const firstDay =
+      daysBack &&
+      dayjs()
+        .subtract(daysBack + 1, "day")
+        .toDate()
+
+    const lastDay =
+      daysForward &&
+      dayjs()
+        .add(daysForward, "day")
+        .toDate()
 
     if (userId != selectedUserId) {
       tasksQuery
         .innerJoinAndSelect("task.element", "element")
         .innerJoinAndSelect("element.sharedElements", "sharedElement")
         // and where task belongs to selectedUser
-        .where("task.userId = :selectedUserId", { selectedUserId })
+        .where({
+          scheduledDate: Between(firstDay, lastDay),
+        })
+        .andWhere("task.userId = :selectedUserId", { selectedUserId })
         .andWhere(
           new Brackets(test => {
             test
@@ -60,7 +80,9 @@ export class TaskService {
       const tasks = tasksQuery.getMany()
       return tasks
     } else {
-      const tasks = Task.find({ where: { userId } })
+      const tasks = Task.find({
+        where: { userId, scheduledDate: Between(firstDay, lastDay) },
+      })
       return tasks
     }
   }

@@ -3,8 +3,16 @@ import gql from "graphql-tag"
 import { Task } from "./fragments"
 
 export const GET_ALL_TASKS = gql`
-  query AllTasks($selectedUserId: String!) {
-    allTasks(selectedUserId: $selectedUserId) {
+  query AllTasks(
+    $selectedUserId: String!
+    $daysBack: Float!
+    $daysForward: Float!
+  ) {
+    allTasks(
+      selectedUserId: $selectedUserId
+      daysBack: $daysBack
+      daysForward: $daysForward
+    ) @connection(key: "timeline", filter: ["selectedUserId"]) {
       ...Task
     }
   }

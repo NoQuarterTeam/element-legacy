@@ -197,6 +197,8 @@ export type QueryAllSharedUsersByUserArgs = {
 }
 
 export type QueryAllTasksArgs = {
+  daysForward?: Maybe<Scalars["Float"]>
+  daysBack?: Maybe<Scalars["Float"]>
   selectedUserId?: Maybe<Scalars["String"]>
 }
 
@@ -221,6 +223,7 @@ export type SharedElement = {
 export type Subscription = {
   __typename?: "Subscription"
   updateTaskSubscription: Task
+  deleteTaskSubscription: Task
 }
 
 export type Task = {
@@ -431,6 +434,8 @@ export type TaskFragment = { __typename: "Task" } & Pick<
 
 export type AllTasksQueryVariables = {
   selectedUserId: Scalars["String"]
+  daysBack: Scalars["Float"]
+  daysForward: Scalars["Float"]
 }
 
 export type AllTasksQuery = { __typename?: "Query" } & {
@@ -854,8 +859,16 @@ export function useDeleteSharedElementMutation(
   >(DeleteSharedElementDocument, baseOptions)
 }
 export const AllTasksDocument = gql`
-  query AllTasks($selectedUserId: String!) {
-    allTasks(selectedUserId: $selectedUserId) {
+  query AllTasks(
+    $selectedUserId: String!
+    $daysBack: Float!
+    $daysForward: Float!
+  ) {
+    allTasks(
+      selectedUserId: $selectedUserId
+      daysBack: $daysBack
+      daysForward: $daysForward
+    ) @connection(key: "timeline", filter: ["selectedUserId"]) {
       ...Task
     }
   }
