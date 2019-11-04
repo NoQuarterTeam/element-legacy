@@ -90,8 +90,6 @@ function TaskForm({
       value: user.id,
     }))
 
-  console.log(isMobileDevice())
-
   return (
     <StyledForm onSubmit={handleTaskUpdate}>
       <Input
