@@ -56,8 +56,8 @@ const HabitModal: FC<HabitModalProps> = ({ closeModal, day }) => {
         {habits &&
           calculateHabitProgress(day, allProgress, habits).map(
             (result: any[]) => {
-              let habit = result[0]
-              let completed = result[1]
+              const habit = result[0]
+              const completed = result[1]
 
               return (
                 <StyledOptionContainer

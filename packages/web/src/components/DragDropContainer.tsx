@@ -42,8 +42,8 @@ const DragDropContainer: FC<DDProps> = ({ children, allTasks }) => {
           })
         })
     } else {
-      let sourceList = getDayTasksAndOrder(allTasks, source)
-      let destinationList = getDayTasksAndOrder(allTasks, destination)
+      const sourceList = getDayTasksAndOrder(allTasks, source)
+      const destinationList = getDayTasksAndOrder(allTasks, destination)
 
       const result = move(sourceList, destinationList, source, destination)
 
