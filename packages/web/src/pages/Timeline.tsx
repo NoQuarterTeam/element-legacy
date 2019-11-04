@@ -5,7 +5,7 @@ import dayjs, { Dayjs } from "dayjs"
 // import { useLogout } from "../../lib/graphql/user/hooks"
 import Day from "../components/Day"
 import TimelineHead from "../components/TimelineHead"
-import { getDays } from "../lib/helpers"
+import { getDays, isMobileDevice } from "../lib/helpers"
 import DragDropContainer from "../components/DragDropContainer"
 import TaskModal from "../components/TaskModal"
 import HabitModal from "../components/HabitModal"
@@ -77,22 +77,36 @@ const Timeline: FC<RouteComponentProps> = () => {
 
   useEffect(() => {
     if (!initialLoad && timelineRef.current) {
-      const num = 17.5 * 98
-      window.scrollTo(num, 0)
+      if (isMobileDevice()) {
+        const num = 19.5 * 98
+        window.scrollTo(num, 0)
+      } else {
+        const num = 17.5 * 98
+        window.scrollTo(num, 0)
+      }
       setInitialLoad(selectedUserId)
     }
   }, [isLoading])
 
   useEffect(() => {
     if (timelineRef.current) {
-      window.scrollTo(18.5 * 98, 0)
+      if (isMobileDevice()) {
+        window.scrollTo(19.5 * 98, 0)
+      } else {
+        window.scrollTo(18.5 * 98, 0)
+      }
     }
   }, [daysBack])
 
   useEffect(() => {
     if (timelineRef.current) {
-      const num = timelineRef.current.scrollWidth - 98 * 30
-      window.scrollTo(num, 0)
+      if (isMobileDevice()) {
+        const num = timelineRef.current.scrollWidth - 98 * 31
+        window.scrollTo(num, 0)
+      } else {
+        const num = timelineRef.current.scrollWidth - 98 * 30
+        window.scrollTo(num, 0)
+      }
     }
   }, [daysForward])
 

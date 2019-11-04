@@ -4,7 +4,7 @@ import styled from "../application/theme"
 import useAppContext from "../lib/hooks/useAppContext"
 import { TaskFragment } from "../lib/graphql/types"
 import useFormState from "../lib/hooks/useFormState"
-import { sleep } from "../lib/helpers"
+import { sleep, isMobileDevice } from "../lib/helpers"
 import { useAllElements } from "../lib/graphql/element/hooks"
 import { useGetSharedUsersByUser } from "../lib/graphql/sharedElement/hooks"
 
@@ -90,6 +90,8 @@ function TaskForm({
       value: user.id,
     }))
 
+  console.log(isMobileDevice())
+
   return (
     <StyledForm onSubmit={handleTaskUpdate}>
       <Input
@@ -98,7 +100,7 @@ function TaskForm({
         placeholder="What is it?"
         required={true}
         variant="large"
-        autoFocus
+        autoFocus={isMobileDevice() ? false : true}
         style={{
           width: "90%",
           marginTop: 0,

@@ -229,6 +229,13 @@ export const monthNames = [
   "dec.",
 ]
 
+export const isMobileDevice = () => {
+  return (
+    typeof window.orientation !== "undefined" ||
+    navigator.userAgent.indexOf("IEMobile") !== -1
+  )
+}
+
 // const isToday? = (day) => {
 //   return dayjs(day).isSame(dayjs(), "day")
 // }
