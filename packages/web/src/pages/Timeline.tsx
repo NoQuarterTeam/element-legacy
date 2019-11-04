@@ -78,7 +78,7 @@ const Timeline: FC<RouteComponentProps> = () => {
   useEffect(() => {
     if (!initialLoad && timelineRef.current) {
       if (isMobileDevice()) {
-        const num = 19.5 * 98
+        const num = 20.5 * 98
         window.scrollTo(num, 0)
       } else {
         const num = 17.5 * 98
@@ -91,7 +91,7 @@ const Timeline: FC<RouteComponentProps> = () => {
   useEffect(() => {
     if (timelineRef.current) {
       if (isMobileDevice()) {
-        window.scrollTo(19.5 * 98, 0)
+        window.scrollTo(20.5 * 98, 0)
       } else {
         window.scrollTo(18.5 * 98, 0)
       }

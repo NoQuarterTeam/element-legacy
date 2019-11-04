@@ -12,8 +12,6 @@ import dayjs from "dayjs"
 import { useTimelineContext } from "./providers/TimelineProvider"
 import useAppContext from "../lib/hooks/useAppContext"
 
-// import { AppContext } from '../application/context';
-
 interface DayProps {
   weekend: boolean
   day: Dayjs
