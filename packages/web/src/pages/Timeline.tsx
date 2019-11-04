@@ -24,7 +24,7 @@ import { ArrowCircleRight } from "styled-icons/fa-solid/ArrowCircleRight"
 const Timeline: FC<RouteComponentProps> = () => {
   // TODO: SET TASK IN TimelineProvider
   const [task, setTask] = useState()
-  const [initialLoad, setInitialLoad] = useState(false)
+  const [initialLoad, setInitialLoad] = useState("")
 
   const [dayClicked, setDayClicked] = useState()
 
@@ -70,6 +70,7 @@ const Timeline: FC<RouteComponentProps> = () => {
     handleDaysForward,
     allTasks,
     isLoading,
+    selectedUserId,
   } = useTimelineContext()
 
   const timelineRef = useRef<HTMLDivElement>(null)
@@ -78,7 +79,7 @@ const Timeline: FC<RouteComponentProps> = () => {
     if (!initialLoad && timelineRef.current) {
       const num = 17.5 * 98
       window.scrollTo(num, 0)
-      setInitialLoad(true)
+      setInitialLoad(selectedUserId)
     }
   }, [isLoading])
 
@@ -203,7 +204,7 @@ const StyledDaysWrapper = styled.div`
 
 const StyledBack = styled.p`
   position: absolute;
-  top: 44%;
+  top: 40vh;
   left: 10px;
   z-index: 95;
   cursor: pointer;
@@ -211,7 +212,7 @@ const StyledBack = styled.p`
 
 const StyledForward = styled.p`
   position: absolute;
-  top: 44%;
+  top: 40vh;
   right: 115px;
   z-index: 95;
   cursor: pointer;

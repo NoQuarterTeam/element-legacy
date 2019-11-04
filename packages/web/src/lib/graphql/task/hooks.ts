@@ -37,7 +37,7 @@ export function useCreateTask() {
 
 export function useAllTasks(selectedUserId: string) {
   const { data } = useAllTasksQuery({ variables: { selectedUserId } })
-  const allTasks = data && data.allTasks
+  const allTasks = data && data.allTasks ? data.allTasks : []
   return allTasks
 }
 

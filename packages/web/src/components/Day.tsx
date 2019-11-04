@@ -101,7 +101,8 @@ const StyledBorder = styled.div<{ monday: boolean; first: boolean }>`
   display: flex;
   border-left: ${p => p.monday && "5px #efefef dotted"};
   border-left: ${p => p.first && `5px ${p.theme.colorLightBlue} dotted`};
-  height: calc(100vh - 176px);
+  min-height: calc(100vh - 176px);
+  /* height: fit-content; */
 `
 
 const StyledDay = styled.div<{
