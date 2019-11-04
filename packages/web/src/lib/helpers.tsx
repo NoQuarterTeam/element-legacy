@@ -40,9 +40,9 @@ export const today = (day: Dayjs) => {
 }
 
 export const getMonths = (startDate: Dayjs, daysCount: number) => {
-  let days = getDays(startDate, daysCount)
+  const days = getDays(startDate, daysCount)
 
-  let monthsByDay = days.map(day => dayjs(day).month())
+  const monthsByDay = days.map(day => dayjs(day).month())
 
   return monthsByDay.filter(function(value, index, array) {
     return array.indexOf(value) === index
@@ -215,18 +215,18 @@ export const calculateHabitProgress = (
 
 // DAYJS set month is broken!!
 export const monthNames = [
-  "JAN.",
-  "FEB.",
-  "MAR.",
-  "APR.",
-  "MAY.",
-  "JUN.",
-  "JUL.",
-  "AUG.",
-  "SEPT.",
-  "OCT.",
-  "NOV.",
-  "DEC.",
+  "jan.",
+  "feb.",
+  "mar.",
+  "apr.",
+  "may.",
+  "jun.",
+  "jul.",
+  "aug.",
+  "sept.",
+  "oct.",
+  "nov.",
+  "dec.",
 ]
 
 // const isToday? = (day) => {

@@ -47,26 +47,30 @@ const TimelineHead: FC<TimelineHeadProps> = ({ openHabitModal }) => {
                       key={day.unix()}
                       today={today(day)}
                       weekend={dayjs(day).day() === 0 || dayjs(day).day() === 6}
+                      monday={dayjs(day).day() === 1}
+                      first={dayjs(day).date() === 1}
                     >
-                      <StyledDayHeader key={day.unix()} today={today(day)}>
+                      <StyledDayHeader
+                        key={day.unix()}
+                        today={today(day)}
+                        weekend={
+                          dayjs(day).day() === 0 || dayjs(day).day() === 6
+                        }
+                      >
                         {dayjs(day).format("ddd Do")}
                       </StyledDayHeader>
+
                       {allProgress &&
-                        user.id === selectedUserId &&
-                        habits &&
-                        allActiveHabits(day, habits).length !== 0 && (
-                          <StyledHabits
-                            today={today(day)}
-                            count={
-                              habits && allActiveHabits(day, habits).length
-                            }
-                            onClick={() => openHabitModal(day)}
-                          >
-                            {calculateHabitProgress(
-                              day,
-                              allProgress,
-                              habits,
-                            ).map((result: any[], index) => {
+                      user.id === selectedUserId &&
+                      habits &&
+                      allActiveHabits(day, habits).length !== 0 ? (
+                        <StyledHabits
+                          today={today(day)}
+                          count={habits && allActiveHabits(day, habits).length}
+                          onClick={() => openHabitModal(day)}
+                        >
+                          {calculateHabitProgress(day, allProgress, habits).map(
+                            (result: any[], index) => {
                               return (
                                 <Circle
                                   key={index}
@@ -78,27 +82,24 @@ const TimelineHead: FC<TimelineHeadProps> = ({ openHabitModal }) => {
                                   past={dayjs(day).isBefore(dayjs())}
                                 />
                               )
-                            })}
-                          </StyledHabits>
-                        )}
-                      {today(day) &&
-                        user.id === selectedUserId &&
+                            },
+                          )}
+                        </StyledHabits>
+                      ) : user.id === selectedUserId &&
                         (habits &&
-                          allActiveHabits(day, habits).length === 0) && (
+                          allActiveHabits(day, habits).length === 0) ? (
+                        today(day) ? (
                           <StyledAddHabits
                             onClick={() => openHabitModal(day)}
                             today={today(day)}
                           >
                             Add habit
                           </StyledAddHabits>
-                        )}
-                      {today(day) && user.id === selectedUserId && !habits && (
-                        <StyledAddHabits
-                          onClick={() => openHabitModal(day)}
-                          today={today(day)}
-                        >
-                          Add habit
-                        </StyledAddHabits>
+                        ) : (
+                          <StyledHabits today={today(day)} count={1} />
+                        )
+                      ) : (
+                        <></>
                       )}
                     </StyledContainer>
                   ))}
@@ -129,7 +130,7 @@ const StyledMonthHeader = styled.h3`
   flex-direction: row;
   position: sticky;
   width: max-content;
-  padding: ${p => p.theme.paddingXL} 0;
+  padding: ${p => p.theme.paddingL} 0;
   left: ${p => p.theme.paddingML};
   margin-left: ${p => p.theme.paddingML};
   z-index: 1;
@@ -143,7 +144,7 @@ const StyledDaysHeader = styled.div`
   flex-direction: row;
 `
 
-const StyledDayHeader = styled.h3<{ today: boolean }>`
+const StyledDayHeader = styled.h3<{ today: boolean; weekend: boolean }>`
   font-size: ${p => (p.today ? p.theme.textM : p.theme.textS)};
   /* font-weight: ${p =>
     p.today ? p.theme.fontSemiBold : p.theme.fontNormal}; */
@@ -153,27 +154,48 @@ const StyledDayHeader = styled.h3<{ today: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: ${p => (p.today ? "134px" : "140px")};
-  margin-top: -140px;
+  padding-top: ${p => (p.today ? "113px" : "119px")};
+  /* margin-top: ${p => (p.today ? "-6px" : "0px")}; */
+  background-color: ${p => p.today && p.theme.colorBlue};
+  /* border: ${p => (p.today ? "3px solid black" : "none")}; */
+  /* box-sizing: content-box; */
+
+  border-bottom: none;
+  /* border-radius: ${p => p.theme.borderRadiusL} ${p =>
+  p.theme.borderRadiusL}  0 0; */
+  font-weight: ${p => (p.today ? p.theme.fontBold : p.theme.fontNormal)};
+  padding-bottom: 5px;
+
 `
 
-const StyledContainer = styled.div<{ weekend: boolean; today: boolean }>`
+const StyledContainer = styled.div<{
+  weekend: boolean
+  today: boolean
+  monday: boolean
+  first: boolean
+}>`
   display: flex;
   flex-direction: column;
-  padding-top: 140px;
-  margin-top: -140px;
-  background-color: ${p =>
-    p.today ? p.theme.colorLightBlue : p.theme.colorBackground};
+  padding-top: 0px;
+  margin-top: -93px;
+  background-color: ${p => p.theme.colorBackground};
+  border-left: ${p => p.monday && "5px #efefef dotted"};
+  border-left: ${p => p.first && `5px ${p.theme.colorLightBlue} dotted`};
 `
 
 const StyledHabits = styled.div<{ today: boolean; count: any }>`
   display: flex;
   /* max-width: 88px; */
+  height: 31px;
   justify-content: ${props => (props.count > 6 ? "center" : "space-evenly")};
   cursor: pointer;
   padding: ${p => p.theme.paddingM};
   padding-left: ${props =>
     props.count > 6 ? 8 + 0.73 * props.count + "px" : "8px"};
+  background-color: ${p => (p.today ? p.theme.colorBlue : "transparent")};
+  /* border: ${p => (p.today ? "3px solid black" : "none")}; */
+  /* border-bottom: none;
+  border-top: none; */
 
   &:hover {
     background-color: ${p => lighten(0.02, p.theme.colorLightBlue)};
@@ -196,8 +218,9 @@ const StyledAddHabits = styled.p<{ today: boolean }>`
   color: ${p => lighten(0.5, p.theme.colorText)};
   border-radius: ${p => p.theme.borderRadiusS};
   text-align: center;
-  padding: ${p => p.theme.paddingS};
-  margin: 5px;
+  align-items: center;
+  /* padding: ${p => p.theme.paddingS}; */
+  height: 31px;
   cursor: pointer;
 
   &:hover {

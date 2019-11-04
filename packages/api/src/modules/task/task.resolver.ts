@@ -1,4 +1,15 @@
-import { Resolver, Mutation, Arg, Authorized, Query, Ctx } from "type-graphql"
+import {
+  Resolver,
+  Mutation,
+  Arg,
+  Authorized,
+  Query,
+  Ctx,
+  Subscription,
+  PubSub,
+  Publisher,
+  Root,
+} from "type-graphql"
 
 import { Task } from "./task.entity"
 import { TaskService } from "./task.service"
@@ -8,6 +19,24 @@ import { ResolverContext } from "../../lib/types"
 @Resolver(() => Task)
 export class TaskResolver {
   constructor(private readonly taskService: TaskService) {}
+
+  @Subscription(() => Task, { topics: "TASK_UPDATES" })
+  updateTaskSubscription(@Root() task: Task) {
+    // if () {
+    return task
+    // } else {
+    //   return null
+    // }
+  }
+
+  @Subscription(() => Task, { topics: "TASK_DELETE" })
+  deleteTaskSubscription(@Root() taskId: string) {
+    // if () {
+    return taskId
+    // } else {
+    //   return null
+    // }
+  }
 
   // ALL TASKS
   @Authorized()
@@ -35,8 +64,11 @@ export class TaskResolver {
   async updateTask(
     @Arg("taskId") taskId: string,
     @Arg("data") data: TaskInput,
+    @PubSub("TASK_UPDATES") publish: Publisher<Task>,
   ): Promise<Task> {
-    return this.taskService.update(taskId, data)
+    const task = await this.taskService.update(taskId, data)
+    await publish(task)
+    return task
   }
 
   // UPDATE TASK ORDER
@@ -45,14 +77,21 @@ export class TaskResolver {
   async updateTaskOrder(
     @Arg("taskId") taskId: string,
     @Arg("data") data: OrderTaskInput,
+    @PubSub("TASK_UPDATES") publish: Publisher<Task>,
   ): Promise<Task> {
-    return this.taskService.update(taskId, data)
+    const task = await this.taskService.update(taskId, data)
+    await publish(task)
+    return task
   }
 
   // DESTROY TASK
   @Authorized()
   @Mutation(() => Boolean, { nullable: true })
-  destroyTask(@Arg("taskId") taskId: string): Promise<boolean> {
+  async destroyTask(
+    @Arg("taskId") taskId: string,
+    @PubSub("TASK_DELETED") publish: Publisher<string>,
+  ): Promise<boolean> {
+    await publish(taskId)
     return this.taskService.destroy(taskId)
   }
 

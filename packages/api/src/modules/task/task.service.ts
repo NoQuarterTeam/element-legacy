@@ -93,8 +93,6 @@ export class TaskService {
           element,
         }).save()
         return task
-
-        return null
       }
     } else {
       return null

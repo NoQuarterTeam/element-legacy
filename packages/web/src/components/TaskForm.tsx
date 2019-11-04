@@ -34,18 +34,19 @@ function TaskForm({
 }: TaskFormProps) {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
+  const [validation, setValidation] = useState<string | null>(null)
 
   const { selectedUserId } = useTimelineContext()
 
   const { user } = useAppContext()
   const sharedUsers = useGetSharedUsersByUser(user.id)
 
-  const elements = useAllElements(selectedUserId)
+  const elements = useAllElements(user.id)
 
   const initialState = {
-    name: task ? task.name : "",
+    name: task ? task.name : null,
     completed: task ? task.completed : false,
-    elementId: task.element ? task.element.id : "",
+    elementId: task.element ? task.element.id : null,
     userId: task.userId ? task.userId : selectedUserId,
     scheduledDate: task.scheduledDate ? task.scheduledDate : "",
     estimatedTime: task.estimatedTime ? task.estimatedTime : "00:00",
@@ -63,13 +64,19 @@ function TaskForm({
 
   const handleTaskUpdate = async (e: any) => {
     e.preventDefault()
-    setLoading(true)
-    onFormSubmit(formState).catch(async () => {
-      setError("Oops, something went wrong, we have been notified!")
-      await sleep(4000)
-      setError(null)
-      setLoading(false)
-    })
+    if (!formState.name) {
+      setValidation("Enter a task name")
+    } else if (!formState.elementId) {
+      setValidation("Select an element")
+    } else {
+      setLoading(true)
+      onFormSubmit(formState).catch(async () => {
+        setError("Oops, something went wrong, we have been notified!")
+        await sleep(4000)
+        setError(null)
+        setLoading(false)
+      })
+    }
   }
 
   const handleUserSelect = (userId: string) => {
@@ -220,6 +227,7 @@ function TaskForm({
         </StyledRow>
       </StyledGrid>
       {error && <StyledError>{error}</StyledError>}
+      {validation && <StyledError>{validation}</StyledError>}
     </StyledForm>
   )
 }

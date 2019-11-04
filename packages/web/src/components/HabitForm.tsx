@@ -59,11 +59,7 @@ function HabitForm({ onFormSubmit, habits, day }: HabitFormProps) {
         />
         <Input hidden defaultValue={formState.activeFrom} />
         {formState.elementId && (
-          <Button
-            loading={loading}
-            variant="tertiary"
-            style={{ marginLeft: "1rem" }}
-          >
+          <Button loading={loading} style={{ marginLeft: "1rem" }}>
             Add
           </Button>
         )}

@@ -5,7 +5,6 @@ import dayjs, { Dayjs } from "dayjs"
 // import { useLogout } from "../../lib/graphql/user/hooks"
 import Day from "../components/Day"
 import TimelineHead from "../components/TimelineHead"
-import { useAllTasks } from "../lib/graphql/task/hooks"
 import { getDays } from "../lib/helpers"
 import DragDropContainer from "../components/DragDropContainer"
 import TaskModal from "../components/TaskModal"
@@ -16,35 +15,85 @@ import styled from "../application/theme"
 import Nav from "../components/Nav"
 import { useTimelineContext } from "../components/providers/TimelineProvider"
 import ShareModal from "../components/ShareModal"
-import intersect from "../public/Intersect.png"
+// import { useSubscription } from "react-apollo-hooks"
+import { ArrowCircleLeft } from "styled-icons/fa-solid/ArrowCircleLeft"
+import { ArrowCircleRight } from "styled-icons/fa-solid/ArrowCircleRight"
+
+// import gql from "graphql-tag"
 
 const Timeline: FC<RouteComponentProps> = () => {
   // TODO: SET TASK IN TimelineProvider
   const [task, setTask] = useState()
+  const [initialLoad, setInitialLoad] = useState(false)
 
   const [dayClicked, setDayClicked] = useState()
+
+  // const { data } = useSubscription(gql`
+  //   subscription OnTaskUpdate {
+  //     updateTaskSubscription {
+  //       id
+  //       name
+  //       startTime
+  //       description
+  //       estimatedTime
+  //       completed
+  //       order
+  //       scheduledDate
+  //       elementId
+  //       userId
+  //       element {
+  //         id
+  //         color
+  //         name
+  //         archived
+  //         createdAt
+  //         updatedAt
+  //       }
+  //     }
+  //   }
+  // `)
+
+  // const { data } = useSubscription(gql`
+  //   subscription OnTaskUpdate {
+  //     deleteTaskSubscription {
+  //   }
+  // `)
 
   // TODO: SET filteredElements IN TimelineProvider
   const [filteredElements, setFilteredElements] = useState<string[]>([])
   const {
-    selectedUserId,
     handleSetModal,
     modal,
     daysForward,
     daysBack,
     handleDaysBack,
     handleDaysForward,
+    allTasks,
+    isLoading,
   } = useTimelineContext()
-
-  const allTasks = useAllTasks(selectedUserId)
 
   const timelineRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (timelineRef.current) {
-      window.scrollTo(timelineRef.current.scrollWidth / 2.4, 0)
+    if (!initialLoad && timelineRef.current) {
+      const num = 17.5 * 98
+      window.scrollTo(num, 0)
+      setInitialLoad(true)
     }
-  }, [timelineRef.current])
+  }, [isLoading])
+
+  useEffect(() => {
+    if (timelineRef.current) {
+      window.scrollTo(18.5 * 98, 0)
+    }
+  }, [daysBack])
+
+  useEffect(() => {
+    if (timelineRef.current) {
+      const num = timelineRef.current.scrollWidth - 98 * 30
+      window.scrollTo(num, 0)
+    }
+  }, [daysForward])
 
   const openTaskModal = (day: Dayjs, task?: TaskFragment) => {
     handleSetModal("task")
@@ -88,19 +137,19 @@ const Timeline: FC<RouteComponentProps> = () => {
         filteredElements={filteredElements}
         handleSetFilteredElements={setFilteredElements}
         scrollToToday={() =>
-          timelineRef.current &&
-          window.scrollTo(timelineRef.current.scrollWidth / 2.4, 0)
+          timelineRef.current && window.scrollTo((daysBack - 2.5) * 98, 0)
         }
       />
-      <StyledTimelineWrapper ref={timelineRef}>
-        <TimelineHead openHabitModal={handleHabitModal} />
-        <StyledTimeline>
-          <StyledSun src={intersect} />
-          {allTasks && (
+      {isLoading && allTasks && (
+        <StyledTimelineWrapper ref={timelineRef}>
+          <TimelineHead openHabitModal={handleHabitModal} />
+          <StyledTimeline>
+            {/* <StyledSun src={intersect} /> */}
+
             <DragDropContainer allTasks={allTasks}>
               <StyledDaysWrapper>
                 <StyledBack onClick={() => handleDaysBack(daysBack + 20)}>
-                  {"<"}
+                  <ArrowCircleLeft width={60} color={"grey"} />
                 </StyledBack>
                 {getDays(
                   dayjs().subtract(daysBack, "day"),
@@ -122,16 +171,17 @@ const Timeline: FC<RouteComponentProps> = () => {
                     />
                   )
                 })}
+
                 <StyledForward
                   onClick={() => handleDaysForward(daysForward + 20)}
                 >
-                  {">"}
+                  <ArrowCircleRight width={60} color={"grey"} />
                 </StyledForward>
               </StyledDaysWrapper>
             </DragDropContainer>
-          )}
-        </StyledTimeline>
-      </StyledTimelineWrapper>
+          </StyledTimeline>
+        </StyledTimelineWrapper>
+      )}
     </>
   )
 }
@@ -143,38 +193,35 @@ const StyledTimelineWrapper = styled.div``
 const StyledTimeline = styled.div`
   display: flex;
   flex-direction: column;
-  height: -webkit-fill-available;
+  height: fit-content;
 `
 
 const StyledDaysWrapper = styled.div`
   display: flex;
   width: fit-content;
-  overflow: scroll;
 `
 
 const StyledBack = styled.p`
   position: absolute;
-  top: 50%;
-  left: 0;
-  font-size: 50px;
-  z-index: 100;
+  top: 44%;
+  left: 10px;
+  z-index: 95;
   cursor: pointer;
 `
 
 const StyledForward = styled.p`
   position: absolute;
-  top: 50%;
-  right: 0;
-  font-size: 50px;
-  z-index: 100;
+  top: 44%;
+  right: 115px;
+  z-index: 95;
   cursor: pointer;
 `
 
-const StyledSun = styled.img`
-  position: fixed;
-  right: 0px;
-  bottom: -20px;
-  height: 200px;
-  filter: blur(25px);
-  opacity: 0.95;
-`
+// const StyledSun = styled.img`
+//   position: fixed;
+//   right: 0px;
+//   bottom: -20px;
+//   height: 200px;
+//   filter: blur(25px);
+//   opacity: 0.95;
+// `

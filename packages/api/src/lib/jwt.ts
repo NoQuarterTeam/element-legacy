@@ -27,3 +27,15 @@ export function decryptToken(token: string): Promise<any> {
     }
   })
 }
+
+export function validateToken(token: string): Promise<any> {
+  return new Promise(resolve => {
+    try {
+      jwt.verify(token, APP_SECRET)
+      const payload = jwt.decode(token)
+      resolve(payload)
+    } catch (error) {
+      // Oops
+    }
+  })
+}

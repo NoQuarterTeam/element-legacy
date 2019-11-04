@@ -7,13 +7,8 @@ import Task from "./Task"
 
 import { calculateTotalTime, today } from "../lib/helpers"
 import { TaskFragment } from "../lib/graphql/types"
-import { lighten, darken } from "polished"
-
-// import { Droppable, Draggable } from 'react-beautiful-dnd';
-
-// import dayjs from "dayjs"
-// import AdvancedFormat from 'dayjs/plugin/advancedFormat';
-// dayjs.extend(AdvancedFormat);
+import { darken } from "polished"
+import dayjs from "dayjs"
 
 // import { AppContext } from '../application/context';
 
@@ -34,62 +29,80 @@ function Day({
   ...props
 }: DayProps) {
   return (
-    <Droppable droppableId={day.toString()}>
-      {(provided, snapshot) => (
-        <div ref={provided.innerRef} {...provided.droppableProps}>
-          <StyledDay weekend={weekend} today={today(day)} {...props}>
-            {tasks &&
-              tasks
-                .sort((a, b) => {
-                  return a.order - b.order
-                })
-                .map((task: TaskFragment, index) => (
-                  <Draggable key={task.id} draggableId={task.id} index={index}>
-                    {(provided, snapshot) => {
-                      return (
-                        <div
-                          ref={provided.innerRef}
-                          key={index}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                        >
-                          <Task
-                            isDragging={snapshot.isDragging}
-                            task={task}
-                            hidden={
-                              filteredElements &&
-                              filteredElements.includes(task.element.id)
-                            }
-                            handleTaskModal={handleTaskModal}
-                            // onMouseDown={() => onTaskClick(event, task)}
-                          />
-                        </div>
-                      )
-                    }}
-                  </Draggable>
-                ))}
-            <StyledTotalTime dragging={snapshot.isDraggingOver}>
-              {filteredElements &&
-                calculateTotalTime(
-                  tasks.filter(
-                    task => !filteredElements.includes(task.element.id),
-                  ),
-                )}
-            </StyledTotalTime>
+    <StyledBorder
+      monday={dayjs(day).day() === 1}
+      first={dayjs(day).date() === 1}
+    >
+      <Droppable
+        droppableId={day.toString()}
+        // style={{ height: "-webkit-fill-available" }}
+      >
+        {(provided, snapshot) => (
+          <div ref={provided.innerRef} {...provided.droppableProps}>
+            <StyledDay weekend={weekend} today={today(day)} {...props}>
+              {tasks &&
+                tasks
+                  .sort((a, b) => {
+                    return a.order - b.order
+                  })
+                  .map((task: TaskFragment, index) => (
+                    <Draggable
+                      key={task.id}
+                      draggableId={task.id}
+                      index={index}
+                    >
+                      {(provided, snapshot) => {
+                        return (
+                          <div
+                            ref={provided.innerRef}
+                            key={index}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <Task
+                              isDragging={snapshot.isDragging}
+                              task={task}
+                              hidden={
+                                filteredElements &&
+                                filteredElements.includes(task.element.id)
+                              }
+                              handleTaskModal={handleTaskModal}
+                              // onMouseDown={() => onTaskClick(event, task)}
+                            />
+                          </div>
+                        )
+                      }}
+                    </Draggable>
+                  ))}
+              <StyledTotalTime dragging={snapshot.isDraggingOver}>
+                {filteredElements &&
+                  calculateTotalTime(
+                    tasks.filter(
+                      task => !filteredElements.includes(task.element.id),
+                    ),
+                  )}
+              </StyledTotalTime>
 
-            {provided.placeholder}
-
-            <AddNewTask onClick={() => handleTaskModal()}>
-              <PlaceholderTask />
-            </AddNewTask>
-          </StyledDay>
-        </div>
-      )}
-    </Droppable>
+              {provided.placeholder}
+              <AddNewTask onClick={() => handleTaskModal()}>
+                <PlaceholderTask />
+              </AddNewTask>
+            </StyledDay>
+          </div>
+        )}
+      </Droppable>
+    </StyledBorder>
   )
 }
 
 export default memo(Day)
+
+const StyledBorder = styled.div<{ monday: boolean; first: boolean }>`
+  display: flex;
+  border-left: ${p => p.monday && "5px #efefef dotted"};
+  border-left: ${p => p.first && `5px ${p.theme.colorLightBlue} dotted`};
+  height: calc(100vh - 176px);
+`
 
 const StyledDay = styled.div<{
   weekend: boolean
@@ -99,15 +112,20 @@ const StyledDay = styled.div<{
   display: flex;
   flex-direction: column;
   width: 98px;
-  height: 880px;
+  height: 100%;
   font-size: ${p => p.theme.textS};
-  background-color: ${p => (p.today ? p.theme.colorLightBlue : "transparent")};
+  background-color: ${p => (p.today ? p.theme.colorBlue : "transparent")};
+  // border: ${p => (p.today ? "3px solid black" : "none")};
+  box-sizing: content-box;
+  border-top: none;
+  padding-bottom: ${p => (p.today ? "20px" : "0")};
+  transition: height -0.3s linear 2s;
 `
 
 const PlaceholderTask = styled.div`
   min-width: calc(100% - ${p => p.theme.paddingS});
   height: 64px;
-  border-radius: ${p => p.theme.borderRadius};
+  /* border-radius: ${p => p.theme.borderRadius}; */
 `
 
 const StyledTotalTime = styled.div<{ dragging: boolean }>`
@@ -119,9 +137,9 @@ const StyledTotalTime = styled.div<{ dragging: boolean }>`
 
 const AddNewTask = styled.div`
   cursor: pointer;
-  height: -webkit-fill-available;
-  border-radius: ${p => p.theme.borderRadius};
+  /* border-radius: ${p => p.theme.borderRadius}; */
   margin: ${p => p.theme.paddingS};
+  flex: 1;
 
   &:hover ${PlaceholderTask} {
     background-color: ${p => darken(0.02, p.theme.colorLightBlue)};

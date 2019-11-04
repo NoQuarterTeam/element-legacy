@@ -19,6 +19,12 @@ const overides = css`
     cursor: pointer;
     background-color: transparent;
   }
+
+  [data-react-beautiful-dnd-droppable="0"] {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
 `
 
 export default overides

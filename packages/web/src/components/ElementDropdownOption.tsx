@@ -1,13 +1,14 @@
 import React, { FC } from "react"
-import styled from "../application/theme"
 
-import { lighten } from "@noquarter/ui"
 import { ElementFragment } from "../lib/graphql/types"
-import { darken } from "polished"
+import { darken, lighten } from "polished"
+import styled from "styled-components"
 import { useTimelineContext } from "./providers/TimelineProvider"
 import useAppContext from "../lib/hooks/useAppContext"
 
-import AddUser from "../public/create-group-button.svg"
+import { DeleteOutline } from "styled-icons/material/DeleteOutline"
+import { Add } from "styled-icons/material/Add"
+import { GroupAdd } from "styled-icons/material/GroupAdd"
 
 interface ElementDropdownOptionProps {
   element: ElementFragment
@@ -60,18 +61,25 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
           {element.name}
         </StyledOption>
 
-        {/* {user.id === element.creatorId && ( */}
         <StyledShare color={element.color} onClick={handleShare}>
-          <StyledAddUser width="20" height="20" src={AddUser} />
+          <GroupAdd color={element.color} width="20" />
         </StyledShare>
-        {/* )} */}
 
+        {element.children && user.id === element.creatorId && (
+          <StyledDelete>
+            <DeleteOutline
+              color={element.color}
+              onClick={() => archiveElement(element)}
+              width="24px"
+              cursor="pointer"
+            />
+          </StyledDelete>
+        )}
         {!child && (
           <StyledAdd color={element.color} onClick={() => addChild(element)}>
-            +
+            <Add color={element.color} width="24px" cursor="pointer" />
           </StyledAdd>
         )}
-
         {user.id === element.creatorId && (
           <StyledColorCircle
             id={element.id}
@@ -80,35 +88,16 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
             // ref={buttonRef}
           />
         )}
-
         {element.children &&
-        element.children.filter(e => !e.archived).length > 0 ? (
-          <div
-            style={{ padding: "0 10px", marginBottom: "5px" }}
-            onClick={handleShowChildren}
-          >
-            <StyledArrow
-              open={open}
-              color={element.color}
-              hiddenElement={hiddenElement}
-            />
-          </div>
-        ) : user.id === element.creatorId ? (
-          <StyledDelete
-            color={element.color}
-            onClick={() => archiveElement(element)}
-          >
-            x
-          </StyledDelete>
-        ) : (
-          <StyledDelete
-            color={element.color}
-            // onClick={() => archiveElement(element)}
-            // onClick={() => removeSelf from Shared}
-          >
-            -
-          </StyledDelete>
-        )}
+          element.children.filter(e => !e.archived).length > 0 && (
+            <StyledArrowContainer open={open} onClick={handleShowChildren}>
+              <StyledArrow
+                open={open}
+                color={element.color}
+                hiddenElement={hiddenElement}
+              />
+            </StyledArrowContainer>
+          )}
       </StyledOptionContainer>
     </>
   )
@@ -116,12 +105,7 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
 
 export default ElementDropdownOption
 
-const StyledDelete = styled.p<{ color: string }>`
-  font-size: ${p => p.theme.textS};
-  color: ${p => darken(0.2, p.color)};
-  position: absolute;
-  top: 0;
-  right: ${p => p.theme.paddingM};
+const StyledDelete = styled.p`
   visibility: hidden;
 
   &:hover {
@@ -142,6 +126,10 @@ const StyledOption = styled.p<{
   color: ${p => (p.hiddenElement ? p.theme.colorLabel : p.theme.colorText)};
 `
 
+const StyledArrowContainer = styled.div<{ open: boolean }>`
+  padding: 0 ${props => props.theme.paddingS} 0 ${props => props.theme.paddingM};
+`
+
 const StyledArrow = styled.div<{
   open?: boolean
   color: string
@@ -154,13 +142,14 @@ const StyledArrow = styled.div<{
         : lighten(0.1, props.theme.colorText)};
   border-width: 0 3px 3px 0;
   display: inline-block;
-  padding: ${p => p.theme.paddingXS};
   content: "";
   transform: ${props => (props.open ? "rotate(225deg)" : "rotate(45deg)")};
   width: 0;
   height: 0;
   margin-left: 0;
-  margin-top: ${props => (props.open ? p => p.theme.paddingS : "-3px")};
+  margin-top: ${props => props.open && props.theme.paddingS};
+  margin-bottom: ${props => !props.open && props.theme.paddingXS};
+  padding: ${p => p.theme.paddingXS};
 
   &:hover {
     transform: ${props =>
@@ -173,6 +162,7 @@ const StyledColorCircle = styled.div`
   min-height: 16px;
   visibility: hidden;
   min-width: 16px;
+  padding: 4px;
   margin: 0 ${p => p.theme.paddingS};
   cursor: pointer;
   background-color: ${props => props.color};
@@ -187,7 +177,6 @@ const StyledAdd = styled.p<{ color: string }>`
   font-size: ${p => p.theme.textL};
   line-height: 1rem;
   visibility: hidden;
-  margin: 0 ${p => p.theme.paddingS};
 
   &:hover {
     transform: scale(1.1);
@@ -214,7 +203,7 @@ const StyledOptionContainer = styled.div<{
 }>`
   position: relative;
   ${p => p.theme.flexCenter};
-  padding: ${p => p.theme.paddingS} ${p => p.theme.paddingL}
+  padding: ${p => p.theme.paddingS} ${p => p.theme.paddingM}
     ${p => p.theme.paddingS} ${p => p.theme.paddingM};
   margin: ${p => p.theme.paddingS};
   cursor: pointer;
@@ -244,20 +233,13 @@ const StyledOptionContainer = styled.div<{
     border: solid ${props => darken(0.2, props.color)};
     border-width: 0 3px 3px 0;
     display: inline-block;
-    padding: ${p => p.theme.paddingXS};
     content: "";
     transform: ${props => (props.open ? "rotate(225deg)" : "rotate(45deg)")};
     width: 0;
     height: 0;
-    margin-left: ${props => props.theme.paddingM};
-    margin-top: ${props => (props.open ? p => p.theme.paddingS : "-3px")};
   }
 
   &:hover ${StyledOption} {
     color: ${p => darken(0.2, p.color)};
   }
-`
-
-const StyledAddUser = styled.img`
-  fill: green;
 `

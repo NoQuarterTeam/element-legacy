@@ -11,6 +11,7 @@ import ElementDropdownOption from "./ElementDropdownOption"
 import Input from "./Input"
 
 import { useTimelineContext } from "./providers/TimelineProvider"
+import { readableColor, darken, lighten } from "polished"
 
 interface ElementDropdownProps {
   selectedElementId?: string
@@ -20,6 +21,7 @@ interface ElementDropdownProps {
   filteredElements?: string[]
   toggleAll?: () => void
   open?: boolean
+  onClose?: () => void
 }
 const ElementDropdown: FC<ElementDropdownProps> = ({
   handleSelectElement,
@@ -29,8 +31,10 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
   filteredElements,
   toggleAll,
   open,
+  onClose,
 }) => {
   const { selectedUserId } = useTimelineContext()
+
   const createElement = useCreateElement(selectedUserId)
   const updateElement = useUpdateElement()
   const [dropdownOpen, openDropdown] = useState(false || open)
@@ -38,6 +42,8 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
   const [newElement, setNewElement] = useState("")
   const [newChildElement, setNewChildElement] = useState("")
   const [showChildren, setShowChildren] = useState("")
+  const [updatedColor, setUpdatedColor] = useState(null)
+
   const [pickerElement, setPickerElement] = useState<ElementFragment>()
   const [selectedElement, selectSelectedElement] = useState<ElementFragment>()
   const [addingChild, setAddingChild] = useState()
@@ -58,9 +64,9 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
 
   const createNewElement = async () => {
     if (newElement !== "") {
-      let letters = "0123456789ABCDEF"
+      const letters = "0123456789ABCDEF"
       let generatedColor = ""
-      for (var i = 0; i < 6; i++) {
+      for (let i = 0; i < 6; i++) {
         generatedColor += letters[Math.floor(Math.random() * 16)]
       }
       const elementData = {
@@ -79,9 +85,9 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
 
   const createNewChildElement = async (parent: ElementFragment) => {
     if (newChildElement !== "") {
-      let letters = "0123456789ABCDEF"
+      const letters = "0123456789ABCDEF"
       let generatedColor = ""
-      for (var i = 0; i < 6; i++) {
+      for (let i = 0; i < 6; i++) {
         generatedColor += letters[Math.floor(Math.random() * 16)]
       }
       const elementData = {
@@ -107,15 +113,24 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
     setAddingChild("")
   }
 
-  useOnClickOutside(dropdownRef, () => openDropdown(false))
+  const handleClose = () => {
+    openDropdown(false)
+
+    if (filteredElements && onClose) {
+      onClose()
+    }
+  }
+
+  useOnClickOutside(dropdownRef, () => handleClose())
   useOnClickOutside(pickerRef, () => openColorPicker(false))
 
   const handleChangeComplete = (color: any) => {
     setAddingChild("")
-
+    setUpdatedColor(color.hex)
     const elementData = {
       color: color.hex,
     }
+
     if (!pickerElement) return
     updateElement({
       variables: {
@@ -175,7 +190,11 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
         <StyledPickerContainer>
           <div ref={pickerRef}>
             <TwitterPicker
-              color={pickerElement && pickerElement.color}
+              color={
+                pickerElement && updatedColor
+                  ? updatedColor
+                  : pickerElement.color
+              }
               onChangeComplete={handleChangeComplete}
               triangle={"hide"}
             />
@@ -326,6 +345,12 @@ const StyledDropdownPlaceholder = styled.div<{
   ${p => p.theme.flexStart};
   white-space: nowrap;
   min-width: 150px;
+  color: ${p =>
+    p.color &&
+    readableColor(p.color, darken(0.5, p.color), lighten(0.5, p.color))};
+  background: ${p => p.color && p.color};
+  // border-color: ${p => p.color && p.color};
+
 
   // &:after {
   //   border: solid black;
@@ -342,13 +367,15 @@ const StyledDropdownPlaceholder = styled.div<{
 `
 
 const StyledDropdownOpenBlur = styled.div<{ open: boolean; filter: string }>`
-  visibility: ${props => (props.open && !props.filter ? "visible" : "hidden")};
+  /* visibility: ${props =>
+    props.open && !props.filter ? "visible" : "hidden"}; */
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  backdrop-filter: blur(5px);
+  /* backdrop-filter: blur(5px); */
   position: fixed;
+  display: ${props => (props.open ? "block" : "none")}; */
 `
 
 const StyledDropdownMenu = styled.div<{ open: boolean; filter: string }>`

@@ -114,7 +114,8 @@ const StyledTaskElement = styled.p<{ completed: boolean; color: string }>`
   color: ${p => p.color};
   transition: width 0.1s ease-out;
   text-align: center;
-  border-radius: ${p => `0 ${p.theme.borderRadius} 0 ${p.theme.borderRadius}`};
+  /* border-radius: ${p =>
+    `0 ${p.theme.borderRadius} 0 ${p.theme.borderRadius}`}; */
 `
 
 const StyledTaskStart = styled.p<{ completed: boolean }>`
@@ -164,18 +165,13 @@ const StyledTaskBox = styled.div<{
   box-shadow: ${p => (p.completed ? p.theme.boxShadow : p.theme.boxShadow)};
   filter: ${p => (p.completed ? "blur(0.6px)" : null)};
   opacity: ${p => (p.completed ? 0.8 : 1)};
-  border-radius: ${p => p.theme.borderRadius};
+  // border-radius: ${p => p.theme.borderRadius};
 
   &:hover ${StyledTaskElement} {
     height: 20px;
     width: 100%;
     text-overflow: ellipsis;
     padding: ${p => p.theme.paddingXS};
-    border-radius: ${p =>
-      `${p.theme.borderRadius} ${p.theme.borderRadius} 0 ${
-        p.theme.borderRadius
-      }`};
-
     color: ${p =>
       readableColor(p.color, darken(0.3, p.color), lighten(0.35, p.color))};
   }

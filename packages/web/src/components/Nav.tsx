@@ -1,16 +1,15 @@
 import React, { FC, useState } from "react"
-import styled, { darken } from "../application/theme"
+import styled from "../application/theme"
 import ElementDropdown from "./ElementDropdown"
 import { ElementFragment } from "../lib/graphql/types"
 import { useAllElements } from "../lib/graphql/element/hooks"
 import logo from "../public/logo.png"
 import textLogo from "../public/textLogo.png"
 
-import { useLogout } from "../lib/graphql/user/hooks"
+// import { useLogout } from "../lib/graphql/user/hooks"
 import { useGetSharedUsersByUser } from "../lib/graphql/sharedElement/hooks"
 import { useTimelineContext } from "./providers/TimelineProvider"
 import useAppContext from "../lib/hooks/useAppContext"
-import { linearGradient } from "polished"
 
 interface NavProps {
   filteredElements: string[]
@@ -25,11 +24,11 @@ const Nav: FC<NavProps> = ({
 }) => {
   const { user } = useAppContext()
 
-  const { handleSelectUser, selectedUserId } = useTimelineContext()
-  const elements = useAllElements(selectedUserId)
+  const { handleSelectUser } = useTimelineContext()
+  const elements = useAllElements(user.id)
   const sharedUsers = useGetSharedUsersByUser(user.id)
   const [elementsOpen, setElementsOpen] = useState(false)
-  const logout = useLogout()
+  // const logout = useLogout()
 
   // TODO: MOVE OUT TO LIB
   const toggleFilteredElement = (element: ElementFragment) => {
@@ -79,7 +78,7 @@ const Nav: FC<NavProps> = ({
   const toggleAll = () => {
     if (!elements) return false
     if (filteredElements.length === 0) {
-      let newFiltered = elements.map(element => element.id)
+      const newFiltered = elements.map(element => element.id)
       handleSetFilteredElements(newFiltered)
     } else {
       handleSetFilteredElements([])
@@ -124,7 +123,7 @@ const Nav: FC<NavProps> = ({
           <br />
           FEEDBACK
         </StyledFeedbackButton>
-        <StyledElementsOpen onClick={() => setElementsOpen(!elementsOpen)}>
+        <StyledElementsOpen onClick={() => setElementsOpen(true)}>
           <span role="img" aria-label="elements">
             📚
           </span>
@@ -133,6 +132,7 @@ const Nav: FC<NavProps> = ({
         </StyledElementsOpen>
         <ElementDropdown
           open={elementsOpen}
+          onClose={() => setElementsOpen(false)}
           handleSelectElement={element => toggleFilteredElement(element)}
           elements={elements}
           placeholder="Filter elements"
@@ -163,6 +163,7 @@ const StyledNav = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  border-left: 3px solid black;
 `
 
 const StyledBlur = styled.div`
@@ -171,14 +172,14 @@ const StyledBlur = styled.div`
   width: 100%;
   right: 0;
   top: 0;
-  background-color: rgba(254, 254, 254, 0.4);
-  backdrop-filter: blur(10px);
+  background-color: rgba(254, 254, 254, 1);
+  /* backdrop-filter: blur(10px); */
 `
 
 const StyledUser = styled.div<{ color: string }>`
   display: flex;
-  height: 55px;
-  width: 55px;
+  height: 65px;
+  width: 65px;
   border-radius: 50%;
   background-color: red;
   justify-content: center;
@@ -187,19 +188,20 @@ const StyledUser = styled.div<{ color: string }>`
   color: white;
   cursor: pointer;
   margin: ${p => p.theme.paddingM} 0;
+  border: 2px solid black;
 `
 
-const StyledLogoutButton = styled.a`
-  color: ${p => darken(0.3, p.theme.colorYellow)};
-  background-color: ${p => p.theme.colorYellow};
-  cursor: pointer;
-  padding: ${p => p.theme.paddingS} ${p => p.theme.paddingM};
-  border-radius: ${p => p.theme.borderRadius};
-  ${p => p.theme.flexCenter};
-  font-weight: ${p => p.theme.fontBold};
-  white-space: nowrap;
-  margin-left: 10px;
-`
+// const StyledLogoutButton = styled.a`
+//   color: ${p => darken(0.3, p.theme.colorYellow)};
+//   background-color: ${p => p.theme.colorYellow};
+//   cursor: pointer;
+//   padding: ${p => p.theme.paddingS} ${p => p.theme.paddingM};
+//   border-radius: ${p => p.theme.borderRadius};
+//   ${p => p.theme.flexCenter};
+//   font-weight: ${p => p.theme.fontBold};
+//   white-space: nowrap;
+//   margin-left: 10px;
+// `
 
 const StyledFeedbackButton = styled.a`
   text-align: center;
@@ -222,8 +224,9 @@ const StyledContainer = styled.div`
 `
 
 const StyledLogo = styled.img`
-  width: 112px;
-  margin: ${p => p.theme.paddingL} 0 ${p => p.theme.paddingXL};
+  width: 92px;
+  /* height: 95px; */
+  margin: ${p => p.theme.paddingXL} ${p => p.theme.paddingM};
   cursor: pointer;
 `
 const StyledTextLogo = styled.img`

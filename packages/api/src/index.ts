@@ -1,6 +1,8 @@
 import "reflect-metadata"
 import "dotenv/config"
 import { ApolloServer } from "apollo-server-express"
+const http = require("http")
+
 import express, { Response } from "express"
 import jwt from "express-jwt"
 import morgan from "morgan"
@@ -12,6 +14,8 @@ import { authChecker } from "./lib/authChecker"
 
 import { cors, PORT, resolverPaths, APP_SECRET } from "./lib/config"
 import { AppRequest } from "./lib/types"
+import { validateToken } from "./lib/jwt"
+import console = require("console")
 
 async function main() {
   try {
@@ -40,8 +44,21 @@ async function main() {
       context: ({ req, res }: { req: AppRequest; res: Response }) => ({
         req,
         res,
-        userId: req.user && req.user.id,
+        userId: req && req.user && req.user.id,
       }),
+      subscriptions: {
+        path: "/graphql",
+        onConnect: connectionParams => {
+          if (connectionParams.authorization) {
+            return validateToken(
+              connectionParams.authorization.split("Bearer ")[1],
+            ).then(payload => ({ user: { id: payload.id } }))
+          }
+
+          throw new Error("Missing auth token!")
+          // console.log(connectionParams)
+        },
+      },
       introspection: true,
       playground: true,
       schema,
@@ -52,9 +69,21 @@ async function main() {
       cors,
     })
 
-    app.listen(PORT, () =>
-      console.log(`Server started at http://localhost:${PORT} 🚀`),
-    )
+    const httpServer = http.createServer(app)
+    apolloServer.installSubscriptionHandlers(httpServer)
+
+    httpServer.listen({ port: PORT }, () => {
+      console.log(
+        `🚀 Server ready at http://localhost:${PORT}${
+          apolloServer.graphqlPath
+        }`,
+      )
+      console.log(
+        `🚀 Subscriptions ready at ws://localhost:${PORT}${
+          apolloServer.subscriptionsPath
+        }`,
+      )
+    })
   } catch (error) {
     console.log(error)
   }

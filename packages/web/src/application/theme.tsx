@@ -27,8 +27,9 @@ const theme: (small: boolean, isDark: boolean) => ThemeInterface = (
   colorPurple: "#A836FF",
   colorYellow: "#FFD336",
   colorPink: "#ed60d3",
-  colorBlue: "#4586ff",
+  colorBlue: "#D2ECFC",
   colorLightBlue: "rgba(210,236,252,0.4)",
+  colorLightGrey: "#EEE",
   fontBold: 900,
   fontSemiBold: 900,
   fontNormal: 400,
@@ -82,6 +83,7 @@ export interface ThemeInterface {
   colorPink: string
   colorBlue: string
   colorLightBlue: string
+  colorLightGrey: string
   fontThin: number
   fontBold: number
   fontSemiBold: number

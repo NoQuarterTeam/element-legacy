@@ -3,7 +3,7 @@ import * as ReactApolloHooks from "react-apollo-hooks"
 import * as ReactApollo from "react-apollo"
 export type Maybe<T> = T | null
 /** All built-in and custom scalars, mapped to their actual values */
-export interface Scalars {
+export type Scalars = {
   ID: string
   String: string
   Boolean: boolean
@@ -13,40 +13,40 @@ export interface Scalars {
   DateTime: any
 }
 
-export interface CreateElementInput {
+export type CreateElementInput = {
   name?: Maybe<Scalars["String"]>
   color?: Maybe<Scalars["String"]>
   archived?: Maybe<Scalars["Boolean"]>
   parentId?: Maybe<Scalars["String"]>
 }
 
-export interface CreateSharedElementInput {
+export type CreateSharedElementInput = {
   userId?: Maybe<Scalars["String"]>
   creatorId?: Maybe<Scalars["String"]>
   elementId?: Maybe<Scalars["String"]>
 }
 
-export interface CreateSharedElementsInput {
-  emails: Scalars["String"][]
+export type CreateSharedElementsInput = {
+  emails: Array<Scalars["String"]>
   elementId: Scalars["String"]
 }
 
-export interface Element {
+export type Element = {
   __typename?: "Element"
   id: Scalars["ID"]
   name: Scalars["String"]
   color: Scalars["String"]
   archived: Scalars["Boolean"]
-  children?: Maybe<Element[]>
+  children?: Maybe<Array<Element>>
   parentId?: Maybe<Scalars["String"]>
   creatorId?: Maybe<Scalars["String"]>
   creator?: Maybe<User>
-  sharedElements?: Maybe<SharedElement[]>
+  sharedElements?: Maybe<Array<SharedElement>>
   createdAt: Scalars["DateTime"]
   updatedAt: Scalars["DateTime"]
 }
 
-export interface Habit {
+export type Habit = {
   __typename?: "Habit"
   id: Scalars["ID"]
   archived: Scalars["Boolean"]
@@ -60,19 +60,19 @@ export interface Habit {
   archivedAt?: Maybe<Scalars["DateTime"]>
 }
 
-export interface HabitInput {
+export type HabitInput = {
   elementId?: Maybe<Scalars["String"]>
   archived?: Maybe<Scalars["Boolean"]>
   archivedAt?: Maybe<Scalars["DateTime"]>
   activeFrom?: Maybe<Scalars["DateTime"]>
 }
 
-export interface LoginInput {
+export type LoginInput = {
   email: Scalars["String"]
   password: Scalars["String"]
 }
 
-export interface Mutation {
+export type Mutation = {
   __typename?: "Mutation"
   createElement?: Maybe<Element>
   updateElement?: Maybe<Element>
@@ -80,7 +80,7 @@ export interface Mutation {
   createHabit?: Maybe<Habit>
   updateHabit?: Maybe<Habit>
   archiveHabit?: Maybe<Habit>
-  createSharedElements?: Maybe<SharedElement[]>
+  createSharedElements?: Maybe<Array<SharedElement>>
   destroySharedElement?: Maybe<Scalars["Boolean"]>
   createTask?: Maybe<Task>
   updateTask?: Maybe<Task>
@@ -92,79 +92,79 @@ export interface Mutation {
   logout: Scalars["Boolean"]
 }
 
-export interface MutationCreateElementArgs {
+export type MutationCreateElementArgs = {
   data: CreateElementInput
 }
 
-export interface MutationUpdateElementArgs {
+export type MutationUpdateElementArgs = {
   data: CreateElementInput
   elementId: Scalars["String"]
 }
 
-export interface MutationDestroyElementArgs {
+export type MutationDestroyElementArgs = {
   elementId: Scalars["String"]
 }
 
-export interface MutationCreateHabitArgs {
+export type MutationCreateHabitArgs = {
   data: HabitInput
 }
 
-export interface MutationUpdateHabitArgs {
-  data: HabitInput
-  habitId: Scalars["String"]
-}
-
-export interface MutationArchiveHabitArgs {
+export type MutationUpdateHabitArgs = {
   data: HabitInput
   habitId: Scalars["String"]
 }
 
-export interface MutationCreateSharedElementsArgs {
+export type MutationArchiveHabitArgs = {
+  data: HabitInput
+  habitId: Scalars["String"]
+}
+
+export type MutationCreateSharedElementsArgs = {
   data: CreateSharedElementsInput
 }
 
-export interface MutationDestroySharedElementArgs {
+export type MutationDestroySharedElementArgs = {
   elementId: Scalars["String"]
   email: Scalars["String"]
 }
 
-export interface MutationCreateTaskArgs {
+export type MutationCreateTaskArgs = {
   data: TaskInput
 }
 
-export interface MutationUpdateTaskArgs {
+export type MutationUpdateTaskArgs = {
   data: TaskInput
   taskId: Scalars["String"]
 }
 
-export interface MutationUpdateTaskOrderArgs {
+export type MutationUpdateTaskOrderArgs = {
   data: OrderTaskInput
   taskId: Scalars["String"]
 }
 
-export interface MutationDestroyTaskArgs {
+export type MutationDestroyTaskArgs = {
   taskId: Scalars["String"]
 }
 
-export interface MutationRegisterArgs {
+export type MutationRegisterArgs = {
   data: RegisterInput
 }
 
-export interface MutationLoginArgs {
+export type MutationLoginArgs = {
   data: LoginInput
 }
 
-export interface MutationUpdateUserArgs {
+export type MutationUpdateUserArgs = {
   data: UpdateInput
 }
 
-export interface OrderTaskInput {
+export type OrderTaskInput = {
   order: Scalars["Float"]
   scheduledDate: Scalars["DateTime"]
   userId: Scalars["String"]
 }
 
-export interface Progress {
+export type Progress = {
   __typename?: "Progress"
   id: Scalars["ID"]
   task: Task
@@ -172,42 +172,42 @@ export interface Progress {
   updatedAt: Scalars["DateTime"]
 }
 
-export interface Query {
+export type Query = {
   __typename?: "Query"
-  allElements?: Maybe<Element[]>
-  allHabits?: Maybe<Habit[]>
-  allProgress?: Maybe<Progress[]>
-  allSharedElements?: Maybe<SharedElement[]>
-  allSharedUsers?: Maybe<User[]>
-  allSharedUsersByUser?: Maybe<User[]>
-  allTasks?: Maybe<Task[]>
+  allElements?: Maybe<Array<Element>>
+  allHabits?: Maybe<Array<Habit>>
+  allProgress?: Maybe<Array<Progress>>
+  allSharedElements?: Maybe<Array<SharedElement>>
+  allSharedUsers?: Maybe<Array<User>>
+  allSharedUsersByUser?: Maybe<Array<User>>
+  allTasks?: Maybe<Array<Task>>
   me?: Maybe<User>
 }
 
-export interface QueryAllElementsArgs {
+export type QueryAllElementsArgs = {
   selectedUserId: Scalars["String"]
 }
 
-export interface QueryAllSharedUsersArgs {
+export type QueryAllSharedUsersArgs = {
   elementId: Scalars["String"]
 }
 
-export interface QueryAllSharedUsersByUserArgs {
+export type QueryAllSharedUsersByUserArgs = {
   userId: Scalars["String"]
 }
 
-export interface QueryAllTasksArgs {
+export type QueryAllTasksArgs = {
   selectedUserId?: Maybe<Scalars["String"]>
 }
 
-export interface RegisterInput {
+export type RegisterInput = {
   firstName: Scalars["String"]
   lastName: Scalars["String"]
   email: Scalars["String"]
   password: Scalars["String"]
 }
 
-export interface SharedElement {
+export type SharedElement = {
   __typename?: "SharedElement"
   id: Scalars["ID"]
   elementId: Scalars["String"]
@@ -218,7 +218,12 @@ export interface SharedElement {
   updatedAt: Scalars["DateTime"]
 }
 
-export interface Task {
+export type Subscription = {
+  __typename?: "Subscription"
+  updateTaskSubscription: Task
+}
+
+export type Task = {
   __typename?: "Task"
   id: Scalars["ID"]
   name: Scalars["String"]
@@ -236,7 +241,7 @@ export interface Task {
   updatedAt: Scalars["DateTime"]
 }
 
-export interface TaskInput {
+export type TaskInput = {
   name?: Maybe<Scalars["String"]>
   startTime?: Maybe<Scalars["String"]>
   description?: Maybe<Scalars["String"]>
@@ -248,26 +253,26 @@ export interface TaskInput {
   order?: Maybe<Scalars["Float"]>
 }
 
-export interface UpdateInput {
+export type UpdateInput = {
   firstName?: Maybe<Scalars["String"]>
   lastName?: Maybe<Scalars["String"]>
   email?: Maybe<Scalars["String"]>
   password?: Maybe<Scalars["String"]>
 }
 
-export interface User {
+export type User = {
   __typename?: "User"
   id: Scalars["ID"]
   email: Scalars["String"]
   firstName: Scalars["String"]
   lastName: Scalars["String"]
-  elements: Element[]
-  habits: Habit[]
-  sharedElements?: Maybe<SharedElement[]>
-  tasks: Task[]
+  elements: Array<Element>
+  habits: Array<Habit>
+  sharedElements?: Maybe<Array<SharedElement>>
+  tasks: Array<Task>
 }
 
-export interface UserAuthResponse {
+export type UserAuthResponse = {
   __typename?: "UserAuthResponse"
   user: User
   token: Scalars["String"]
@@ -277,19 +282,19 @@ export type ElementFragment = { __typename?: "Element" } & Pick<
   "id" | "name" | "color" | "archived" | "parentId" | "creatorId"
 > & {
     children: Maybe<
-      ({ __typename?: "Element" } & Pick<Element, "id" | "archived">)[]
+      Array<{ __typename?: "Element" } & Pick<Element, "id" | "archived">>
     >
   }
 
-export interface AllElementsQueryVariables {
+export type AllElementsQueryVariables = {
   selectedUserId: Scalars["String"]
 }
 
 export type AllElementsQuery = { __typename?: "Query" } & {
-  allElements: Maybe<({ __typename?: "Element" } & ElementFragment)[]>
+  allElements: Maybe<Array<{ __typename?: "Element" } & ElementFragment>>
 }
 
-export interface CreateElementMutationVariables {
+export type CreateElementMutationVariables = {
   data: CreateElementInput
 }
 
@@ -297,7 +302,7 @@ export type CreateElementMutation = { __typename?: "Mutation" } & {
   createElement: Maybe<{ __typename?: "Element" } & ElementFragment>
 }
 
-export interface UpdateElementMutationVariables {
+export type UpdateElementMutationVariables = {
   elementId: Scalars["String"]
   data: CreateElementInput
 }
@@ -313,13 +318,13 @@ export type HabitFragment = { __typename?: "Habit" } & Pick<
     element: { __typename?: "Element" } & Pick<Element, "id" | "name" | "color">
   }
 
-export interface AllHabitsQueryVariables {}
+export type AllHabitsQueryVariables = {}
 
 export type AllHabitsQuery = { __typename?: "Query" } & {
-  allHabits: Maybe<({ __typename?: "Habit" } & HabitFragment)[]>
+  allHabits: Maybe<Array<{ __typename?: "Habit" } & HabitFragment>>
 }
 
-export interface CreateHabitMutationVariables {
+export type CreateHabitMutationVariables = {
   data: HabitInput
 }
 
@@ -327,7 +332,7 @@ export type CreateHabitMutation = { __typename?: "Mutation" } & {
   createHabit: Maybe<{ __typename?: "Habit" } & HabitFragment>
 }
 
-export interface ArchiveHabitMutationVariables {
+export type ArchiveHabitMutationVariables = {
   habitId: Scalars["String"]
   data: HabitInput
 }
@@ -345,10 +350,10 @@ export type ProgressFragment = { __typename?: "Progress" } & Pick<
       }
   }
 
-export interface AllProgressQueryVariables {}
+export type AllProgressQueryVariables = {}
 
 export type AllProgressQuery = { __typename?: "Query" } & {
-  allProgress: Maybe<({ __typename?: "Progress" } & ProgressFragment)[]>
+  allProgress: Maybe<Array<{ __typename?: "Progress" } & ProgressFragment>>
 }
 
 export type SharedElementFragment = { __typename?: "SharedElement" } & Pick<
@@ -361,41 +366,41 @@ export type SharedElementFragment = { __typename?: "SharedElement" } & Pick<
       }
   }
 
-export interface AllSharedElementsQueryVariables {}
+export type AllSharedElementsQueryVariables = {}
 
 export type AllSharedElementsQuery = { __typename?: "Query" } & {
   allSharedElements: Maybe<
-    ({ __typename?: "SharedElement" } & SharedElementFragment)[]
+    Array<{ __typename?: "SharedElement" } & SharedElementFragment>
   >
 }
 
-export interface AllSharedUsersQueryVariables {
+export type AllSharedUsersQueryVariables = {
   elementId: Scalars["String"]
 }
 
 export type AllSharedUsersQuery = { __typename?: "Query" } & {
-  allSharedUsers: Maybe<({ __typename?: "User" } & UserFragment)[]>
+  allSharedUsers: Maybe<Array<{ __typename?: "User" } & UserFragment>>
 }
 
-export interface AllSharedUsersByUserQueryVariables {
+export type AllSharedUsersByUserQueryVariables = {
   userId: Scalars["String"]
 }
 
 export type AllSharedUsersByUserQuery = { __typename?: "Query" } & {
-  allSharedUsersByUser: Maybe<({ __typename?: "User" } & UserFragment)[]>
+  allSharedUsersByUser: Maybe<Array<{ __typename?: "User" } & UserFragment>>
 }
 
-export interface CreateSharedElementsMutationVariables {
+export type CreateSharedElementsMutationVariables = {
   data: CreateSharedElementsInput
 }
 
 export type CreateSharedElementsMutation = { __typename?: "Mutation" } & {
   createSharedElements: Maybe<
-    ({ __typename?: "SharedElement" } & SharedElementFragment)[]
+    Array<{ __typename?: "SharedElement" } & SharedElementFragment>
   >
 }
 
-export interface DeleteSharedElementMutationVariables {
+export type DeleteSharedElementMutationVariables = {
   email: Scalars["String"]
   elementId: Scalars["String"]
 }
@@ -424,15 +429,15 @@ export type TaskFragment = { __typename: "Task" } & Pick<
     >
   }
 
-export interface AllTasksQueryVariables {
+export type AllTasksQueryVariables = {
   selectedUserId: Scalars["String"]
 }
 
 export type AllTasksQuery = { __typename?: "Query" } & {
-  allTasks: Maybe<({ __typename?: "Task" } & TaskFragment)[]>
+  allTasks: Maybe<Array<{ __typename?: "Task" } & TaskFragment>>
 }
 
-export interface CreateTaskMutationVariables {
+export type CreateTaskMutationVariables = {
   data: TaskInput
 }
 
@@ -440,7 +445,7 @@ export type CreateTaskMutation = { __typename?: "Mutation" } & {
   createTask: Maybe<{ __typename?: "Task" } & TaskFragment>
 }
 
-export interface UpdateTaskMutationVariables {
+export type UpdateTaskMutationVariables = {
   taskId: Scalars["String"]
   data: TaskInput
 }
@@ -449,7 +454,7 @@ export type UpdateTaskMutation = { __typename?: "Mutation" } & {
   updateTask: Maybe<{ __typename?: "Task" } & TaskFragment>
 }
 
-export interface UpdateTaskOrderMutationVariables {
+export type UpdateTaskOrderMutationVariables = {
   taskId: Scalars["String"]
   data: OrderTaskInput
 }
@@ -460,7 +465,7 @@ export type UpdateTaskOrderMutation = { __typename?: "Mutation" } & {
   >
 }
 
-export interface DeleteTaskMutationVariables {
+export type DeleteTaskMutationVariables = {
   taskId: Scalars["String"]
 }
 
@@ -474,13 +479,13 @@ export type UserFragment = { __typename?: "User" } & Pick<
   "id" | "firstName" | "lastName" | "email"
 >
 
-export interface MeQueryVariables {}
+export type MeQueryVariables = {}
 
 export type MeQuery = { __typename?: "Query" } & {
   me: Maybe<{ __typename?: "User" } & UserFragment>
 }
 
-export interface LoginMutationVariables {
+export type LoginMutationVariables = {
   data: LoginInput
 }
 
@@ -491,7 +496,7 @@ export type LoginMutation = { __typename?: "Mutation" } & {
   > & { user: { __typename?: "User" } & UserFragment }
 }
 
-export interface RegisterMutationVariables {
+export type RegisterMutationVariables = {
   data: RegisterInput
 }
 
@@ -502,7 +507,7 @@ export type RegisterMutation = { __typename?: "Mutation" } & {
   > & { user: { __typename?: "User" } & UserFragment }
 }
 
-export interface UpdateUserMutationVariables {
+export type UpdateUserMutationVariables = {
   data: UpdateInput
 }
 
@@ -510,7 +515,7 @@ export type UpdateUserMutation = { __typename?: "Mutation" } & {
   updateUser: Maybe<{ __typename?: "User" } & UserFragment>
 }
 
-export interface LogoutMutationVariables {}
+export type LogoutMutationVariables = {}
 
 export type LogoutMutation = { __typename?: "Mutation" } & Pick<
   Mutation,
