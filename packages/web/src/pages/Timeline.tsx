@@ -29,7 +29,7 @@ import { useAllTasks } from "../lib/graphql/task/hooks"
 const Timeline: FC<RouteComponentProps> = () => {
   // TODO: SET TASK IN TimelineProvider
   const [task, setTask] = useState()
-  const [initialLoad, setInitialLoad] = useState(false)
+  const [initialLoad, setInitialLoad] = useState(true)
 
   const [daysBack, setDaysBack] = useState(20)
   const [daysForward, setDaysForward] = useState(20)
@@ -100,6 +100,7 @@ const Timeline: FC<RouteComponentProps> = () => {
         daysForward: daysForward + 20,
       },
     })
+
     setDaysForward(daysForward + 20)
     handleDaysForward(daysForward + 20)
   }
@@ -119,42 +120,41 @@ const Timeline: FC<RouteComponentProps> = () => {
         daysForward: -daysBack - 1,
       },
     })
+    let num = 18.5 * 98
+    if (isMobileDevice()) {
+      num = 20.5 * 98
+    }
+    window.scrollTo({
+      left: num,
+    })
+
     setDaysBack(daysBack + 20)
     handleDaysBack(daysBack + 20)
   }
 
+  const handleScrollToToday = () => {
+    if (isMobileDevice()) {
+      const num = 20.5 * 98
+      window.scrollTo(num, 0)
+    } else {
+      const num = 17.5 * 98
+      window.scrollTo(num, 0)
+    }
+  }
+
   useEffect(() => {
-    if (!initialLoad && timelineRef.current) {
-      if (isMobileDevice()) {
-        const num = 20.5 * 98
-        window.scrollTo(num, 0)
-      } else {
-        const num = 17.5 * 98
-        window.scrollTo(num, 0)
-      }
-      setInitialLoad(true)
+    if (initialLoad && timelineRef.current) {
+      handleScrollToToday()
+      setInitialLoad(false)
     }
   }, [])
 
   useEffect(() => {
-    if (timelineRef.current && initialLoad) {
-      if (isMobileDevice()) {
-        window.scrollTo(20.5 * 98, 0)
-      } else {
-        window.scrollTo(17.5 * 98, 0)
-      }
-    }
-  }, [daysBack])
-
-  useEffect(() => {
-    if (timelineRef.current && initialLoad) {
-      if (isMobileDevice()) {
-        const num = timelineRef.current.scrollWidth - 98 * 31
-        window.scrollTo(num, 0)
-      } else {
-        const num = timelineRef.current.scrollWidth - 98 * 30
-        window.scrollTo(num, 0)
-      }
+    if (!initialLoad && timelineRef.current) {
+      window.scrollBy({
+        left: 2 * 98,
+        behavior: "smooth",
+      })
     }
   }, [daysForward])
 
@@ -199,9 +199,7 @@ const Timeline: FC<RouteComponentProps> = () => {
       <Nav
         filteredElements={filteredElements}
         handleSetFilteredElements={setFilteredElements}
-        scrollToToday={() =>
-          timelineRef.current && window.scrollTo((daysBack - 2.5) * 98, 0)
-        }
+        scrollToToday={handleScrollToToday}
       />
       {allTasks && (
         <StyledTimelineWrapper ref={timelineRef}>
