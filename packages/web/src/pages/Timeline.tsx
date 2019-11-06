@@ -122,7 +122,7 @@ const Timeline: FC<RouteComponentProps> = () => {
     })
     let num = 18.5 * 98
     if (isMobileDevice()) {
-      num = 20.5 * 98
+      num = 21 * 98
     }
     window.scrollTo({
       left: num,
@@ -134,10 +134,10 @@ const Timeline: FC<RouteComponentProps> = () => {
 
   const handleScrollToToday = () => {
     if (isMobileDevice()) {
-      const num = 20.5 * 98
+      const num = daysBack * 98
       window.scrollTo(num, 0)
     } else {
-      const num = 17.5 * 98
+      const num = (daysBack - 2.5) * 98
       window.scrollTo(num, 0)
     }
   }
