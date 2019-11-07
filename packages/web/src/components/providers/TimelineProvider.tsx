@@ -3,14 +3,21 @@ import useAppContext from "../../lib/hooks/useAppContext"
 import { useCallback } from "react"
 import { useContext } from "react"
 import { ElementFragment } from "../../lib/graphql/types"
+import { isMobileDevice } from "../../lib/helpers"
 
 const TimelineProvider: FC = ({ children }) => {
   const { user } = useAppContext()
   const [modal, setModal] = useState("")
   const [selectedElement, setSelectedElement] = useState()
   const [selectedUserId, setSelectedUserId] = useState(user.id)
-  const [daysBack, setDaysBack] = useState(20)
-  const [daysForward, setDaysForward] = useState(20)
+
+  let days = 20
+  if (isMobileDevice()) {
+    days = 7
+  }
+
+  const [daysBack, setDaysBack] = useState(days)
+  const [daysForward, setDaysForward] = useState(days)
 
   const handleSetModal = useCallback(setModal, [setModal])
   const handleSelectUser = useCallback(setSelectedUserId, [setSelectedUserId])

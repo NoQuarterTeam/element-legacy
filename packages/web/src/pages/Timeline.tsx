@@ -28,8 +28,13 @@ const Timeline: FC<RouteComponentProps> = () => {
   const [navOpen, setNavOpen] = useState(true)
   const [initialLoad, setInitialLoad] = useState(true)
 
-  const [daysBack, setDaysBack] = useState(20)
-  const [daysForward, setDaysForward] = useState(20)
+  let days = 20
+  if (isMobileDevice()) {
+    days = 7
+  }
+
+  const [daysBack, setDaysBack] = useState(days)
+  const [daysForward, setDaysForward] = useState(days)
 
   const [dayClicked, setDayClicked] = useState()
 
@@ -77,7 +82,7 @@ const Timeline: FC<RouteComponentProps> = () => {
   const { user } = useAppContext()
 
   const { data, fetchMore } = useAllTasksQuery({
-    variables: { selectedUserId, daysBack: 20, daysForward: 20 },
+    variables: { selectedUserId, daysBack: days, daysForward: days },
   })
   const allTasks = data && data.allTasks ? data.allTasks : []
 
@@ -95,12 +100,12 @@ const Timeline: FC<RouteComponentProps> = () => {
       variables: {
         selectedUserId,
         daysBack: -daysForward - 1,
-        daysForward: daysForward + 20,
+        daysForward: daysForward + days,
       },
     })
 
-    setDaysForward(daysForward + 20)
-    handleDaysForward(daysForward + 20)
+    setDaysForward(daysForward + days)
+    handleDaysForward(daysForward + days)
   }
 
   const handleBack = () => {
@@ -114,23 +119,23 @@ const Timeline: FC<RouteComponentProps> = () => {
       },
       variables: {
         selectedUserId,
-        daysBack: daysBack + 20,
+        daysBack: daysBack + days,
         daysForward: -daysBack - 1,
       },
     })
 
     if (timelineRef.current) {
-      let num = 18.5 * 98
+      let num = (days - 1.5) * 98
       if (isMobileDevice()) {
-        num = 21 * 98
+        num = (days + 1) * 98
       }
       timelineRef.current.scrollTo({
         left: num,
       })
     }
 
-    setDaysBack(daysBack + 20)
-    handleDaysBack(daysBack + 20)
+    setDaysBack(daysBack + days)
+    handleDaysBack(daysBack + days)
   }
 
   const handleScrollToToday = () => {
