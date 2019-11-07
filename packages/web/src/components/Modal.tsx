@@ -4,6 +4,7 @@ import Tile from "./styled/Tile"
 import Center from "./styled/Center"
 import useEventListener from "../lib/hooks/useEventListener"
 import { media } from "../lib/mediaQueries"
+import { Close } from "styled-icons/material/Close"
 
 interface ModalProps {
   onClose: () => void
@@ -31,7 +32,9 @@ const Modal: FC<ModalProps> = ({ children, onClose }) => {
     <StyledModal tabIndex={-1}>
       <StyledOverlay onClick={onClose} />
       <StyledTile>
-        <StyledClose onClick={onClose}>X</StyledClose>
+        <StyledClose onClick={onClose}>
+          <Close size={30} color="lightgrey" />
+        </StyledClose>
         {children}
       </StyledTile>
     </StyledModal>
@@ -63,19 +66,18 @@ const StyledOverlay = styled.div`
 
 const StyledTile = styled(Tile)`
   z-index: 101;
-  padding: ${p => p.theme.paddingXL} ${p => p.theme.paddingXL};
+  padding: 55px ${p => p.theme.paddingXL} ${p => p.theme.paddingXL};
   margin: 0;
   height: 100vh;
   width: 100vw;
   color: black;
   background-color: white;
   border: ${p => p.theme.border};
-  /* position: fixed; */
-  /* overflow: hidden; */
   border-radius: 0;
 
   ${media.greaterThan("md")`
     position: relative;
+    padding: ${p => p.theme.paddingXL} ${p => p.theme.paddingXL};
     margin: ${(p: any) => p.theme.paddingXL};
     height: max-content;
     max-width: 500px;

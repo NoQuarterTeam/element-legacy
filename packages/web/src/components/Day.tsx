@@ -11,6 +11,7 @@ import { darken } from "polished"
 import dayjs from "dayjs"
 import { useTimelineContext } from "./providers/TimelineProvider"
 import useAppContext from "../lib/hooks/useAppContext"
+import { media } from "../application/theme"
 
 interface DayProps {
   weekend: boolean
@@ -112,7 +113,12 @@ const StyledBorder = styled.div<{
   border-left: ${p => p.monday && "5px #efefef dotted"};
   border-left: ${p => p.first && `5px ${p.theme.colorLightBlue} dotted`};
   min-height: ${p =>
-    p.currentUser ? `calc(100vh - 176px)` : `calc(100vh - 145px)`};
+    p.currentUser ? `calc(100vh - 164px)` : `calc(100vh - 132px)`};
+
+  ${media.greaterThan("md")`
+    min-height: ${p =>
+      p.currentUser ? `calc(100vh - 176px)` : `calc(100vh - 145px)`};
+  `}
 `
 
 const StyledDay = styled.div<{
@@ -125,12 +131,14 @@ const StyledDay = styled.div<{
   width: 98px;
   height: 100%;
   font-size: ${p => p.theme.textS};
-  background-color: ${p => (p.today ? p.theme.colorBlue : "transparent")};
+  background-color: ${p =>
+    p.today ? p.theme.colorBlue : p.theme.colorBackground};
   // border: ${p => (p.today ? "3px solid black" : "none")};
   box-sizing: content-box;
   border-top: none;
   padding-bottom: ${p => (p.today ? "20px" : "0")};
   transition: height -0.3s linear 2s;
+  
 `
 
 const PlaceholderTask = styled.div`

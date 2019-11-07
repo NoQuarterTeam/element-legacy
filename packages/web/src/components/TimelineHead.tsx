@@ -98,6 +98,8 @@ const TimelineHead: FC<TimelineHeadProps> = ({ openHabitModal }) => {
                         ) : (
                           <StyledHabits today={today(day)} count={1} />
                         )
+                      ) : user.id === selectedUserId ? (
+                        <StyledHabits today={today(day)} count={4} />
                       ) : (
                         <></>
                       )}
@@ -117,12 +119,15 @@ export default TimelineHead
 const StyledTimelineHead = styled.div`
   display: flex;
   flex-direction: column;
+  background-color: ${p => p.theme.colorBackground};
 `
 
 const StyledMonthsHeadContainer = styled.div`
+  position: absolute;
   display: flex;
   flex-direction: row;
   width: fit-content;
+  z-index: 50;
 `
 
 const StyledMonthHeader = styled.h3`
@@ -154,7 +159,7 @@ const StyledDayHeader = styled.h3<{ today: boolean; weekend: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: ${p => (p.today ? "113px" : "119px")};
+  padding-top: ${p => (p.today ? "114px" : "119px")};
   /* margin-top: ${p => (p.today ? "-6px" : "0px")}; */
   background-color: ${p => p.today && p.theme.colorBlue};
   /* border: ${p => (p.today ? "3px solid black" : "none")}; */

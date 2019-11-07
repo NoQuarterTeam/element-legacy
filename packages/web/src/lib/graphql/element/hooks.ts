@@ -23,7 +23,7 @@ export function useCreateElement(selectedUserId: string) {
             query: AllElementsDocument,
             variables: { selectedUserId: userId },
             data: {
-              allElements: [data.createElement, ...allElements],
+              allElements: [...allElements, data.createElement],
             },
           })
         }

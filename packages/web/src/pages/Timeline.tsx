@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, FC, useState } from "react"
 import { RouteComponentProps } from "@reach/router"
 import dayjs, { Dayjs } from "dayjs"
-// import useAppContext from "../../lib/hooks/useAppContext"
 // import { useLogout } from "../../lib/graphql/user/hooks"
 import Day from "../components/Day"
 import TimelineHead from "../components/TimelineHead"
@@ -10,25 +9,23 @@ import DragDropContainer from "../components/DragDropContainer"
 import TaskModal from "../components/TaskModal"
 import HabitModal from "../components/HabitModal"
 
-import {
-  TaskFragment,
-  useAllTasksQuery,
-  AllTasksDocument,
-} from "../lib/graphql/types"
-import styled from "../application/theme"
+import { TaskFragment, useAllTasksQuery } from "../lib/graphql/types"
+import styled, { media } from "../application/theme"
 import Nav from "../components/Nav"
 import { useTimelineContext } from "../components/providers/TimelineProvider"
 import ShareModal from "../components/ShareModal"
 // import { useSubscription } from "react-apollo-hooks"
-import { ArrowCircleLeft } from "styled-icons/fa-solid/ArrowCircleLeft"
-import { ArrowCircleRight } from "styled-icons/fa-solid/ArrowCircleRight"
-import { useAllTasks } from "../lib/graphql/task/hooks"
+import { ChevronLeft } from "styled-icons/fa-solid/ChevronLeft"
+import { ChevronRight } from "styled-icons/fa-solid/ChevronRight"
+import useAppContext from "../lib/hooks/useAppContext"
+// import { useAllTasks } from "../lib/graphql/task/hooks"
 
 // import gql from "graphql-tag"
 
 const Timeline: FC<RouteComponentProps> = () => {
   // TODO: SET TASK IN TimelineProvider
   const [task, setTask] = useState()
+  const [navOpen, setNavOpen] = useState(true)
   const [initialLoad, setInitialLoad] = useState(true)
 
   const [daysBack, setDaysBack] = useState(20)
@@ -77,6 +74,7 @@ const Timeline: FC<RouteComponentProps> = () => {
     handleDaysForward,
     selectedUserId,
   } = useTimelineContext()
+  const { user } = useAppContext()
 
   const { data, fetchMore } = useAllTasksQuery({
     variables: { selectedUserId, daysBack: 20, daysForward: 20 },
@@ -120,25 +118,30 @@ const Timeline: FC<RouteComponentProps> = () => {
         daysForward: -daysBack - 1,
       },
     })
-    let num = 18.5 * 98
-    if (isMobileDevice()) {
-      num = 21 * 98
+
+    if (timelineRef.current) {
+      let num = 18.5 * 98
+      if (isMobileDevice()) {
+        num = 21 * 98
+      }
+      timelineRef.current.scrollTo({
+        left: num,
+      })
     }
-    window.scrollTo({
-      left: num,
-    })
 
     setDaysBack(daysBack + 20)
     handleDaysBack(daysBack + 20)
   }
 
   const handleScrollToToday = () => {
-    if (isMobileDevice()) {
-      const num = daysBack * 98
-      window.scrollTo(num, 0)
-    } else {
-      const num = (daysBack - 2.5) * 98
-      window.scrollTo(num, 0)
+    if (timelineRef.current) {
+      if (isMobileDevice()) {
+        const num = daysBack * 98
+        timelineRef.current.scrollTo(num, 0)
+      } else {
+        const num = (daysBack - 2.5) * 98
+        timelineRef.current.scrollTo(num, 0)
+      }
     }
   }
 
@@ -151,8 +154,8 @@ const Timeline: FC<RouteComponentProps> = () => {
 
   useEffect(() => {
     if (!initialLoad && timelineRef.current) {
-      window.scrollBy({
-        left: 2 * 98,
+      timelineRef.current.scrollBy({
+        left: 4 * 98,
         behavior: "smooth",
       })
     }
@@ -200,18 +203,21 @@ const Timeline: FC<RouteComponentProps> = () => {
         filteredElements={filteredElements}
         handleSetFilteredElements={setFilteredElements}
         scrollToToday={handleScrollToToday}
+        open={navOpen}
+        toggleOpen={() => setNavOpen(!navOpen)}
       />
       {allTasks && (
         <StyledTimelineWrapper ref={timelineRef}>
           <TimelineHead openHabitModal={handleHabitModal} />
           <StyledTimeline>
             {/* <StyledSun src={intersect} /> */}
-
-            <DragDropContainer allTasks={allTasks}>
-              <StyledDaysWrapper>
+            <StyledSpacer currentUser={user.id === selectedUserId} />
+            <StyledDaysWrapper>
+              <DragDropContainer allTasks={allTasks}>
                 <StyledBack onClick={handleBack}>
-                  <ArrowCircleLeft width={60} color={"grey"} />
+                  <ChevronLeft width={30} color={"lightgrey"} />
                 </StyledBack>
+
                 {getDays(
                   dayjs().subtract(daysBack, "day"),
                   daysBack + daysForward,
@@ -233,11 +239,11 @@ const Timeline: FC<RouteComponentProps> = () => {
                   )
                 })}
 
-                <StyledForward onClick={handleForward}>
-                  <ArrowCircleRight width={60} color={"grey"} />
+                <StyledForward onClick={handleForward} open={navOpen}>
+                  <ChevronRight width={30} color={"lightgrey"} />
                 </StyledForward>
-              </StyledDaysWrapper>
-            </DragDropContainer>
+              </DragDropContainer>
+            </StyledDaysWrapper>
           </StyledTimeline>
         </StyledTimelineWrapper>
       )}
@@ -247,40 +253,50 @@ const Timeline: FC<RouteComponentProps> = () => {
 
 export default Timeline
 
-const StyledTimelineWrapper = styled.div``
+const StyledTimelineWrapper = styled.div`
+  overflow-x: auto;
+  overflow-y: hidden;
+`
 
 const StyledTimeline = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
+  width: fit-content;
+  height: 100vh;
+  overflow: auto;
 `
 
 const StyledDaysWrapper = styled.div`
   display: flex;
   width: fit-content;
+  height: fit-content;
+  overflow-y: scroll;
+  overflow-x: hidden;
+`
+
+const StyledSpacer = styled.div<{ currentUser: boolean }>`
+  height: ${p => (p.currentUser ? "162px" : "131px")};
+
+  ${media.greaterThan("md")`
+    height: ${p => (p.currentUser ? "174px" : "143px")};
+  `}
 `
 
 const StyledBack = styled.p`
   position: absolute;
-  top: 40vh;
-  left: 10px;
+  top: 30vh;
+  left: 5px;
   z-index: 95;
   cursor: pointer;
+  filter: drop-shadow(1px 1px 2px rgba(200, 200, 200, 0.3));
+  padding-right: ${p => p.theme.paddingM};
 `
 
-const StyledForward = styled.p`
+const StyledForward = styled.p<{ open: boolean }>`
   position: absolute;
-  top: 40vh;
-  right: 115px;
+  top: 30vh;
+  right: ${p => (p.open ? "80px" : "5px")};
+  transition: right 0.5s;
   z-index: 95;
   cursor: pointer;
+  filter: drop-shadow(1px 1px 2px rgba(200, 200, 200, 0.3));
+  padding-left: ${p => p.theme.paddingM};
 `
-
-// const StyledSun = styled.img`
-//   position: fixed;
-//   right: 0px;
-//   bottom: -20px;
-//   height: 200px;
-//   filter: blur(25px);
-//   opacity: 0.95;
-// `

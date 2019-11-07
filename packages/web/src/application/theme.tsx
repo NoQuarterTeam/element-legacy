@@ -41,7 +41,7 @@ const theme: (small: boolean, isDark: boolean) => ThemeInterface = (
   paddingS: "5px",
   paddingXL: "40px",
   paddingXS: "3px",
-  borderRadius: "8px",
+  borderRadius: "3px",
   borderRadiusL: "16px",
   borderRadiusS: "4px",
   border: "2px solid black",
@@ -52,6 +52,7 @@ const theme: (small: boolean, isDark: boolean) => ThemeInterface = (
   textM: small ? "1rem" : "1.125rem",
   textS: small ? "0.75rem" : "0.8125rem",
   textXS: "0.72rem",
+  textXXS: "0.52rem",
   flexCenter: `
     display: flex;
     align-items: center;
@@ -98,6 +99,7 @@ export interface ThemeInterface {
   textS: string
   textXL: string
   textXS: string
+  textXXS: string
   flexCenter: string
   flexBetween: string
   flexAround: string

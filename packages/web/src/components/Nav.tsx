@@ -3,8 +3,10 @@ import styled from "../application/theme"
 import ElementDropdown from "./ElementDropdown"
 import { ElementFragment } from "../lib/graphql/types"
 import { useAllElements } from "../lib/graphql/element/hooks"
-import logo from "../public/logo.png"
-import textLogo from "../public/textLogo.png"
+import { ChevronsRight } from "styled-icons/boxicons-regular/ChevronsRight"
+import { Filter } from "styled-icons/boxicons-regular/Filter"
+import { Feedback } from "styled-icons/material/Feedback"
+import { Today } from "styled-icons/material/Today"
 
 // import { useLogout } from "../lib/graphql/user/hooks"
 import { useGetSharedUsersByUser } from "../lib/graphql/sharedElement/hooks"
@@ -15,12 +17,16 @@ interface NavProps {
   filteredElements: string[]
   handleSetFilteredElements: (elements: string[]) => void
   scrollToToday: () => void
+  toggleOpen: () => void
+  open: boolean
 }
 
 const Nav: FC<NavProps> = ({
   filteredElements,
   handleSetFilteredElements,
   scrollToToday,
+  toggleOpen,
+  open,
 }) => {
   const { user } = useAppContext()
 
@@ -28,6 +34,7 @@ const Nav: FC<NavProps> = ({
   const elements = useAllElements(user.id)
   const sharedUsers = useGetSharedUsersByUser(user.id)
   const [elementsOpen, setElementsOpen] = useState(false)
+
   // const logout = useLogout()
 
   // TODO: MOVE OUT TO LIB
@@ -88,14 +95,20 @@ const Nav: FC<NavProps> = ({
   const colors = ["#FF9292", "#245A7A", "#F7B002"]
 
   return (
-    <StyledNav>
-      <StyledBlur />
+    <StyledNav open={open}>
+      {/* <StyledBlur /> */}
+      {/* <StyledOpenButton open={open} onClick={() => setOpen(true)}>
+        <ChevronsLeft width={40} color="lightgrey" />
+      </StyledOpenButton> */}
       <StyledContainer>
-        <StyledLogo src={logo} onClick={scrollToToday} />
+        <StyledCloseButton open={open} onClick={() => toggleOpen(!open)}>
+          <ChevronsRight width={40} color="lightgrey" />
+        </StyledCloseButton>
         <StyledUser
           key={user.id}
           onClick={() => handleSelectUser(user.id)}
           color={colors[0]}
+          open={open}
           selected={selectedUserId === user.id}
         >
           {user.firstName.charAt(0)}
@@ -108,6 +121,7 @@ const Nav: FC<NavProps> = ({
               onClick={() => handleSelectUser(sharedUser.id)}
               color={colors[index + 1]}
               selected={selectedUserId === sharedUser.id}
+              open={open}
             >
               {sharedUser.firstName.charAt(0)}
               {sharedUser.lastName.charAt(0)}
@@ -118,18 +132,13 @@ const Nav: FC<NavProps> = ({
         <StyledFeedbackButton
           href="https://www.notion.so/noquarter/Tell-me-how-you-really-feel-3210d7178b704f1dbf977ff82cbb543d"
           target="_blank"
+          open={open}
         >
-          <span role="img" aria-label="feedback">
-            💌
-          </span>
-          <br />
+          <Feedback width={20} color="lightgrey" />
           FEEDBACK
         </StyledFeedbackButton>
-        <StyledElementsOpen onClick={() => setElementsOpen(true)}>
-          <span role="img" aria-label="elements">
-            📚
-          </span>
-          <br />
+        <StyledElementsOpen onClick={() => setElementsOpen(true)} open={open}>
+          <Filter width={30} color="lightgrey" />
           ELEMENTS
         </StyledElementsOpen>
         <ElementDropdown
@@ -141,49 +150,47 @@ const Nav: FC<NavProps> = ({
           filteredElements={filteredElements && filteredElements}
           toggleAll={toggleAll}
         />
-        {/* 
-        <StyledFeedbackButton
-          href="https://www.notion.so/noquarter/Tell-me-how-you-really-feel-3210d7178b704f1dbf977ff82cbb543d"
-          target="_blank"
-        >
-          Feedback
-        </StyledFeedbackButton>
-        <StyledLogoutButton onClick={logout}>Logout</StyledLogoutButton> */}
-        <StyledTextLogo src={textLogo} onClick={scrollToToday} />
+        <StyledToday open={open} onClick={scrollToToday}>
+          <Today width={30} color="lightgrey" />
+        </StyledToday>
       </StyledContainer>
     </StyledNav>
   )
 }
 
-const StyledNav = styled.div`
+const StyledNav = styled.div<{ open: boolean }>`
   position: fixed;
   height: 100vh;
   right: 0;
   top: 0;
+  /* overflow: hidden; */
   z-index: 98;
+  width: ${p => (p.open ? "75px" : "0px")};
+  background: ${p => p.theme.colorBackground};
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  border-left: 3px solid black;
+  transition: width 0.3s;
+  box-shadow: -4px 0px 4px 4px rgba(200, 200, 200, 0.1);
 `
 
-const StyledBlur = styled.div`
-  position: absolute;
-  height: 100vh;
-  width: 100%;
-  right: 0;
-  top: 0;
-  background-color: rgba(254, 254, 254, 1);
-  /* backdrop-filter: blur(10px); */
+const StyledCloseButton = styled.button<{ open: boolean }>`
+  transform-origin: left;
+  transform: ${p => !p.open && "translate(20px, 0) scale(-1, -1) "};
+  transition: transform 0.4s;
 `
 
-const StyledUser = styled.div<{ color: string; selected: boolean }>`
+const StyledUser = styled.div<{
+  color: string
+  selected: boolean
+  open: boolean
+}>`
+  visibility: ${p => (p.open ? "visible" : "hidden")};
   display: flex;
-  height: 65px;
-  width: 65px;
+  height: 45px;
+  width: 45px;
   border-radius: 50%;
-  background-color: red;
   justify-content: center;
   align-items: center;
   background-color: ${p => p.color};
@@ -191,7 +198,7 @@ const StyledUser = styled.div<{ color: string; selected: boolean }>`
   cursor: pointer;
   margin: ${p => p.theme.paddingM} 0;
   border: 2px solid black;
-  opacity: ${p => !p.selected && 0.5};
+  opacity: ${p => !p.selected && 0.7};
 `
 
 // const StyledLogoutButton = styled.a`
@@ -206,17 +213,18 @@ const StyledUser = styled.div<{ color: string; selected: boolean }>`
 //   margin-left: 10px;
 // `
 
-const StyledFeedbackButton = styled.a`
+const StyledFeedbackButton = styled.a<{ open: boolean }>`
+  visibility: ${p => (p.open ? "visible" : "hidden")};
   text-align: center;
   cursor: pointer;
-  font-size: ${p => p.theme.textS};
+  font-size: ${p => p.theme.textXXS};
   text-decoration: none;
   margin-bottom: ${p => p.theme.paddingL};
-  color: black;
-
-  span {
-    font-size: ${p => p.theme.textL};
-  }
+  font-variant: small-caps;
+  color: ${p => p.theme.colorLabel};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `
 
 const StyledContainer = styled.div`
@@ -226,25 +234,24 @@ const StyledContainer = styled.div`
   align-items: center;
 `
 
-const StyledLogo = styled.img`
-  width: 92px;
-  /* height: 95px; */
-  margin: ${p => p.theme.paddingXL} ${p => p.theme.paddingM};
-  cursor: pointer;
-`
-const StyledTextLogo = styled.img`
-  width: 60px;
-  margin: ${p => p.theme.paddingXL} 0 ${p => p.theme.paddingL};
-  cursor: pointer;
+const StyledToday = styled.button<{ open: boolean }>`
+  transform-origin: left;
+  transform: ${p => !p.open && "translate(20px, 0) scale(-1, 1) "};
+  transition: transform 0.4s;
+  margin-bottom: ${p => p.theme.paddingL};
 `
 
-const StyledElementsOpen = styled.div`
+const StyledElementsOpen = styled.div<{ open: boolean }>`
+  visibility: ${p => (p.open ? "visible" : "hidden")};
   text-align: center;
+  font-variant: small-caps;
   cursor: pointer;
-  font-size: ${p => p.theme.textS};
-  span {
-    font-size: ${p => p.theme.textL};
-  }
+  font-size: ${p => p.theme.textXXS};
+  margin-bottom: ${p => p.theme.paddingXL};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: ${p => p.theme.colorLabel};
 `
 
 export default Nav

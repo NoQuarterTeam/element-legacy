@@ -3,6 +3,13 @@ import { css } from "../../application/theme"
 const body = css`
   @import url(//fonts.googleapis.com/earlyaccess/laosanspro.css);
 
+  html,
+  body {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+  }
+
   body,
   h1,
   h2,

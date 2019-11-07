@@ -5,10 +5,12 @@ import {
   useCreateElement,
   useUpdateElement,
 } from "../lib/graphql/element/hooks"
+import { isMobileDevice } from "../lib/helpers"
 import { ElementFragment } from "../lib/graphql/types"
 import useOnClickOutside from "../lib/hooks/useOnOutsideClick"
 import ElementDropdownOption from "./ElementDropdownOption"
 import Input from "./Input"
+import { Close } from "styled-icons/material/Close"
 
 import { useTimelineContext } from "./providers/TimelineProvider"
 import { readableColor, darken, lighten } from "polished"
@@ -210,18 +212,9 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
         open={dropdownOpen}
         filter={filteredElements ? "true" : "false"}
       >
-        <StyledNewElement>
-          <Input
-            placeholder="New Element..."
-            onChange={e => setNewElement(e.target.value)}
-            value={newElement}
-            style={{ fontSize: "16px", padding: 0 }}
-            autoFocus
-          />
-          <StyledAdd newElement={newElement} onClick={createNewElement}>
-            +
-          </StyledAdd>
-        </StyledNewElement>
+        <StyledClose onClick={() => openDropdown(!dropdownOpen)}>
+          <Close size={30} color="lightgrey" />
+        </StyledClose>
 
         {elements &&
           elements
@@ -318,6 +311,18 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
                     ))}
               </div>
             ))}
+        <StyledNewElement>
+          <Input
+            placeholder="New Element..."
+            onChange={e => setNewElement(e.target.value)}
+            value={newElement}
+            style={{ fontSize: "16px", padding: 0 }}
+            autoFocus
+          />
+          <StyledAdd newElement={newElement} onClick={createNewElement}>
+            +
+          </StyledAdd>
+        </StyledNewElement>
         {filteredElements && filteredElements.length > 0 && (
           <StyledToggle onClick={handleToggleAll}>Show all</StyledToggle>
         )}
@@ -373,33 +378,38 @@ const StyledDropdownOpenBlur = styled.div<{ open: boolean; filter: string }>`
   left: 0;
   width: 100vw;
   height: 100vh;
-  /* backdrop-filter: blur(5px); */
+  background: ${p => p.theme.colorOverlay};
   position: fixed;
-  display: ${props => (props.open ? "block" : "none")}; */
+  display: ${props => (props.open ? "block" : "none")};
 `
 
 const StyledDropdownMenu = styled.div<{ open: boolean; filter: string }>`
   visibility: ${props => (props.open ? "visible" : "hidden")};
   position: fixed;
-  padding-top: ${p => p.theme.paddingM};
+  padding-top: ${p => p.theme.paddingXL};
   /* border-radius: ${p => p.theme.borderRadiusL}; */
   background-color: white;
   min-width: 350px;
   overflow-y: auto;
   z-index: 100;
   width: 100vw;
-  left: 0;
-  top: ${p => (p.filter === "true" ? "50px" : "auto")};
-  bottom: ${p => (p.filter === "true" ? "auto" : "0")};
+  right: 0;
+  top: 0;
+  bottom: 0;
+  /* top: ${p => (p.filter === "true" ? "50px" : "auto")}; */
+  /* bottom: ${p => (p.filter === "true" ? "auto" : "0")}; */
   color: black;
   background-color: white;
-  border: ${p => p.theme.border};
-
+  border:2px solid black;
+ 
   ${media.greaterThan("md")`
     position: fixed; 
     bottom: 0;
     width: fit-content;
     top: 0
+    border: none;
+    border-left: 2px solid black;
+    padding-top: ${p => p.theme.paddingM};
   `};
 `
 
@@ -452,4 +462,17 @@ const StyledPickerContainer = styled.div`
   ${p => p.theme.flexCenter};
   background-color: ${p => p.theme.colorOverlay};
   z-index: 1001;
+`
+
+const StyledClose = styled.button`
+  position: absolute;
+  right: ${p => p.theme.paddingS};
+  top: ${p => p.theme.paddingS};
+  cursor: pointer;
+  font-size: 20px;
+  z-index: 101;
+
+  ${media.greaterThan("md")`
+    display: none;
+  `};
 `

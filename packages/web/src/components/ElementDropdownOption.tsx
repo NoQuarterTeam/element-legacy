@@ -143,7 +143,8 @@ const StyledArrow = styled.div<{
   border-width: 0 3px 3px 0;
   display: inline-block;
   content: "";
-  transform: ${props => (props.open ? "rotate(225deg)" : "rotate(45deg)")};
+  transform: ${props =>
+    props.open ? "rotate(45deg) scale(-1, -1)" : "rotate(45deg)"};
   width: 0;
   height: 0;
   margin-left: 0;
@@ -153,7 +154,7 @@ const StyledArrow = styled.div<{
 
   &:hover {
     transform: ${props =>
-      props.open ? "rotate(225deg) scale(1.1)" : "rotate(45deg) scale(1.1)"};
+      props.open ? "rotate(45deg) scale(-1,-1)" : "rotate(45deg) scale(1.1)"};
   }
 `
 
@@ -234,9 +235,11 @@ const StyledOptionContainer = styled.div<{
     border-width: 0 3px 3px 0;
     display: inline-block;
     content: "";
-    transform: ${props => (props.open ? "rotate(225deg)" : "rotate(45deg)")};
+    transform: ${props =>
+      props.open ? "rotate(45deg) scale(-1,-1)" : "rotate(45deg)"};
     width: 0;
     height: 0;
+    transition: transform 0.2s;
   }
 
   &:hover ${StyledOption} {
