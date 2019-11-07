@@ -13,7 +13,7 @@ const TimelineProvider: FC = ({ children }) => {
 
   let days = 20
   if (isMobileDevice()) {
-    days = 7
+    days = 4
   }
 
   const [daysBack, setDaysBack] = useState(days)
