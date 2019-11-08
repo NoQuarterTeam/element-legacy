@@ -173,6 +173,7 @@ const StyledTaskBox = styled.div<{
     padding: ${p => p.theme.paddingXS};
     color: ${p =>
       readableColor(p.color, darken(0.3, p.color), lighten(0.35, p.color))};
+    border-radius: ${p => p.theme.borderRadius} ${p => p.theme.borderRadius} 0 0;
   }
   &:hover ${StyledTaskName} {
     display: none;

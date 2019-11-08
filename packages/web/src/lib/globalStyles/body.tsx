@@ -2,6 +2,7 @@ import { css } from "../../application/theme"
 
 const body = css`
   @import url(//fonts.googleapis.com/earlyaccess/laosanspro.css);
+  @import url(//fonts.googleapis.com/css?family=Open+Sans&display=swap);
 
   html,
   body {

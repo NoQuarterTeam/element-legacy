@@ -159,7 +159,7 @@ const StyledDayHeader = styled.h3<{ today: boolean; weekend: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: ${p => (p.today ? "114px" : "119px")};
+  padding-top: ${p => (p.today ? "113px" : "119px")};
   /* margin-top: ${p => (p.today ? "-6px" : "0px")}; */
   background-color: ${p => p.today && p.theme.colorBlue};
   /* border: ${p => (p.today ? "3px solid black" : "none")}; */
