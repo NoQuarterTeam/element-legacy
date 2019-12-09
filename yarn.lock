@@ -2405,13 +2405,14 @@
     "@types/connect" "*"
     "@types/node" "*"
 
-"@types/connect-redis@0.0.9":
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/@types/connect-redis/-/connect-redis-0.0.9.tgz#ad1db26cdb55a741fcbad6dc337b6273ddc5e064"
-  integrity sha512-LdAbC9EnQkHLMgeV0EKufPbqaRKfsAxgdWaYnDtQOKuJV2U4JpFE2EU4yKJ3G2FjVvNXyzO6rcaBBjPBztGTzg==
+"@types/connect-redis@0.0.13":
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/@types/connect-redis/-/connect-redis-0.0.13.tgz#9237f7f57b79d9f6418993fd6f3b6ea923859079"
+  integrity sha512-bHo/UWrUPbWkn05D1YAMs31wG+0dMt6GYXjv8Vfu8kAxO6CfD4N6lmHv/sAkjzYVdXFhc5jck/kEYLBDPJ90iQ==
   dependencies:
     "@types/express" "*"
     "@types/express-session" "*"
+    "@types/ioredis" "*"
     "@types/redis" "*"
 
 "@types/connect@*":
@@ -2501,6 +2502,13 @@
   version "4.7.2"
   resolved "https://registry.yarnpkg.com/@types/history/-/history-4.7.2.tgz#0e670ea254d559241b6eeb3894f8754991e73220"
   integrity sha512-ui3WwXmjTaY73fOQ3/m3nnajU/Orhi6cEu5rzX+BrAAJxa3eITXZ5ch9suPqtM03OWhAHhPSyBGCN4UKoxO20Q==
+
+"@types/ioredis@*":
+  version "4.14.1"
+  resolved "https://registry.yarnpkg.com/@types/ioredis/-/ioredis-4.14.1.tgz#69b501d5aa0438a3617b1542c47b08cbd7d0b3a1"
+  integrity sha512-qfuscm0FJPOxiW2E5URb2gCKF19jeMZKtVoBZ/pfZFmJzm8qUBrb3UNj+hdaz+jY/UwjXvexyR4YF+3cvKsQ3A==
+  dependencies:
+    "@types/node" "*"
 
 "@types/ioredis@4.0.10":
   version "4.0.10"
@@ -7336,7 +7344,7 @@ graphql-upload@^8.0.2:
     http-errors "^1.7.1"
     object-path "^0.11.4"
 
-graphql@^14.1.1:
+graphql@14.1.1, graphql@^14.1.1:
   version "14.1.1"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-14.1.1.tgz#d5d77df4b19ef41538d7215d1e7a28834619fac0"
   integrity sha512-C5zDzLqvfPAgTtP8AUPIt9keDabrdRAqSWjj2OPRKrKxI9Fb65I36s1uCs1UUBFnSWTdO7hyHi7z1ZbwKMKF6Q==
