@@ -1,38 +1,25 @@
-import {
-  BaseEntity,
-  Entity,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-} from "typeorm"
+import { Entity, ManyToOne } from "typeorm"
 
-import { ObjectType, Field, ID } from "type-graphql"
+import { BaseEntity } from "../shared/base.entity"
+
+import { ObjectType, Field } from "type-graphql"
 import { Task } from "../task/task.entity"
 
 @ObjectType()
 @Entity()
-export class Progress extends BaseEntity {
-  @Field(() => ID)
-  @PrimaryGeneratedColumn("uuid")
-  id: string
-
+export class Progress extends BaseEntity<Progress> {
   // @Field()
   // @Column({ nullable: true })
   // date: Date
 
   @Field(() => Task)
-  @ManyToOne(() => Task, task => task.progress, {
-    eager: true,
-    onDelete: "CASCADE",
-  })
+  @ManyToOne(
+    () => Task,
+    task => task.progress,
+    {
+      eager: true,
+      onDelete: "CASCADE",
+    },
+  )
   task: Task
-
-  @Field()
-  @CreateDateColumn()
-  createdAt: Date
-
-  @Field()
-  @UpdateDateColumn()
-  updatedAt: Date
 }

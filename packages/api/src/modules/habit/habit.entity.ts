@@ -1,31 +1,19 @@
-import {
-  BaseEntity,
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  JoinColumn,
-  ManyToOne,
-} from "typeorm"
+import { Entity, JoinColumn, ManyToOne, Column } from "typeorm"
 
-import { ObjectType, Field, ID } from "type-graphql"
+import { BaseEntity } from "../shared/base.entity"
+
+import { ObjectType, Field } from "type-graphql"
 import { Element } from "../element/element.entity"
 import { User } from "../user/user.entity"
+import { UuidField, BooleanField } from "../shared/fields"
 
 @ObjectType()
 @Entity()
-export class Habit extends BaseEntity {
-  @Field(() => ID)
-  @PrimaryGeneratedColumn("uuid")
-  id: string
-
-  @Field()
-  @Column({ default: false })
+export class Habit extends BaseEntity<Habit> {
+  @BooleanField({ nullable: true, default: false })
   archived: boolean
 
-  @Field()
-  @Column()
+  @UuidField()
   elementId: string
 
   @Field({ nullable: true })
@@ -37,21 +25,15 @@ export class Habit extends BaseEntity {
   @JoinColumn()
   element: Element
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @UuidField({ nullable: true })
   userId: string
 
   @Field(() => User)
-  @ManyToOne(() => User, user => user.habits)
+  @ManyToOne(
+    () => User,
+    user => user.habits,
+  )
   user: User
-
-  @Field()
-  @CreateDateColumn()
-  createdAt: Date
-
-  @Field()
-  @UpdateDateColumn()
-  updatedAt: Date
 
   @Field({ nullable: true })
   @Column({ nullable: true })
