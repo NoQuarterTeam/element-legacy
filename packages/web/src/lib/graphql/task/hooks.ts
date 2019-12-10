@@ -127,8 +127,8 @@ export function useDeleteTask(taskId: string, selectedUserId: string) {
         query: AllTasksDocument,
         variables: { selectedUserId },
       })
-      if (data && tasksData && tasksData.allTasks) {
-        const tasks = tasksData.allTasks.filter(t => t.id !== taskId)
+      if (data && tasksData?.allTasks) {
+        const tasks = tasksData.allTasks.filter(task => task.id !== taskId)
         cache.writeQuery({
           query: AllTasksDocument,
           variables: { selectedUserId },

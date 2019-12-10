@@ -16,9 +16,7 @@ const Home: FC<RouteComponentProps> = () => {
         <StyledImage src={logo} />
         <StyledHeader>Balance your life.</StyledHeader>
         <StyledSubHeader>Be in your element.</StyledSubHeader>
-        <Button color="white" onClick={() => navigate("/register")}>
-          begin
-        </Button>
+        <Button onClick={() => navigate("/register")}>begin</Button>
         <Spacer margin={120} />
         <StyledHeader>Four tools in one.</StyledHeader>
         <StyledSubHeader>

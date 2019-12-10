@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, FC, useState } from "react"
+import React from "react"
 import { RouteComponentProps } from "@reach/router"
 import dayjs, { Dayjs } from "dayjs"
 import { ChevronLeft } from "styled-icons/fa-solid/ChevronLeft"
@@ -7,34 +7,32 @@ import { ChevronRight } from "styled-icons/fa-solid/ChevronRight"
 import Day from "../components/Day"
 import TimelineHead from "../components/TimelineHead"
 import { getDays, isMobileDevice } from "../lib/helpers"
-import DragDropContainer from "../components/DragDropContainer"
-import TaskModal from "../components/TaskModal"
+import { DragDropContainer } from "../components/DragDropContainer"
 import HabitModal from "../components/HabitModal"
 
-import { TaskFragment, useAllTasksQuery } from "../lib/graphql/types"
+import { useAllTasksQuery } from "../lib/graphql/types"
 import styled, { media } from "../application/theme"
 import Nav from "../components/Nav"
 import { useTimelineContext } from "../components/providers/TimelineProvider"
 import ShareModal from "../components/ShareModal"
 import { useMe } from "../components/providers/MeProvider"
 
-const Timeline: FC<RouteComponentProps> = () => {
+const Timeline: React.FC<RouteComponentProps> = () => {
   const user = useMe()
-  const [task, setTask] = useState()
-  const [navOpen, setNavOpen] = useState(true)
-  const [initialLoad, setInitialLoad] = useState(true)
+  const [navOpen, setNavOpen] = React.useState(true)
+  const [initialLoad, setInitialLoad] = React.useState(true)
 
   let DAY_COUNT = 20
   if (isMobileDevice()) {
     DAY_COUNT = 4
   }
 
-  const [daysBack, setDaysBack] = useState(DAY_COUNT)
-  const [daysForward, setDaysForward] = useState(DAY_COUNT)
+  const [daysBack, setDaysBack] = React.useState(DAY_COUNT)
+  const [daysForward, setDaysForward] = React.useState(DAY_COUNT)
 
-  const [dayClicked, setDayClicked] = useState()
+  const [dayClicked, setDayClicked] = React.useState()
 
-  const [filteredElements, setFilteredElements] = useState<string[]>([])
+  const [filteredElements, setFilteredElements] = React.useState<string[]>([])
   const { handleSetModal, modal, selectedUserId } = useTimelineContext()
 
   const { data, fetchMore } = useAllTasksQuery({
@@ -42,7 +40,7 @@ const Timeline: FC<RouteComponentProps> = () => {
   })
   const allTasks = data && data.allTasks ? data.allTasks : []
 
-  const timelineRef = useRef<HTMLDivElement>(null)
+  const timelineRef = React.useRef<HTMLDivElement>(null)
 
   const handleForward = () => {
     fetchMore({
@@ -98,20 +96,20 @@ const Timeline: FC<RouteComponentProps> = () => {
         const num = daysBack * 98
         timelineRef.current.scrollTo(num, 0)
       } else {
-        const num = (daysBack - 2.5) * 98
+        const num = (daysBack - 4) * 98
         timelineRef.current.scrollTo(num, 0)
       }
     }
   }, [daysBack])
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (initialLoad && timelineRef.current) {
       handleScrollToToday()
       setInitialLoad(false)
     }
   }, [handleScrollToToday, initialLoad])
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!initialLoad && timelineRef.current) {
       timelineRef.current.scrollBy({
         left: 4 * 98,
@@ -120,37 +118,24 @@ const Timeline: FC<RouteComponentProps> = () => {
     }
   }, [daysForward, initialLoad])
 
-  const openTaskModal = (day: Dayjs, task?: TaskFragment) => {
-    handleSetModal("task")
-    if (task) {
-      setTask(task)
-    } else {
-      const scheduledTask = { scheduledDate: day }
-      setTask(scheduledTask)
-    }
-  }
-
   const handleHabitModal = (day: Dayjs) => {
     handleSetModal("habit")
     setDayClicked(day)
   }
 
-  const closeTaskModal = () => {
-    setTask("")
-    handleSetModal("")
-  }
+  const days = React.useMemo(
+    () => getDays(dayjs().subtract(daysBack, "day"), daysBack + daysForward),
+    [daysBack, daysForward],
+  )
 
-  const closeShareModal = () => handleSetModal("")
+  const closeModal = () => handleSetModal("")
 
   return (
     <>
-      {modal === "task" && (
-        <TaskModal task={task} closeModal={closeTaskModal} />
-      )}
       {modal === "habit" && (
-        <HabitModal day={dayClicked} closeModal={closeTaskModal} />
+        <HabitModal day={dayClicked} closeModal={closeModal} />
       )}
-      {modal === "share" && <ShareModal closeModal={closeShareModal} />}
+      {modal === "share" && <ShareModal closeModal={closeModal} />}
       <Nav
         filteredElements={filteredElements}
         handleSetFilteredElements={setFilteredElements}
@@ -170,28 +155,22 @@ const Timeline: FC<RouteComponentProps> = () => {
             <StyledDaysWrapper>
               <DragDropContainer allTasks={allTasks}>
                 <StyledBack onClick={handleBack}>
-                  <ChevronLeft width={30} color={"lightgrey"} />
+                  <ChevronLeft width={30} color="lightgrey" />
                 </StyledBack>
 
-                {getDays(
-                  dayjs().subtract(daysBack, "day"),
-                  daysBack + daysForward,
-                ).map(day => (
+                {days.map(day => (
                   <Day
                     key={day.unix()}
                     day={day}
+                    filteredElements={filteredElements}
                     tasks={allTasks.filter(t =>
                       dayjs(t.scheduledDate).isSame(dayjs(day), "day"),
                     )}
-                    handleTaskModal={passedTask =>
-                      openTaskModal(dayjs(day), passedTask)
-                    }
-                    filteredElements={filteredElements}
                   />
                 ))}
 
                 <StyledForward onClick={handleForward} open={navOpen}>
-                  <ChevronRight width={30} color={"lightgrey"} />
+                  <ChevronRight width={30} color="lightgrey" />
                 </StyledForward>
               </DragDropContainer>
             </StyledDaysWrapper>
