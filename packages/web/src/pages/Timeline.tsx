@@ -14,15 +14,15 @@ import styled, { media } from "../application/theme"
 import Nav from "../components/Nav"
 import { useTimelineContext } from "../components/providers/TimelineProvider"
 import ShareModal from "../components/ShareModal"
-// import { useSubscription } from "react-apollo-hooks"
 import { ChevronLeft } from "styled-icons/fa-solid/ChevronLeft"
 import { ChevronRight } from "styled-icons/fa-solid/ChevronRight"
-import useAppContext from "../lib/hooks/useAppContext"
+import { useMe } from "../components/providers/MeProvider"
 // import { useAllTasks } from "../lib/graphql/task/hooks"
 
 // import gql from "graphql-tag"
 
 const Timeline: FC<RouteComponentProps> = () => {
+  const user = useMe()
   // TODO: SET TASK IN TimelineProvider
   const [task, setTask] = useState()
   const [navOpen, setNavOpen] = useState(true)
@@ -38,37 +38,6 @@ const Timeline: FC<RouteComponentProps> = () => {
 
   const [dayClicked, setDayClicked] = useState()
 
-  // const { data } = useSubscription(gql`
-  //   subscription OnTaskUpdate {
-  //     updateTaskSubscription {
-  //       id
-  //       name
-  //       startTime
-  //       description
-  //       estimatedTime
-  //       completed
-  //       order
-  //       scheduledDate
-  //       elementId
-  //       userId
-  //       element {
-  //         id
-  //         color
-  //         name
-  //         archived
-  //         createdAt
-  //         updatedAt
-  //       }
-  //     }
-  //   }
-  // `)
-
-  // const { data } = useSubscription(gql`
-  //   subscription OnTaskUpdate {
-  //     deleteTaskSubscription {
-  //   }
-  // `)
-
   // TODO: SET filteredElements IN TimelineProvider
 
   const [filteredElements, setFilteredElements] = useState<string[]>([])
@@ -79,7 +48,6 @@ const Timeline: FC<RouteComponentProps> = () => {
     handleDaysForward,
     selectedUserId,
   } = useTimelineContext()
-  const { user } = useAppContext()
 
   const { data, fetchMore } = useAllTasksQuery({
     variables: { selectedUserId, daysBack: days, daysForward: days },
@@ -138,7 +106,7 @@ const Timeline: FC<RouteComponentProps> = () => {
     handleDaysBack(daysBack + days)
   }
 
-  const handleScrollToToday = () => {
+  const handleScrollToToday = useCallback(() => {
     if (timelineRef.current) {
       if (isMobileDevice()) {
         const num = daysBack * 98
@@ -148,14 +116,14 @@ const Timeline: FC<RouteComponentProps> = () => {
         timelineRef.current.scrollTo(num, 0)
       }
     }
-  }
+  })
 
   useEffect(() => {
     if (initialLoad && timelineRef.current) {
       handleScrollToToday()
       setInitialLoad(false)
     }
-  }, [])
+  }, [handleScrollToToday, initialLoad])
 
   useEffect(() => {
     if (!initialLoad && timelineRef.current) {
@@ -164,7 +132,7 @@ const Timeline: FC<RouteComponentProps> = () => {
         behavior: "smooth",
       })
     }
-  }, [daysForward])
+  }, [daysForward, initialLoad])
 
   const openTaskModal = (day: Dayjs, task?: TaskFragment) => {
     handleSetModal("task")
@@ -239,7 +207,7 @@ const Timeline: FC<RouteComponentProps> = () => {
                         openTaskModal(dayjs(day), passedTask)
                       }
                       weekend={dayjs(day).day() === 0 || dayjs(day).day() === 6}
-                      filteredElements={filteredElements && filteredElements}
+                      filteredElements={filteredElements}
                     />
                   )
                 })}
@@ -280,8 +248,8 @@ const StyledDaysWrapper = styled.div`
 const StyledSpacer = styled.div<{ currentUser: boolean }>`
   height: ${p => (p.currentUser ? "162px" : "131px")};
 
-  ${media.greaterThan("md")`
-    height: ${p => (p.currentUser ? "174px" : "143px")};
+  ${p => media.greaterThan("md")`
+    height: ${p.currentUser ? "174px" : "143px"};
   `}
 `
 
@@ -290,7 +258,6 @@ const StyledBack = styled.p`
   top: 30vh;
   left: 5px;
   z-index: 95;
-  cursor: pointer;
   filter: drop-shadow(1px 1px 2px rgba(200, 200, 200, 0.3));
   padding-right: ${p => p.theme.paddingM};
 `

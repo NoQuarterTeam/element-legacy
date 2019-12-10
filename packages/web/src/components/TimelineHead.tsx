@@ -15,14 +15,15 @@ import { useAllProgress } from "../lib/graphql/progress/hooks"
 import { FC } from "react"
 import { darken, lighten } from "polished"
 import { useTimelineContext } from "./providers/TimelineProvider"
-import useAppContext from "../lib/hooks/useAppContext"
+import { useMe } from "./providers/MeProvider"
+
 dayjs.extend(advancedFormat)
 
 interface TimelineHeadProps {
   openHabitModal: (day: Dayjs) => void
 }
 const TimelineHead: FC<TimelineHeadProps> = ({ openHabitModal }) => {
-  const { user } = useAppContext()
+  const user = useMe()
   const { selectedUserId, daysBack, daysForward } = useTimelineContext()
   const habits = useAllHabits()
   const allProgress = useAllProgress()
@@ -86,8 +87,8 @@ const TimelineHead: FC<TimelineHeadProps> = ({ openHabitModal }) => {
                           )}
                         </StyledHabits>
                       ) : user.id === selectedUserId &&
-                        (habits &&
-                          allActiveHabits(day, habits).length === 0) ? (
+                        habits &&
+                        allActiveHabits(day, habits).length === 0 ? (
                         today(day) ? (
                           <StyledAddHabits
                             onClick={() => openHabitModal(day)}

@@ -1,15 +1,15 @@
-import React, { FC, Fragment } from "react"
+import React from "react"
 import { Redirect, Router, RouteComponentProps } from "@reach/router"
-import useAppContext from "../lib/hooks/useAppContext"
 
 import Home from "../pages/Home"
 import Login from "../pages/Login"
 import Register from "../pages/Register"
+import { useMe } from "./providers/MeProvider"
 
-const CheckAuth: FC = ({ children }) => {
-  const { user } = useAppContext()
+const CheckAuth: React.FC = ({ children }) => {
+  const user = useMe()
   return user ? (
-    <Fragment>{children}</Fragment>
+    <>{children}</>
   ) : (
     <Router>
       <Home path="/" />
@@ -22,6 +22,6 @@ const CheckAuth: FC = ({ children }) => {
 
 export default CheckAuth
 
-const NotFound: FC<RouteComponentProps> = () => {
+const NotFound: React.FC<RouteComponentProps> = () => {
   return <Redirect to="/" noThrow={true} />
 }

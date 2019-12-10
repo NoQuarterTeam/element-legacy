@@ -7,7 +7,6 @@ import {
   UpdateDateColumn,
   BeforeInsert,
   OneToMany,
-  ManyToOne,
 } from "typeorm"
 import { Element } from "../element/element.entity"
 import { ObjectType, Field, ID } from "type-graphql"
@@ -45,19 +44,31 @@ export class User extends BaseEntity {
   updatedAt: string
 
   @Field(() => [Element])
-  @OneToMany(() => Element, element => element.creator)
+  @OneToMany(
+    () => Element,
+    element => element.creator,
+  )
   elements: Element[]
 
   @Field(() => [Habit])
-  @OneToMany(() => Habit, habit => habit.user)
+  @OneToMany(
+    () => Habit,
+    habit => habit.user,
+  )
   habits: Habit[]
 
   @Field(() => [SharedElement], { nullable: true })
-  @OneToMany(() => SharedElement, sharedElements => sharedElements.user)
+  @OneToMany(
+    () => SharedElement,
+    sharedElements => sharedElements.user,
+  )
   sharedElements: SharedElement[]
 
   @Field(() => [Task])
-  @OneToMany(() => Task, task => task.user)
+  @OneToMany(
+    () => Task,
+    task => task.user,
+  )
   tasks: Task[]
 
   @BeforeInsert()

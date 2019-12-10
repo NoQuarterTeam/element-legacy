@@ -2,6 +2,7 @@ import * as styledComponents from "styled-components"
 import { ThemedStyledComponentsModule } from "styled-components"
 import { generateMedia } from "styled-media-query"
 import { darken, lighten } from "polished"
+import { defaultTheme } from "@noquarter/ui"
 
 const media = generateMedia({
   xl: "1440px",
@@ -14,6 +15,7 @@ const theme: (small: boolean, isDark: boolean) => ThemeInterface = (
   small,
   isDark,
 ) => ({
+  ...defaultTheme,
   colorPage: isDark ? "#2f3335" : "white",
   colorBackground: isDark ? "#373c3f" : "#fff",
   colorPlaceholder: isDark ? "#6f7172" : "#d3d3d3",

@@ -1,11 +1,11 @@
-import { Resolver, Query, Ctx, Mutation, Arg, Authorized } from "type-graphql"
+import { Resolver, Query, Mutation, Arg, Authorized } from "type-graphql"
 
 import { User } from "./user.entity"
 import { UserService } from "./user.service"
-import { ResolverContext } from "../../lib/types"
 import { LoginInput, RegisterInput, UpdateInput } from "./user.input"
 import { createToken } from "../../lib/jwt"
 import { UserAuthResponse } from "./user.response"
+import { CurrentUser } from "../shared/context/currentUser"
 
 @Resolver(() => User)
 export class UserResolver {
@@ -14,8 +14,8 @@ export class UserResolver {
   // ME
   @Authorized()
   @Query(() => User, { nullable: true })
-  async me(@Ctx() { userId }: ResolverContext): Promise<User> {
-    return await this.userService.findById(userId)
+  async me(@CurrentUser() user: User): Promise<User> {
+    return user
   }
 
   // REGISTER
@@ -39,9 +39,9 @@ export class UserResolver {
   @Mutation(() => User, { nullable: true })
   async updateUser(
     @Arg("data") data: UpdateInput,
-    @Ctx() { userId }: ResolverContext,
+    @CurrentUser() user: User,
   ): Promise<User> {
-    return this.userService.update(userId, data)
+    return this.userService.update(user.id, data)
   }
 
   // LOGOUT

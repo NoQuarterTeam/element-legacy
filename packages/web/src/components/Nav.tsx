@@ -11,7 +11,7 @@ import { Today } from "styled-icons/material/Today"
 // import { useLogout } from "../lib/graphql/user/hooks"
 import { useGetSharedUsersByUser } from "../lib/graphql/sharedElement/hooks"
 import { useTimelineContext } from "./providers/TimelineProvider"
-import useAppContext from "../lib/hooks/useAppContext"
+import { useMe } from "./providers/MeProvider"
 
 interface NavProps {
   filteredElements: string[]
@@ -28,7 +28,7 @@ const Nav: FC<NavProps> = ({
   toggleOpen,
   open,
 }) => {
-  const { user } = useAppContext()
+  const user = useMe()
 
   const { handleSelectUser, selectedUserId } = useTimelineContext()
   const elements = useAllElements(user.id)

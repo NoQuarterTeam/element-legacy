@@ -21,6 +21,17 @@ export const cors = {
   origin: "*",
 }
 
+//  JWT AUTH
+export const jwtAuth = {
+  secret: APP_SECRET,
+  credentialsRequired: false,
+}
+
+// LOADER PATHS
+export const loaderPaths = isProduction
+  ? "/modules/**/*.loader.js"
+  : "/modules/**/*.loader.ts"
+
 // GRAPHQL PATH
 export const path = "/graphql"
 

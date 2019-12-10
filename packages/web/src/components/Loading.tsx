@@ -1,26 +1,24 @@
-import React, { Fragment, FC } from "react"
+import React from "react"
 import styled from "../application/theme"
 import useDebounce from "../lib/hooks/useDebounce"
 
 import logo from "../public/logo.png"
 
-interface LoadingProps {
+interface Props {
   loading: boolean
 }
 
-const Loading: FC<LoadingProps> = ({ loading, children }) => {
+export const Loading: React.FC<Props> = ({ loading, children }) => {
   const isLoading = useDebounce(loading, 200)
   return (
-    <Fragment>
+    <>
       <StyledContainer loading={isLoading}>
         <StyledLogo src={logo} />
       </StyledContainer>
       {!isLoading && children}
-    </Fragment>
+    </>
   )
 }
-
-export default Loading
 
 const StyledContainer = styled.div<{ loading: boolean }>`
   position: fixed;

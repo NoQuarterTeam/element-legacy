@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react"
 import styled from "../application/theme"
+import dayjs from "dayjs"
 
-import useAppContext from "../lib/hooks/useAppContext"
 import { TaskFragment } from "../lib/graphql/types"
 import useFormState from "../lib/hooks/useFormState"
 import { sleep, isMobileDevice } from "../lib/helpers"
 import { useAllElements } from "../lib/graphql/element/hooks"
 import { useGetSharedUsersByUser } from "../lib/graphql/sharedElement/hooks"
 
-import { Select } from "@noquarter/ui"
 import { Duplicate } from "styled-icons/boxicons-regular/Duplicate"
 import { DeleteOutline } from "styled-icons/material/DeleteOutline"
 
@@ -16,9 +15,9 @@ import Input from "./Input"
 import Button from "./Button"
 import ElementDropdown from "./ElementDropdown"
 import Checkbox from "./Checkbox"
-import dayjs from "dayjs"
 import TextArea from "./TextArea"
 import { useTimelineContext } from "./providers/TimelineProvider"
+import { useMe } from "./providers/MeProvider"
 
 interface TaskFormProps {
   onFormSubmit: (data: any) => Promise<any>
@@ -32,13 +31,13 @@ function TaskForm({
   onDeleteTask,
   onDuplicateTask,
 }: TaskFormProps) {
+  const user = useMe()
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   const [validation, setValidation] = useState<string | null>(null)
 
   const { selectedUserId } = useTimelineContext()
 
-  const { user } = useAppContext()
   const sharedUsers = useGetSharedUsersByUser(user.id)
 
   const elements = useAllElements(user.id)
@@ -60,7 +59,7 @@ function TaskForm({
     if (task) {
       setFormState(initialState)
     }
-  }, [task])
+  }, [initialState, setFormState, task])
 
   const handleTaskUpdate = async (e: any) => {
     e.preventDefault()
@@ -130,33 +129,17 @@ function TaskForm({
         </StyledRow>
         <StyledRow style={{ width: "fit-content" }}>
           <StyledLabel>Who?</StyledLabel>
-          <Select
+          <select
             value={formState.userId}
             onChange={e => handleUserSelect(e.target.value)}
-            options={
-              selectUserOptions
-                ? [
-                    {
-                      label: user.firstName,
-                      value: user.id,
-                    },
-                    ...selectUserOptions,
-                  ]
-                : []
-            }
-            style={{
-              padding: "4px 0px 4px 10px",
-              margin: "0",
-              marginLeft: "-5px",
-              width: "auto",
-              minWidth: "150px",
-              color: "black",
-              borderRadius: "0",
-              backgroundColor: "white",
-              border: "2px solid black",
-              fontSize: "16px",
-            }}
-          />
+          >
+            <option value={user.id}>{user.firstName}</option>
+            {selectUserOptions?.map(opt => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
         </StyledRow>
         <StyledRow>
           <StyledLabel>How long?</StyledLabel>

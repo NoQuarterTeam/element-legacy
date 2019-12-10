@@ -4,7 +4,6 @@ import {
   Arg,
   Authorized,
   Query,
-  Ctx,
   Subscription,
   PubSub,
   Publisher,
@@ -14,7 +13,8 @@ import {
 import { Task } from "./task.entity"
 import { TaskService } from "./task.service"
 import { TaskInput, OrderTaskInput } from "./task.input"
-import { ResolverContext } from "../../lib/types"
+import { CurrentUser } from "../shared/context/currentUser"
+import { User } from "../user/user.entity"
 
 @Resolver(() => Task)
 export class TaskResolver {
@@ -42,13 +42,13 @@ export class TaskResolver {
   @Authorized()
   @Query(() => [Task], { nullable: true })
   allTasks(
-    @Ctx() { userId }: ResolverContext,
+    @CurrentUser() user: User,
     @Arg("selectedUserId", { nullable: true }) selectedUserId?: string,
     @Arg("daysBack", { nullable: true }) daysBack?: number,
     @Arg("daysForward", { nullable: true }) daysForward?: number,
   ): Promise<Task[]> {
     return this.taskService.findAll(
-      userId,
+      user.id,
       selectedUserId,
       daysBack,
       daysForward,
@@ -60,9 +60,9 @@ export class TaskResolver {
   @Mutation(() => Task, { nullable: true })
   async createTask(
     @Arg("data") data: TaskInput,
-    @Ctx() { userId }: ResolverContext,
+    @CurrentUser() user: User,
   ): Promise<Task | null> {
-    return this.taskService.create(data, userId)
+    return this.taskService.create(data, user.id)
   }
 
   // UPDATE TASK

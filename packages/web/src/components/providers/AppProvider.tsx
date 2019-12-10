@@ -1,7 +1,7 @@
 import React, { FC } from "react"
 import ThemeProvider from "./ThemeProvider"
 import ApolloProvider from "./ApolloProvider"
-import StateProvider from "./StateProvider"
+import { MeProvider } from "./MeProvider"
 import TimelineProvider from "./TimelineProvider"
 import CheckAuth from "../CheckAuth"
 
@@ -9,11 +9,11 @@ const AppProvider: FC = ({ children }) => {
   return (
     <ApolloProvider>
       <ThemeProvider>
-        <StateProvider>
+        <MeProvider>
           <CheckAuth>
             <TimelineProvider>{children}</TimelineProvider>
           </CheckAuth>
-        </StateProvider>
+        </MeProvider>
       </ThemeProvider>
     </ApolloProvider>
   )

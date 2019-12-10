@@ -1,18 +1,11 @@
 import { useApolloClient } from "react-apollo-hooks"
 import {
   useLoginMutation,
-  useMeQuery,
   useUpdateUserMutation,
   useRegisterMutation,
   useLogoutMutation,
   MeDocument,
 } from "../types"
-
-export function useMe() {
-  const { data, loading } = useMeQuery({ suspend: false })
-  const user = (data && data.me) || null
-  return { user, userLoading: loading }
-}
 
 export function useLogin() {
   return useLoginMutation({

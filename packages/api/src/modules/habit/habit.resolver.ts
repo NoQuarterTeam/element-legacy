@@ -1,10 +1,11 @@
-import { Resolver, Mutation, Arg, Authorized, Query, Ctx } from "type-graphql"
+import { Resolver, Mutation, Arg, Authorized, Query } from "type-graphql"
 
 import { Habit } from "./habit.entity"
 import { HabitService } from "./habit.service"
 
 import { HabitInput } from "./habit.input"
-import { ResolverContext } from "../../lib/types"
+import { User } from "../user/user.entity"
+import { CurrentUser } from "../shared/context/currentUser"
 
 @Resolver(() => Habit)
 export class HabitResolver {
@@ -13,8 +14,8 @@ export class HabitResolver {
   // ALL HABITS
   @Authorized()
   @Query(() => [Habit], { nullable: true })
-  allHabits(@Ctx() { userId }: ResolverContext): Promise<Habit[]> {
-    return this.habitService.findAll(userId)
+  allHabits(@CurrentUser() user: User): Promise<Habit[]> {
+    return this.habitService.findAll(user.id)
   }
 
   // CREATE HABIT
@@ -22,9 +23,9 @@ export class HabitResolver {
   @Mutation(() => Habit, { nullable: true })
   async createHabit(
     @Arg("data") data: HabitInput,
-    @Ctx() { userId }: ResolverContext,
+    @CurrentUser() user: User,
   ): Promise<Habit> {
-    return this.habitService.create(data, userId)
+    return this.habitService.create(data, user.id)
   }
 
   // UPDATE HABIT

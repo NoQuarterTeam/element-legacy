@@ -4,7 +4,6 @@ import { RouteComponentProps, navigate } from "@reach/router"
 import logo from "../public/logo.png"
 
 import styled from "../application/theme"
-import Page from "../components/Page"
 import Button from "../components/Button"
 import Spacer from "../components/styled/Spacer"
 

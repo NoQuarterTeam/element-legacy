@@ -16,8 +16,8 @@ import {
 import FlexGrid from "./styled/FlexGrid"
 import { UserFragment, ElementFragment } from "../lib/graphql/types"
 import { darken, lighten } from "polished"
-import useAppContext from "../lib/hooks/useAppContext"
 import Spacer from "./styled/Spacer"
+import { useMe } from "./providers/MeProvider"
 
 interface ShareModalProps {
   closeModal: () => void
@@ -26,7 +26,7 @@ const ShareModal: FC<ShareModalProps> = ({ closeModal }) => {
   const [emails, setEmails] = useState()
   const [error, setError] = useState()
 
-  const { user: currentUser } = useAppContext()
+  const currentUser = useMe()
   const { selectedElement } = useTimelineContext()
   const createSharedElements = useCreateSharedElements(
     currentUser.id,

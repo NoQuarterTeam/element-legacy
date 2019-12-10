@@ -4,11 +4,10 @@ import { ElementFragment } from "../lib/graphql/types"
 import { darken, lighten } from "polished"
 import styled from "styled-components"
 import { useTimelineContext } from "./providers/TimelineProvider"
-import useAppContext from "../lib/hooks/useAppContext"
-
 import { DeleteOutline } from "styled-icons/material/DeleteOutline"
 import { Add } from "styled-icons/material/Add"
 import { GroupAdd } from "styled-icons/material/GroupAdd"
+import { useMe } from "./providers/MeProvider"
 
 interface ElementDropdownOptionProps {
   element: ElementFragment
@@ -36,7 +35,7 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
   ...props
 }) => {
   const { handleSetModal, handleSetElement } = useTimelineContext()
-  const { user } = useAppContext()
+  const user = useMe()
 
   const handleShare = () => {
     handleSetModal("share")

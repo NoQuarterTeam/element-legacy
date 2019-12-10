@@ -10,8 +10,8 @@ import { TaskFragment } from "../lib/graphql/types"
 import { darken } from "polished"
 import dayjs from "dayjs"
 import { useTimelineContext } from "./providers/TimelineProvider"
-import useAppContext from "../lib/hooks/useAppContext"
 import { media } from "../application/theme"
+import { useMe } from "./providers/MeProvider"
 
 interface DayProps {
   weekend: boolean
@@ -30,7 +30,7 @@ function Day({
   ...props
 }: DayProps) {
   const { selectedUserId } = useTimelineContext()
-  const { user } = useAppContext()
+  const user = useMe()
 
   return (
     <StyledBorder
@@ -47,40 +47,32 @@ function Day({
         {(provided, snapshot) => (
           <div ref={provided.innerRef} {...provided.droppableProps}>
             <StyledDay weekend={weekend} today={today(day)} {...props}>
-              {tasks &&
-                tasks
-                  .sort((a, b) => {
-                    return a.order - b.order
-                  })
-                  .map((task: TaskFragment, index) => (
-                    <Draggable
-                      key={task.id}
-                      draggableId={task.id}
-                      index={index}
-                    >
-                      {(provided, snapshot) => {
-                        return (
-                          <div
-                            ref={provided.innerRef}
-                            key={index}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                          >
-                            <Task
-                              isDragging={snapshot.isDragging}
-                              task={task}
-                              hidden={
-                                filteredElements &&
-                                filteredElements.includes(task.element.id)
-                              }
-                              handleTaskModal={handleTaskModal}
-                              // onMouseDown={() => onTaskClick(event, task)}
-                            />
-                          </div>
-                        )
-                      }}
-                    </Draggable>
-                  ))}
+              {tasks
+                ?.sort((a, b) => {
+                  return a.order - b.order
+                })
+                .map((task: TaskFragment, index) => (
+                  <Draggable key={task.id} draggableId={task.id} index={index}>
+                    {(provided, snapshot) => {
+                      return (
+                        <div
+                          ref={provided.innerRef}
+                          key={index}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <Task
+                            isDragging={snapshot.isDragging}
+                            task={task}
+                            hidden={filteredElements?.includes(task.element.id)}
+                            handleTaskModal={handleTaskModal}
+                            // onMouseDown={() => onTaskClick(event, task)}
+                          />
+                        </div>
+                      )
+                    }}
+                  </Draggable>
+                ))}
               <StyledTotalTime dragging={snapshot.isDraggingOver}>
                 {filteredElements &&
                   calculateTotalTime(
@@ -115,9 +107,10 @@ const StyledBorder = styled.div<{
   min-height: ${p =>
     p.currentUser ? `calc(100vh - 164px)` : `calc(100vh - 132px)`};
 
-  ${media.greaterThan("md")`
-    min-height: ${p =>
-      p.currentUser ? `calc(100vh - 176px)` : `calc(100vh - 145px)`};
+  ${p => media.greaterThan("md")`
+    min-height: ${
+      p.currentUser ? `calc(100vh - 176px)` : `calc(100vh - 145px)`
+    };
   `}
 `
 

@@ -6,14 +6,15 @@ import {
   Query,
   FieldResolver,
   Root,
-  Ctx,
 } from "type-graphql"
 
 import { Element } from "./element.entity"
 import { ElementService } from "./element.service"
 // import { ResolverContext } from "../../lib/types"
 import { CreateElementInput } from "./element.input"
-import { ResolverContext } from "../../lib/types"
+import { CurrentUser } from "../shared/context/currentUser"
+import { User } from "../user/user.entity"
+import { Loaders } from "../shared/context/loaders"
 
 @Resolver(() => Element)
 export class ElementResolver {
@@ -23,10 +24,10 @@ export class ElementResolver {
   @Authorized()
   @Query(() => [Element], { nullable: true })
   async allElements(
-    @Ctx() { userId }: ResolverContext,
+    @CurrentUser() user: User,
     @Arg("selectedUserId") selectedUserId: string,
   ): Promise<Element[]> {
-    return this.elementService.findAll(userId, selectedUserId)
+    return this.elementService.findAll(user.id, selectedUserId)
   }
 
   // CREATE ELEMENT
@@ -34,9 +35,9 @@ export class ElementResolver {
   @Mutation(() => Element, { nullable: true })
   async createElement(
     @Arg("data") data: CreateElementInput,
-    @Ctx() { userId }: ResolverContext,
+    @CurrentUser() user: User,
   ): Promise<Element> {
-    return this.elementService.create(data, userId)
+    return this.elementService.create(data, user.id)
   }
 
   // UPDATE ELEMENT
@@ -56,9 +57,11 @@ export class ElementResolver {
     return this.elementService.destroy(elementId)
   }
 
-  // TODO - data loader
   @FieldResolver()
-  async children(@Root() element: Element) {
-    return this.elementService.findChildren(element.id)
+  async children(
+    @Root() element: Element,
+    @Loaders() { elementChildrenLoader }: Loaders,
+  ) {
+    return elementChildrenLoader.load(element.id)
   }
 }

@@ -1,12 +1,16 @@
-import React, { FC, useState, createContext } from "react"
-import useAppContext from "../../lib/hooks/useAppContext"
-import { useCallback } from "react"
-import { useContext } from "react"
+import React, {
+  FC,
+  useState,
+  createContext,
+  useCallback,
+  useContext,
+} from "react"
 import { ElementFragment } from "../../lib/graphql/types"
 import { isMobileDevice } from "../../lib/helpers"
+import { useMe } from "./MeProvider"
 
 const TimelineProvider: FC = ({ children }) => {
-  const { user } = useAppContext()
+  const user = useMe()
   const [modal, setModal] = useState("")
   const [selectedElement, setSelectedElement] = useState()
   const [selectedUserId, setSelectedUserId] = useState(user.id)

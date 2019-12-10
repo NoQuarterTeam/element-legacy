@@ -4,7 +4,6 @@ import {
   Arg,
   Authorized,
   Query,
-  Ctx,
   FieldResolver,
   Root,
 } from "type-graphql"
@@ -12,11 +11,11 @@ import {
 import { SharedElement } from "./sharedElement.entity"
 import { SharedElementService } from "./sharedElement.service"
 
-import { ResolverContext } from "../../lib/types"
 import { UserService } from "../user/user.service"
 import { CreateSharedElementsInput } from "./sharedElement.input"
 import { User } from "../user/user.entity"
 import { Element } from "../element/element.entity"
+import { CurrentUser } from "../shared/context/currentUser"
 
 @Resolver(() => SharedElement)
 export class SharedElementResolver {
@@ -28,10 +27,8 @@ export class SharedElementResolver {
   // ALL SHARED ELEMENTS BY USER
   @Authorized()
   @Query(() => [SharedElement], { nullable: true })
-  async allSharedElements(@Ctx() { userId }: ResolverContext): Promise<
-    SharedElement[]
-  > {
-    return this.sharedElementService.findAll(userId)
+  async allSharedElements(@CurrentUser() user: User): Promise<SharedElement[]> {
+    return this.sharedElementService.findAll(user.id)
   }
 
   // ALL SHARED USERS BY ELEMENT
@@ -51,11 +48,10 @@ export class SharedElementResolver {
   // CREATE SHARED ELEMENTS
   @Authorized()
   @Mutation(() => [SharedElement], { nullable: true })
-  async createSharedElements(@Arg("data")
-  {
-    emails,
-    elementId,
-  }: CreateSharedElementsInput): Promise<SharedElement[]> {
+  async createSharedElements(
+    @Arg("data")
+    { emails, elementId }: CreateSharedElementsInput,
+  ): Promise<SharedElement[]> {
     const sharedElements = emails.map(async email => {
       const user = await this.userService.findByEmail(email)
       if (!user) throw new Error("User" + email + " doesn't exist")
