@@ -1,4 +1,6 @@
 import React, { FC } from "react"
+import { Modal, ModalOverlay, ModalContent, ModalBody } from "@chakra-ui/core"
+
 import {
   useCreateTask,
   useUpdateTask,
@@ -9,75 +11,75 @@ import {
   TaskFragment,
   AllProgressDocument,
 } from "../lib/graphql/types"
-import Modal from "./Modal"
 import TaskForm from "./TaskForm"
 import { useTimelineContext } from "./providers/TimelineProvider"
 
 interface TaskModalProps {
-  task: TaskFragment
-  closeModal: () => void
+  task?: TaskFragment
+  scheduledDate?: string
+  isOpen: boolean
+  onClose: () => void
 }
-const TaskModal: FC<TaskModalProps> = ({ closeModal, task }) => {
+const TaskModal: FC<TaskModalProps> = ({
+  onClose,
+  task,
+  isOpen,
+  scheduledDate,
+}) => {
   const { selectedUserId } = useTimelineContext()
   const createTask = useCreateTask()
-  const updateTask = useUpdateTask(task.userId)
-  const destroyTask = useDeleteTask(task.id, selectedUserId)
+  const updateTask = useUpdateTask(task?.userId)
+  // TODO: fix this
+  const destroyTask = useDeleteTask(task?.id || "", selectedUserId)
 
   const handleCreateTask = async (taskData: TaskInput) => {
-    const data = { ...taskData, order: 100 }
+    if (!scheduledDate) return
+    const data = { ...taskData, scheduledDate, order: 100 }
     await createTask({
       refetchQueries: [{ query: AllProgressDocument }],
-      variables: {
-        data,
-      },
+      variables: { data },
     })
-    closeModal()
+    onClose()
   }
 
   const handleDuplicateTask = async () => {
-    const data = { ...task, order: task.order + 1 }
-
-    delete data.__typename
-    delete data.element
-    delete data.id
-
+    if (!task) return
+    const { id, element, __typename, order, ...data } = task
     await createTask({
       refetchQueries: [{ query: AllProgressDocument }],
-      variables: {
-        data,
-      },
+      variables: { data: { ...data, order: order + 1 } },
     })
-    closeModal()
+    onClose()
   }
 
   const handleUpdateTask = async (data: TaskInput) => {
+    if (!task) return
     await updateTask({
       refetchQueries: [{ query: AllProgressDocument }],
-      variables: {
-        taskId: task.id,
-        data,
-      },
+      variables: { taskId: task.id, data },
     })
-    closeModal()
+    onClose()
   }
 
   const handleDeleteTask = async () => {
-    await destroyTask({
-      variables: {
-        taskId: task.id,
-      },
-    })
-    closeModal()
+    if (!task) return
+    await destroyTask({ variables: { taskId: task.id } })
+    onClose()
   }
 
   return (
-    <Modal onClose={closeModal}>
-      <TaskForm
-        onFormSubmit={task.id ? handleUpdateTask : handleCreateTask}
-        onDeleteTask={handleDeleteTask}
-        onDuplicateTask={handleDuplicateTask}
-        task={task}
-      />
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalBody p={6}>
+          <TaskForm
+            onFormSubmit={task ? handleUpdateTask : handleCreateTask}
+            onDeleteTask={handleDeleteTask}
+            onDuplicateTask={handleDuplicateTask}
+            task={task}
+          />
+        </ModalBody>
+      </ModalContent>
     </Modal>
   )
 }

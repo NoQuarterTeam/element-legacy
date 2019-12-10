@@ -1,6 +1,5 @@
 import React from "react"
 import styled from "../application/theme"
-import useDebounce from "../lib/hooks/useDebounce"
 
 import logo from "../public/logo.png"
 
@@ -9,18 +8,17 @@ interface Props {
 }
 
 export const Loading: React.FC<Props> = ({ loading, children }) => {
-  const isLoading = useDebounce(loading, 200)
   return (
     <>
-      <StyledContainer loading={isLoading}>
+      <StyledContainer isLoading={loading}>
         <StyledLogo src={logo} />
       </StyledContainer>
-      {!isLoading && children}
+      {!loading && children}
     </>
   )
 }
 
-const StyledContainer = styled.div<{ loading: boolean }>`
+const StyledContainer = styled.div<{ isLoading: boolean }>`
   position: fixed;
   z-index: 1000;
   top: 0;
@@ -30,8 +28,8 @@ const StyledContainer = styled.div<{ loading: boolean }>`
   transition: opacity 2s, visibility -0.3s linear 2s;
 
   background-color: ${p => p.theme.colorPage};
-  visibility: ${p => (p.loading ? "visible" : "hidden")};
-  opacity: ${p => (p.loading ? 1 : 0)};
+  visibility: ${p => (p.isLoading ? "visible" : "hidden")};
+  opacity: ${p => (p.isLoading ? 1 : 0)};
 
   ${p => p.theme.flexCenter};
 `

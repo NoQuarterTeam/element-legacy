@@ -1,5 +1,7 @@
 import React, { memo } from "react"
 import styled from "styled-components"
+import { darken, readableColor, lighten } from "polished"
+
 import { TaskFragment, AllProgressDocument } from "../lib/graphql/types"
 import { hoursInMins, formatTime } from "../lib/helpers"
 import {
@@ -7,28 +9,26 @@ import {
   useDeleteTask,
   useUpdateTask,
 } from "../lib/graphql/task/hooks"
-import { darken, complement, readableColor, lighten } from "polished"
 import { useTimelineContext } from "./providers/TimelineProvider"
+import TaskModal from "./TaskModal"
+import { useDisclosure } from "@chakra-ui/core"
 
 interface TaskProps {
   task: TaskFragment
   isDragging: boolean
   hidden: boolean
-  handleTaskModal: (task: TaskFragment) => void
 }
-function Task({ task, hidden, handleTaskModal, ...rest }: TaskProps) {
+function Task({ task, hidden, ...rest }: TaskProps) {
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const { selectedUserId } = useTimelineContext()
   const createTask = useCreateTask()
   const updateTask = useUpdateTask()
   const destroyTask = useDeleteTask(task.id, selectedUserId)
 
   const onTaskClick = async (event: any, task: TaskFragment) => {
-    if (!event) {
-      return false
-    }
-
+    if (!event) return false
     if (!event.metaKey && !event.altKey && !event.shiftKey) {
-      handleTaskModal(task)
+      onOpen()
     }
     if (event.metaKey) {
       // DUPLICATE
@@ -40,7 +40,6 @@ function Task({ task, hidden, handleTaskModal, ...rest }: TaskProps) {
 
       await createTask({
         refetchQueries: [{ query: AllProgressDocument }],
-
         variables: {
           data,
         },
@@ -70,29 +69,35 @@ function Task({ task, hidden, handleTaskModal, ...rest }: TaskProps) {
   }
 
   return (
-    <StyledTaskBox
-      {...rest}
-      completed={task.completed}
-      color={task.element.color}
-      id={task.id}
-      className="task"
-      hidden={hidden}
-      onClick={event => onTaskClick(event, task)}
-    >
-      <StyledTaskName completed={task.completed}>{task.name}</StyledTaskName>
-      <StyledTaskElement completed={task.completed} color={task.element.color}>
-        {task.element.name}
-      </StyledTaskElement>
-      {task.startTime && (
-        <StyledTaskStart completed={task.completed}>
-          @{task.startTime}
-        </StyledTaskStart>
-      )}
-      <StyledTaskDuration completed={task.completed}>
-        {formatTime(hoursInMins(task.estimatedTime)) &&
-          formatTime(hoursInMins(task.estimatedTime))}
-      </StyledTaskDuration>
-    </StyledTaskBox>
+    <>
+      <StyledTaskBox
+        {...rest}
+        completed={task.completed}
+        color={task.element.color}
+        id={task.id}
+        className="task"
+        hidden={hidden}
+        onClick={event => onTaskClick(event, task)}
+      >
+        <StyledTaskName completed={task.completed}>{task.name}</StyledTaskName>
+        <StyledTaskElement
+          completed={task.completed}
+          color={task.element.color}
+        >
+          {task.element.name}
+        </StyledTaskElement>
+        {task.startTime && (
+          <StyledTaskStart completed={task.completed}>
+            @{task.startTime}
+          </StyledTaskStart>
+        )}
+        <StyledTaskDuration completed={task.completed}>
+          {formatTime(hoursInMins(task.estimatedTime)) &&
+            formatTime(hoursInMins(task.estimatedTime))}
+        </StyledTaskDuration>
+      </StyledTaskBox>
+      <TaskModal isOpen={isOpen} onClose={onClose} task={task} />
+    </>
   )
 }
 

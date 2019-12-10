@@ -2,59 +2,52 @@ import React, { memo } from "react"
 import styled from "styled-components"
 import { Dayjs } from "dayjs"
 import { Droppable, Draggable } from "react-beautiful-dnd"
+import { useDisclosure } from "@chakra-ui/core"
 
 import Task from "./Task"
 
-import { calculateTotalTime, today } from "../lib/helpers"
+import { calculateTotalTime, isToday } from "../lib/helpers"
 import { TaskFragment } from "../lib/graphql/types"
 import { darken } from "polished"
 import dayjs from "dayjs"
 import { useTimelineContext } from "./providers/TimelineProvider"
 import { media } from "../application/theme"
 import { useMe } from "./providers/MeProvider"
+import deepEqual from "deep-equal"
+import TaskModal from "./TaskModal"
 
 interface DayProps {
-  weekend: boolean
   day: Dayjs
-  month: string
   tasks: TaskFragment[]
   filteredElements: string[]
-  handleTaskModal: (task?: TaskFragment) => void
 }
-function Day({
-  weekend,
-  day,
-  tasks,
-  handleTaskModal,
-  filteredElements,
-  ...props
-}: DayProps) {
+function Day({ day, tasks, filteredElements, ...props }: DayProps) {
+  const { isOpen, onClose, onOpen } = useDisclosure()
   const { selectedUserId } = useTimelineContext()
   const user = useMe()
-
+  const weekend = dayjs(day).day() === 0 || dayjs(day).day() === 6
   return (
-    <StyledBorder
-      monday={dayjs(day).day() === 1}
-      first={dayjs(day).date() === 1}
-      currentUser={
-        selectedUserId && user && selectedUserId === user.id ? true : false
-      }
-    >
-      <Droppable
-        droppableId={day.toString()}
-        // style={{ height: "-webkit-fill-available" }}
+    <>
+      <StyledBorder
+        monday={dayjs(day).day() === 1}
+        first={dayjs(day).date() === 1}
+        currentUser={
+          (selectedUserId && user && selectedUserId === user.id) || false
+        }
       >
-        {(provided, snapshot) => (
-          <div ref={provided.innerRef} {...provided.droppableProps}>
-            <StyledDay weekend={weekend} today={today(day)} {...props}>
-              {tasks
-                ?.sort((a, b) => {
-                  return a.order - b.order
-                })
-                .map((task: TaskFragment, index) => (
-                  <Draggable key={task.id} draggableId={task.id} index={index}>
-                    {(provided, snapshot) => {
-                      return (
+        <Droppable droppableId={day.toString()}>
+          {(provided, snapshot) => (
+            <div ref={provided.innerRef} {...provided.droppableProps}>
+              <StyledDay weekend={weekend} today={isToday(day)} {...props}>
+                {tasks
+                  ?.sort((a, b) => a.order - b.order)
+                  .map((task, index) => (
+                    <Draggable
+                      key={task.id}
+                      draggableId={task.id}
+                      index={index}
+                    >
+                      {(provided, snapshot) => (
                         <div
                           ref={provided.innerRef}
                           key={index}
@@ -65,36 +58,44 @@ function Day({
                             isDragging={snapshot.isDragging}
                             task={task}
                             hidden={filteredElements?.includes(task.element.id)}
-                            handleTaskModal={handleTaskModal}
-                            // onMouseDown={() => onTaskClick(event, task)}
                           />
                         </div>
-                      )
-                    }}
-                  </Draggable>
-                ))}
-              <StyledTotalTime dragging={snapshot.isDraggingOver}>
-                {filteredElements &&
-                  calculateTotalTime(
-                    tasks.filter(
-                      task => !filteredElements.includes(task.element.id),
-                    ),
-                  )}
-              </StyledTotalTime>
+                      )}
+                    </Draggable>
+                  ))}
+                <StyledTotalTime dragging={snapshot.isDraggingOver}>
+                  {filteredElements &&
+                    calculateTotalTime(
+                      tasks.filter(
+                        task => !filteredElements.includes(task.element.id),
+                      ),
+                    )}
+                </StyledTotalTime>
 
-              {provided.placeholder}
-              <AddNewTask onClick={() => handleTaskModal()}>
-                <PlaceholderTask />
-              </AddNewTask>
-            </StyledDay>
-          </div>
-        )}
-      </Droppable>
-    </StyledBorder>
+                {provided.placeholder}
+                <AddNewTask onClick={onOpen}>
+                  <PlaceholderTask />
+                </AddNewTask>
+              </StyledDay>
+            </div>
+          )}
+        </Droppable>
+      </StyledBorder>
+
+      <TaskModal
+        isOpen={isOpen}
+        onClose={onClose}
+        scheduledDate={day.format()}
+      />
+    </>
   )
 }
 
-export default memo(Day)
+export default memo(Day, dayIsEqual)
+
+function dayIsEqual(prevDay: DayProps, nextDay: DayProps) {
+  return deepEqual(prevDay.tasks, nextDay.tasks)
+}
 
 const StyledBorder = styled.div<{
   monday: boolean
@@ -114,10 +115,7 @@ const StyledBorder = styled.div<{
   `}
 `
 
-const StyledDay = styled.div<{
-  weekend: boolean
-  today: boolean
-}>`
+const StyledDay = styled.div<{ weekend: boolean; today: boolean }>`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -137,7 +135,6 @@ const StyledDay = styled.div<{
 const PlaceholderTask = styled.div`
   min-width: calc(100% - ${p => p.theme.paddingS});
   height: 64px;
-  /* border-radius: ${p => p.theme.borderRadius}; */
 `
 
 const StyledTotalTime = styled.div<{ dragging: boolean }>`
@@ -149,7 +146,6 @@ const StyledTotalTime = styled.div<{ dragging: boolean }>`
 
 const AddNewTask = styled.div`
   cursor: pointer;
-  /* border-radius: ${p => p.theme.borderRadius}; */
   margin: ${p => p.theme.paddingS};
   flex: 1;
 

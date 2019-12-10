@@ -5,7 +5,7 @@ import advancedFormat from "dayjs/plugin/advancedFormat"
 import {
   getMonths,
   getDays,
-  today,
+  isToday,
   calculateHabitProgress,
   monthNames,
   allActiveHabits,
@@ -21,10 +21,16 @@ dayjs.extend(advancedFormat)
 
 interface TimelineHeadProps {
   openHabitModal: (day: Dayjs) => void
+  daysBack: number
+  daysForward: number
 }
-const TimelineHead: FC<TimelineHeadProps> = ({ openHabitModal }) => {
+const TimelineHead: FC<TimelineHeadProps> = ({
+  openHabitModal,
+  daysBack,
+  daysForward,
+}) => {
   const user = useMe()
-  const { selectedUserId, daysBack, daysForward } = useTimelineContext()
+  const { selectedUserId } = useTimelineContext()
   const habits = useAllHabits()
   const allProgress = useAllProgress()
 
@@ -46,14 +52,14 @@ const TimelineHead: FC<TimelineHeadProps> = ({ openHabitModal }) => {
                   .map(day => (
                     <StyledContainer
                       key={day.unix()}
-                      today={today(day)}
+                      today={isToday(day)}
                       weekend={dayjs(day).day() === 0 || dayjs(day).day() === 6}
                       monday={dayjs(day).day() === 1}
                       first={dayjs(day).date() === 1}
                     >
                       <StyledDayHeader
                         key={day.unix()}
-                        today={today(day)}
+                        today={isToday(day)}
                         weekend={
                           dayjs(day).day() === 0 || dayjs(day).day() === 6
                         }
@@ -66,7 +72,7 @@ const TimelineHead: FC<TimelineHeadProps> = ({ openHabitModal }) => {
                       habits &&
                       allActiveHabits(day, habits).length !== 0 ? (
                         <StyledHabits
-                          today={today(day)}
+                          today={isToday(day)}
                           count={habits && allActiveHabits(day, habits).length}
                           onClick={() => openHabitModal(day)}
                         >
@@ -89,18 +95,18 @@ const TimelineHead: FC<TimelineHeadProps> = ({ openHabitModal }) => {
                       ) : user.id === selectedUserId &&
                         habits &&
                         allActiveHabits(day, habits).length === 0 ? (
-                        today(day) ? (
+                        isToday(day) ? (
                           <StyledAddHabits
                             onClick={() => openHabitModal(day)}
-                            today={today(day)}
+                            today={isToday(day)}
                           >
                             Add habit
                           </StyledAddHabits>
                         ) : (
-                          <StyledHabits today={today(day)} count={1} />
+                          <StyledHabits today={isToday(day)} count={1} />
                         )
                       ) : user.id === selectedUserId ? (
-                        <StyledHabits today={today(day)} count={4} />
+                        <StyledHabits today={isToday(day)} count={4} />
                       ) : (
                         <></>
                       )}

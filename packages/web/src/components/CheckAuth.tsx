@@ -4,10 +4,10 @@ import { Redirect, Router, RouteComponentProps } from "@reach/router"
 import Home from "../pages/Home"
 import Login from "../pages/Login"
 import Register from "../pages/Register"
-import { useMe } from "./providers/MeProvider"
+import { useAuth } from "./providers/MeProvider"
 
 const CheckAuth: React.FC = ({ children }) => {
-  const user = useMe()
+  const user = useAuth()
   return user ? (
     <>{children}</>
   ) : (

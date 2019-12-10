@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react"
-import styled from "../application/theme"
+import React from "react"
 import dayjs from "dayjs"
+import { Duplicate } from "styled-icons/boxicons-regular/Duplicate"
+import { DeleteOutline } from "styled-icons/material/DeleteOutline"
 
+import styled from "../application/theme"
 import { TaskFragment } from "../lib/graphql/types"
 import useFormState from "../lib/hooks/useFormState"
 import { sleep, isMobileDevice } from "../lib/helpers"
 import { useAllElements } from "../lib/graphql/element/hooks"
 import { useGetSharedUsersByUser } from "../lib/graphql/sharedElement/hooks"
-
-import { Duplicate } from "styled-icons/boxicons-regular/Duplicate"
-import { DeleteOutline } from "styled-icons/material/DeleteOutline"
 
 import Input from "./Input"
 import Button from "./Button"
@@ -21,9 +20,9 @@ import { useMe } from "./providers/MeProvider"
 
 interface TaskFormProps {
   onFormSubmit: (data: any) => Promise<any>
-  task: TaskFragment
   onDeleteTask: () => void
   onDuplicateTask: () => void
+  task?: TaskFragment
 }
 function TaskForm({
   onFormSubmit,
@@ -32,9 +31,9 @@ function TaskForm({
   onDuplicateTask,
 }: TaskFormProps) {
   const user = useMe()
-  const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<string | null>(null)
-  const [validation, setValidation] = useState<string | null>(null)
+  const [loading, setLoading] = React.useState<boolean>(false)
+  const [error, setError] = React.useState<string | null>(null)
+  const [validation, setValidation] = React.useState<string | null>(null)
 
   const { selectedUserId } = useTimelineContext()
 
@@ -43,23 +42,17 @@ function TaskForm({
   const elements = useAllElements(user.id)
 
   const initialState = {
-    name: task ? task.name : null,
-    completed: task ? task.completed : false,
-    elementId: task.element ? task.element.id : null,
-    userId: task.userId ? task.userId : selectedUserId,
-    scheduledDate: task.scheduledDate ? task.scheduledDate : "",
-    estimatedTime: task.estimatedTime ? task.estimatedTime : "00:00",
-    startTime: task.startTime ? task.startTime : "",
-    description: task.description ? task.description : "",
+    name: task?.name || null,
+    completed: task?.completed || false,
+    elementId: task?.element?.id || null,
+    userId: task?.userId || selectedUserId,
+    scheduledDate: task?.scheduledDate || "",
+    estimatedTime: task?.estimatedTime || "00:00",
+    startTime: task?.startTime || "",
+    description: task?.description || "",
   }
 
   const { formState, setFormState } = useFormState(initialState)
-
-  useEffect(() => {
-    if (task) {
-      setFormState(initialState)
-    }
-  }, [initialState, setFormState, task])
 
   const handleTaskUpdate = async (e: any) => {
     e.preventDefault()
@@ -82,12 +75,10 @@ function TaskForm({
     setFormState({ ...formState, userId })
   }
 
-  const selectUserOptions =
-    sharedUsers &&
-    sharedUsers.map(user => ({
-      label: user.firstName,
-      value: user.id,
-    }))
+  const selectUserOptions = sharedUsers?.map(user => ({
+    label: user.firstName,
+    value: user.id,
+  }))
 
   return (
     <StyledForm onSubmit={handleTaskUpdate}>
@@ -119,7 +110,7 @@ function TaskForm({
         <StyledRow>
           <StyledLabel>Element</StyledLabel>
           <ElementDropdown
-            selectedElementId={formState.elementId ? formState.elementId : ""}
+            selectedElementId={formState.elementId}
             handleSelectElement={element =>
               setFormState({ elementId: element.id })
             }

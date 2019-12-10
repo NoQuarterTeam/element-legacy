@@ -24,7 +24,6 @@ function Button({
     <StyledButton
       variant={variant}
       color={color}
-      loading={loading}
       disabled={loading || disabled}
       {...props}
     >
