@@ -35,16 +35,11 @@ const TaskModal: FC<TaskModalProps> = ({ closeModal, task }) => {
   }
 
   const handleDuplicateTask = async () => {
-    const data = { ...task, order: task.order + 1 }
-
-    delete data.__typename
-    delete data.element
-    delete data.id
-
+    const { id, element, __typename, order, ...data } = task
     await createTask({
       refetchQueries: [{ query: AllProgressDocument }],
       variables: {
-        data,
+        data: { ...data, order: order + 1 },
       },
     })
     closeModal()

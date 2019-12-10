@@ -32,10 +32,10 @@ export const decimalCount = (value: number) => {
 export const getDays = (startDate: Dayjs, daysCount: number) => {
   return Array(daysCount)
     .fill(null)
-    .map((k, v) => dayjs(startDate).add(v, "day"))
+    .map((_, v) => dayjs(startDate).add(v, "day"))
 }
 
-export const today = (day: Dayjs) => {
+export const isToday = (day: Dayjs) => {
   return dayjs(day).isSame(dayjs(), "day")
 }
 
@@ -235,46 +235,3 @@ export const isMobileDevice = () => {
     navigator.userAgent.indexOf("IEMobile") !== -1
   )
 }
-
-// const isToday? = (day) => {
-//   return dayjs(day).isSame(dayjs(), "day")
-// }
-
-// Key shortcuts
-// const taskOnMouseDown = (event, task) => {
-// 	event.preventDefault();
-// 	console.log(event.keyCode);
-
-// 	if (window.event.metaKey) {
-// 		const name = task.name;
-// 		const completed = task.completed;
-// 		const elementId = task.element.id;
-// 		const scheduledDate = task.scheduledDate;
-// 		const startTime = task.startTime;
-// 		const estimatedTime = task.estimatedTime;
-// 		const description = task.description;
-// 		const formData = {
-// 			name,
-// 			completed,
-// 			elementId,
-// 			scheduledDate,
-// 			startTime,
-// 			estimatedTime,
-// 			description,
-// 		};
-// 		createTask(formData).then(() => updateTasks());
-// 	} else if (event.altKey) {
-// 		deleteTask(task).then(() => updateTasks());
-// 	} else if (event.shiftKey) {
-// 		const completed = !task.completed;
-// 		const elementId = task.element.id;
-// 		const order = task.order;
-// 		const formData = {
-// 			...task,
-// 			elementId,
-// 			order,
-// 			completed,
-// 		};
-// 		updateTask(formData).then(() => updateTasks());
-// 	}
-// };

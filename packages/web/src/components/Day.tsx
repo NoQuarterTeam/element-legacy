@@ -5,7 +5,7 @@ import { Droppable, Draggable } from "react-beautiful-dnd"
 
 import Task from "./Task"
 
-import { calculateTotalTime, today } from "../lib/helpers"
+import { calculateTotalTime, isToday } from "../lib/helpers"
 import { TaskFragment } from "../lib/graphql/types"
 import { darken } from "polished"
 import dayjs from "dayjs"
@@ -14,15 +14,12 @@ import { media } from "../application/theme"
 import { useMe } from "./providers/MeProvider"
 
 interface DayProps {
-  weekend: boolean
   day: Dayjs
-  month: string
   tasks: TaskFragment[]
   filteredElements: string[]
   handleTaskModal: (task?: TaskFragment) => void
 }
 function Day({
-  weekend,
   day,
   tasks,
   handleTaskModal,
@@ -31,22 +28,19 @@ function Day({
 }: DayProps) {
   const { selectedUserId } = useTimelineContext()
   const user = useMe()
-
+  const weekend = dayjs(day).day() === 0 || dayjs(day).day() === 6
   return (
     <StyledBorder
       monday={dayjs(day).day() === 1}
       first={dayjs(day).date() === 1}
       currentUser={
-        selectedUserId && user && selectedUserId === user.id ? true : false
+        (selectedUserId && user && selectedUserId === user.id) || false
       }
     >
-      <Droppable
-        droppableId={day.toString()}
-        // style={{ height: "-webkit-fill-available" }}
-      >
+      <Droppable droppableId={day.toString()}>
         {(provided, snapshot) => (
           <div ref={provided.innerRef} {...provided.droppableProps}>
-            <StyledDay weekend={weekend} today={today(day)} {...props}>
+            <StyledDay weekend={weekend} today={isToday(day)} {...props}>
               {tasks
                 ?.sort((a, b) => {
                   return a.order - b.order
