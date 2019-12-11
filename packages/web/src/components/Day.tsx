@@ -106,11 +106,11 @@ const StyledBorder = styled.div<{
   border-left: ${p => p.monday && "5px #efefef dotted"};
   border-left: ${p => p.first && `5px ${p.theme.colorLightBlue} dotted`};
   min-height: ${p =>
-    p.currentUser ? `calc(100vh - 164px)` : `calc(100vh - 132px)`};
+    p.currentUser ? `calc(100vh - 174px)` : `calc(100vh - 143px)`};
 
   ${p => media.greaterThan("md")`
     min-height: ${
-      p.currentUser ? `calc(100vh - 176px)` : `calc(100vh - 145px)`
+      p.currentUser ? `calc(100vh - 174px)` : `calc(100vh - 143px)`
     };
   `}
 `
