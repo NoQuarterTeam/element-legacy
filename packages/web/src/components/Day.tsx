@@ -124,12 +124,11 @@ const StyledDay = styled.div<{ weekend: boolean; today: boolean }>`
   font-size: ${p => p.theme.textS};
   background-color: ${p =>
     p.today ? p.theme.colorBlue : p.theme.colorBackground};
-  // border: ${p => (p.today ? "3px solid black" : "none")};
+
   box-sizing: content-box;
   border-top: none;
   padding-bottom: ${p => (p.today ? "20px" : "0")};
   transition: height -0.3s linear 2s;
-  
 `
 
 const PlaceholderTask = styled.div`

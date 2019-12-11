@@ -86,7 +86,6 @@ const Timeline: React.FC<RouteComponentProps> = () => {
         left: num,
       })
     }
-
     setDaysBack(daysBack + DAY_COUNT)
   }
 
@@ -96,7 +95,8 @@ const Timeline: React.FC<RouteComponentProps> = () => {
         const num = daysBack * 98
         timelineRef.current.scrollTo(num, 0)
       } else {
-        const num = (daysBack - 4) * 98
+        const num = (daysBack - 6) * 98
+
         timelineRef.current.scrollTo(num, 0)
       }
     }
@@ -191,15 +191,17 @@ const StyledTimelineWrapper = styled.div`
 const StyledTimeline = styled.div`
   width: fit-content;
   height: 100vh;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: scroll;
 `
 
 const StyledDaysWrapper = styled.div`
   display: flex;
   width: fit-content;
+  flex: 1;
+  min-height: min-content;
   height: fit-content;
-  overflow-y: scroll;
-  overflow-x: hidden;
+  overflow: hidden;
 `
 
 const StyledSpacer = styled.div<{ currentUser: boolean }>`
@@ -215,6 +217,7 @@ const StyledBack = styled.p`
   top: 30vh;
   left: 5px;
   z-index: 95;
+  cursor: pointer;
   filter: drop-shadow(1px 1px 2px rgba(200, 200, 200, 0.3));
   padding-right: ${p => p.theme.paddingM};
 `
