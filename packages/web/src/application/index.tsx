@@ -1,7 +1,7 @@
 import React, { memo, Suspense } from "react"
 import { Router } from "@reach/router"
 
-import AppProvider from "../components/providers/AppProvider"
+import { AppProvider } from "../components/providers/AppProvider"
 import Timeline from "../pages/Timeline"
 import NotFound from "../pages/NotFound"
 

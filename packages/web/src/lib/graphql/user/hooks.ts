@@ -1,4 +1,3 @@
-import { useApolloClient } from "react-apollo-hooks"
 import {
   useLoginMutation,
   useUpdateUserMutation,
@@ -6,6 +5,7 @@ import {
   useLogoutMutation,
   MeDocument,
 } from "../types"
+import { useApolloClient } from "@apollo/client"
 
 export function useLogin() {
   return useLoginMutation({
@@ -50,7 +50,7 @@ export function useRegister() {
 
 export function useLogout() {
   const client = useApolloClient()
-  const logout = useLogoutMutation()
+  const [logout] = useLogoutMutation()
 
   const handleLogout = async () => {
     localStorage.removeItem("token")

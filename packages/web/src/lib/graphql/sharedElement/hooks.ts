@@ -20,11 +20,6 @@ export function useCreateSharedElements(userId: string, elementId: string) {
         query: AllSharedUsersByUserDocument,
         variables: { userId: userId },
       },
-      // TODO: To update selected users tasks when added to shared users list
-      // {
-      //   query: AllTasksDocument,
-      //   variables: { selectedUserId: sharedUserId },
-      // },
     ],
   })
 }
@@ -35,29 +30,6 @@ export function useDeleteSharedElement(
   elementId: string,
 ) {
   return useDeleteSharedElementMutation({
-    // update: cache => {
-    //   const sharedUsersQuery = cache.readQuery<
-    //     AllSharedUsersQuery,
-    //     AllSharedUsersQueryVariables
-    //   >({
-    //     query: AllSharedUsersDocument,
-    //     variables: { elementId },
-    //   })
-    //   if (sharedUsersQuery && sharedUsersQuery.allSharedUsers) {
-    //     const sharedUsersData = sharedUsersQuery.allSharedUsers.filter(
-    //       user => user.email !== userEmail,
-    //     )
-
-    //     cache.writeQuery({
-    //       query: AllSharedUsersDocument,
-    //       variables: { elementId },
-    //       data: {
-    //         ...sharedUsersQuery,
-    //         allSharedUsers: sharedUsersData,
-    //       },
-    //     })
-    //   }
-    // },
     refetchQueries: [
       {
         query: AllSharedUsersDocument,
@@ -77,18 +49,15 @@ export function useDeleteSharedElement(
 
 export function useAllSharedElements() {
   const { data } = useAllSharedElementsQuery()
-  const allSharedElements = data && data.allSharedElements
-  return allSharedElements
+  return data?.allSharedElements
 }
 
 export function useGetSharedUsersByElement(elementId: string) {
   const { data } = useAllSharedUsersQuery({ variables: { elementId } })
-  const allSharedUsers = data && data.allSharedUsers
-  return allSharedUsers
+  return data?.allSharedUsers
 }
 
 export function useGetSharedUsersByUser(userId: string) {
   const { data } = useAllSharedUsersByUserQuery({ variables: { userId } })
-  const allSharedUsersByUser = data && data.allSharedUsersByUser
-  return allSharedUsersByUser
+  return data?.allSharedUsersByUser
 }
