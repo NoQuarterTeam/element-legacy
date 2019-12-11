@@ -6,7 +6,7 @@ import Login from "../pages/Login"
 import Register from "../pages/Register"
 import { useAuth } from "./providers/MeProvider"
 
-const CheckAuth: React.FC = ({ children }) => {
+export const CheckAuth: React.FC = ({ children }) => {
   const user = useAuth()
   return user ? (
     <>{children}</>
@@ -19,8 +19,6 @@ const CheckAuth: React.FC = ({ children }) => {
     </Router>
   )
 }
-
-export default CheckAuth
 
 const NotFound: React.FC<RouteComponentProps> = () => {
   return <Redirect to="/" noThrow={true} />

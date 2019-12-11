@@ -5,14 +5,13 @@ import {
   useCreateElement,
   useUpdateElement,
 } from "../lib/graphql/element/hooks"
-import { isMobileDevice } from "../lib/helpers"
+
 import { ElementFragment } from "../lib/graphql/types"
 import useOnClickOutside from "../lib/hooks/useOnOutsideClick"
 import ElementDropdownOption from "./ElementDropdownOption"
 import Input from "./Input"
 import { Close } from "styled-icons/material/Close"
 
-import { useTimelineContext } from "./providers/TimelineProvider"
 import { readableColor, darken, lighten } from "polished"
 
 interface ElementDropdownProps {
@@ -35,10 +34,8 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
   open,
   onClose,
 }) => {
-  const { selectedUserId } = useTimelineContext()
-
-  const createElement = useCreateElement(selectedUserId)
-  const updateElement = useUpdateElement()
+  const [createElement] = useCreateElement()
+  const [updateElement] = useUpdateElement()
   const [dropdownOpen, openDropdown] = useState(false || open)
   const [pickerOpen, openColorPicker] = useState(false)
   const [newElement, setNewElement] = useState("")

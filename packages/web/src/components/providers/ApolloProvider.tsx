@@ -1,36 +1,40 @@
-import React, { FC, Fragment } from "react"
-import ApolloClient from "apollo-client"
-import { InMemoryCache } from "apollo-cache-inmemory"
-import { createHttpLink } from "apollo-link-http"
-import { setContext } from "apollo-link-context"
+import React from "react"
+import {
+  ApolloClient,
+  HttpLink,
+  InMemoryCache,
+  ApolloProvider as ReactApolloProvider,
+  concat,
+  ApolloLink,
+} from "@apollo/client"
 
-import { ApolloProvider as ReactApolloProvider } from "react-apollo-hooks"
 import { apiUrl } from "../../lib/config"
 
-const httpLink = createHttpLink({
+const httpLink = new HttpLink({
   uri: apiUrl,
 })
 
-const authLink = setContext(async () => {
+const authMiddleware = new ApolloLink((operation, forward) => {
   const token = localStorage.getItem("token")
-  return {
+  operation.setContext({
     headers: {
-      authorization: token ? `Bearer ${token}` : "",
+      authorization: (token && `Bearer ${token}`) || null,
     },
-  }
+  })
+
+  return forward(operation)
 })
 
 const client = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: concat(authMiddleware, httpLink),
   cache: new InMemoryCache(),
+  defaultOptions: {
+    mutate: {
+      errorPolicy: "all",
+    },
+  },
 })
 
-const ApolloProvider: FC = ({ children }) => {
-  return (
-    <ReactApolloProvider client={client}>
-      <Fragment>{children}</Fragment>
-    </ReactApolloProvider>
-  )
+export const ApolloProvider: React.FC = ({ children }) => {
+  return <ReactApolloProvider client={client}>{children}</ReactApolloProvider>
 }
-
-export default ApolloProvider
