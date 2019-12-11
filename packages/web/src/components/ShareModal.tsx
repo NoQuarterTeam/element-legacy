@@ -28,7 +28,7 @@ const ShareModal: FC<ShareModalProps> = ({ closeModal }) => {
 
   const currentUser = useMe()
   const { selectedElement } = useTimelineContext()
-  const createSharedElements = useCreateSharedElements(
+  const [createSharedElements] = useCreateSharedElements(
     currentUser.id,
     selectedElement.id,
   )
@@ -37,10 +37,7 @@ const ShareModal: FC<ShareModalProps> = ({ closeModal }) => {
   const handleShareElement = async () => {
     const data = { emails, elementId: selectedElement.id }
     const res = await createSharedElements({
-      errorPolicy: "all",
-      variables: {
-        data,
-      },
+      variables: { data },
     })
     if (res && res.errors) {
       setError(res.errors[0].message)
@@ -48,7 +45,6 @@ const ShareModal: FC<ShareModalProps> = ({ closeModal }) => {
       setEmails("")
       setError("")
     }
-    // handleSetModal("")
   }
 
   const handleRemoveEmail = (emailToRemove: string) => {
@@ -115,7 +111,7 @@ const SharedUser: FC<SharedUserProps> = ({
   sharedUser,
   selectedElement,
 }) => {
-  const deleteSharedElement = useDeleteSharedElement(
+  const [deleteSharedElement] = useDeleteSharedElement(
     sharedUser.id,
     userId,
     selectedElement.id,
