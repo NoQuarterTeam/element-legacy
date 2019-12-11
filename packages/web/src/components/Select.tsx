@@ -12,7 +12,7 @@ export const Select: React.FC<Props> = props => {
   return (
     <ChakraSelect
       border="1px solid black"
-      selectProps={{ borderRadius: "0", height: "2rem" }}
+      selectProps={{ borderRadius: "0", height: "2rem", cursor: "pointer" }}
       {...props}
     >
       {props.children}
