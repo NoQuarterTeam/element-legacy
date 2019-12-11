@@ -28,9 +28,8 @@ export type CreateElementInput = {
 }
 
 export type CreateSharedElementInput = {
-  userId?: Maybe<Scalars["String"]>
-  creatorId?: Maybe<Scalars["String"]>
-  elementId?: Maybe<Scalars["String"]>
+  userId: Scalars["String"]
+  elementId: Scalars["String"]
 }
 
 export type CreateSharedElementsInput = {
@@ -56,14 +55,14 @@ export type Element = {
 export type Habit = {
   __typename?: "Habit"
   id: Scalars["ID"]
-  archived: Scalars["Boolean"]
+  createdAt: Scalars["DateTime"]
+  updatedAt: Scalars["DateTime"]
+  archived?: Maybe<Scalars["Boolean"]>
   elementId: Scalars["String"]
   activeFrom?: Maybe<Scalars["DateTime"]>
   element: Element
   userId?: Maybe<Scalars["String"]>
   user: User
-  createdAt: Scalars["DateTime"]
-  updatedAt: Scalars["DateTime"]
   archivedAt?: Maybe<Scalars["DateTime"]>
 }
 
@@ -174,9 +173,9 @@ export type OrderTaskInput = {
 export type Progress = {
   __typename?: "Progress"
   id: Scalars["ID"]
-  task: Task
   createdAt: Scalars["DateTime"]
   updatedAt: Scalars["DateTime"]
+  task: Task
 }
 
 export type Query = {
@@ -219,12 +218,12 @@ export type RegisterInput = {
 export type SharedElement = {
   __typename?: "SharedElement"
   id: Scalars["ID"]
+  createdAt: Scalars["DateTime"]
+  updatedAt: Scalars["DateTime"]
   elementId: Scalars["String"]
   element: Element
   userId: Scalars["String"]
   user: User
-  createdAt: Scalars["DateTime"]
-  updatedAt: Scalars["DateTime"]
 }
 
 export type Subscription = {
@@ -236,19 +235,19 @@ export type Subscription = {
 export type Task = {
   __typename?: "Task"
   id: Scalars["ID"]
+  createdAt: Scalars["DateTime"]
+  updatedAt: Scalars["DateTime"]
   name: Scalars["String"]
   startTime?: Maybe<Scalars["String"]>
   description?: Maybe<Scalars["String"]>
   estimatedTime?: Maybe<Scalars["String"]>
   completed: Scalars["Boolean"]
   scheduledDate?: Maybe<Scalars["DateTime"]>
-  order: Scalars["Float"]
+  order: Scalars["Int"]
   elementId: Scalars["String"]
   element: Element
   userId: Scalars["String"]
   user: User
-  createdAt: Scalars["DateTime"]
-  updatedAt: Scalars["DateTime"]
 }
 
 export type TaskInput = {
@@ -273,7 +272,10 @@ export type UpdateInput = {
 export type User = {
   __typename?: "User"
   id: Scalars["ID"]
+  createdAt: Scalars["DateTime"]
+  updatedAt: Scalars["DateTime"]
   email: Scalars["String"]
+  password: Scalars["String"]
   firstName: Scalars["String"]
   lastName: Scalars["String"]
   elements: Array<Element>

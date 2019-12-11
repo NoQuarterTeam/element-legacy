@@ -335,8 +335,7 @@ const StyledDropdownPlaceholder = styled.div<{
   background-color: white;
   border: ${p => p.theme.border};
   cursor: pointer;
-  padding: ${p => p.theme.paddingS} ${p => p.theme.paddingM};
-  padding-left: 1rem;
+  padding: ${p => p.theme.paddingS} 1rem;
   ${p => p.theme.flexStart};
   white-space: nowrap;
   min-width: 110px;
