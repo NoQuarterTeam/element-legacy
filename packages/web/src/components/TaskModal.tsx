@@ -76,7 +76,7 @@ const TaskModal: FC<TaskModalProps> = ({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered size={["full", "lg"]}>
-      <ModalOverlay height={["100vh", "auto"]} />
+      <ModalOverlay />
       <ModalContent
         m={0}
         height={["100vh", "auto"]}
