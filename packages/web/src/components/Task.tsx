@@ -21,9 +21,9 @@ interface TaskProps {
 function Task({ task, hidden, ...rest }: TaskProps) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { selectedUserId } = useTimelineContext()
-  const createTask = useCreateTask()
-  const updateTask = useUpdateTask()
-  const destroyTask = useDeleteTask(task.id, selectedUserId)
+  const [createTask] = useCreateTask()
+  const [updateTask] = useUpdateTask()
+  const [destroyTask] = useDeleteTask(task.id, selectedUserId)
 
   const onTaskClick = async (event: any, task: TaskFragment) => {
     if (!event) return false

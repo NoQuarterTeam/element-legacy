@@ -9,7 +9,7 @@ interface DDProps {
 }
 
 export const DragDropContainer: FC<DDProps> = ({ children, allTasks }) => {
-  const updateTaskOrder = useUpdateTaskOrder()
+  const [updateTaskOrder] = useUpdateTaskOrder()
 
   const onDragEnd = ({ source, destination }: any) => {
     if (!destination) return
