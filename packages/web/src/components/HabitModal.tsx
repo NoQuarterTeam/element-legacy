@@ -21,8 +21,8 @@ interface HabitModalProps {
   day: Dayjs
 }
 const HabitModal: FC<HabitModalProps> = ({ closeModal, day }) => {
-  const createHabit = useCreateHabit()
-  const archiveHabit = useArchiveHabit()
+  const [createHabit] = useCreateHabit()
+  const [archiveHabit] = useArchiveHabit()
   const habits = useAllHabits()
 
   const allProgress = useAllProgress()

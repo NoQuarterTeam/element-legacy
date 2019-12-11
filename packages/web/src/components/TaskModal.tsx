@@ -34,10 +34,10 @@ const TaskModal: FC<TaskModalProps> = ({
   scheduledDate,
 }) => {
   const { selectedUserId } = useTimelineContext()
-  const createTask = useCreateTask()
-  const updateTask = useUpdateTask(task?.userId)
+  const [createTask] = useCreateTask()
+  const [updateTask] = useUpdateTask(task?.userId)
   // TODO: fix this
-  const destroyTask = useDeleteTask(task?.id || "", selectedUserId)
+  const [destroyTask] = useDeleteTask(task?.id || "", selectedUserId)
 
   const handleCreateTask = async (taskData: TaskInput) => {
     if (!scheduledDate) return
