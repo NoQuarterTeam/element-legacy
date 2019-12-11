@@ -1,80 +1,69 @@
-import {
-  BaseEntity,
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  OneToMany,
-} from "typeorm"
+import { Entity, ManyToOne, OneToMany, Column } from "typeorm"
 
-import { ObjectType, Field, ID } from "type-graphql"
+import { BaseEntity } from "../shared/base.entity"
+
+import { ObjectType, Field } from "type-graphql"
 import { CreateElementInput } from "../element/element.input"
 import { Element } from "../element/element.entity"
 import { Progress } from "../progress/progress.entity"
 import { User } from "../user/user.entity"
+import {
+  UuidField,
+  StringField,
+  BooleanField,
+  IntField,
+} from "../shared/fields"
 
 @ObjectType()
 @Entity()
-export class Task extends BaseEntity {
-  @Field(() => ID)
-  @PrimaryGeneratedColumn("uuid")
-  id: string
-
-  @Field()
-  @Column()
+export class Task extends BaseEntity<Task> {
+  @StringField()
   name: string
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @StringField({ nullable: true })
   startTime: string
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @StringField({ nullable: true })
   description: string
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @StringField({ nullable: true })
   estimatedTime: string
 
-  @Field()
-  @Column({ default: false })
+  @BooleanField({ default: false })
   completed: boolean
 
   @Field({ nullable: true })
   @Column({ nullable: true })
   scheduledDate: Date
 
-  @Field()
-  @Column({ type: "int" })
+  @IntField()
   order: number
 
-  @Field()
-  @Column()
+  @UuidField()
   elementId: string
 
   @Field(() => Element)
-  @ManyToOne(() => Element, element => element.tasks, { eager: true })
+  @ManyToOne(
+    () => Element,
+    element => element.tasks,
+    { eager: true },
+  )
   element: CreateElementInput
 
   // @Field()
-  @OneToMany(() => Progress, progress => progress.task)
+  @OneToMany(
+    () => Progress,
+    progress => progress.task,
+  )
   progress: Progress
 
-  @Field()
-  @Column()
+  @UuidField()
   userId: string
 
   @Field(() => User)
-  @ManyToOne(() => User, user => user.tasks)
+  @ManyToOne(
+    () => User,
+    user => user.tasks,
+  )
   user: User
-
-  @Field()
-  @CreateDateColumn()
-  createdAt: Date
-
-  @Field()
-  @UpdateDateColumn()
-  updatedAt: Date
 }

@@ -1,47 +1,28 @@
-import {
-  Entity,
-  BaseEntity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  BeforeInsert,
-  OneToMany,
-} from "typeorm"
+import { Entity, BeforeInsert, OneToMany } from "typeorm"
+import { BaseEntity } from "../shared/base.entity"
+
 import { Element } from "../element/element.entity"
-import { ObjectType, Field, ID } from "type-graphql"
+import { ObjectType, Field } from "type-graphql"
 import bcrypt from "bcryptjs"
 import { Habit } from "../habit/habit.entity"
 import { Task } from "../task/task.entity"
 import { SharedElement } from "../sharedElement/sharedElement.entity"
+import { StringField } from "../shared/fields"
 
 @ObjectType()
 @Entity()
-export class User extends BaseEntity {
-  @Field(() => ID)
-  @PrimaryGeneratedColumn("uuid")
-  id: string
-
-  @Field()
-  @Column({ unique: true })
+export class User extends BaseEntity<User> {
+  @StringField({ unique: true })
   email: string
 
-  @Column()
+  @StringField()
   password: string
 
-  @Field()
-  @Column()
+  @StringField()
   firstName: string
 
-  @Field()
-  @Column()
+  @StringField()
   lastName: string
-
-  @CreateDateColumn()
-  createdAt: string
-
-  @UpdateDateColumn()
-  updatedAt: string
 
   @Field(() => [Element])
   @OneToMany(
