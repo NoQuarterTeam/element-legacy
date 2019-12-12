@@ -206,7 +206,7 @@ export const calculateHabitProgress = (
         return [h, false]
       }
     })
-    .sort(function(x, y) {
+    .sort((x, y) => {
       return x[1] === y[1] ? 0 : x[1] ? -1 : 1
     })
 
