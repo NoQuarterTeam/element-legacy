@@ -11,6 +11,10 @@ const body = css`
     overflow: hidden;
   }
 
+  html .homePage {
+    overflow: auto;
+  }
+
   body,
   h1,
   h2,

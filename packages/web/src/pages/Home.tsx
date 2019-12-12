@@ -8,6 +8,11 @@ import Button from "../components/Button"
 import Spacer from "../components/styled/Spacer"
 
 const Home: FC<RouteComponentProps> = () => {
+  // TODO make this better
+  React.useEffect(() => {
+    document.getElementsByTagName("body")[0].setAttribute("class", "homePage")
+  }, [])
+
   return (
     <StyledWrapper>
       <StyledLogo>element</StyledLogo>
