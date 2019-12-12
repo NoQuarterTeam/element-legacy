@@ -8,7 +8,6 @@ import Day from "../components/Day"
 import TimelineHead from "../components/TimelineHead"
 import { getDays, isMobileDevice, sleep } from "../lib/helpers"
 import { DragDropContainer } from "../components/DragDropContainer"
-import HabitModal from "../components/HabitModal"
 
 import { useAllTasksQuery } from "../lib/graphql/types"
 import styled, { media } from "../application/theme"
@@ -29,8 +28,6 @@ const Timeline: React.FC<RouteComponentProps> = () => {
 
   const [daysBack, setDaysBack] = React.useState(DAY_COUNT)
   const [daysForward, setDaysForward] = React.useState(DAY_COUNT)
-
-  const [dayClicked, setDayClicked] = React.useState()
 
   const [filteredElements, setFilteredElements] = React.useState<string[]>([])
   const { handleSetModal, modal, selectedUserId } = useTimelineContext()
@@ -116,11 +113,6 @@ const Timeline: React.FC<RouteComponentProps> = () => {
     }
   }, [handleScrollToToday, initialLoad])
 
-  const handleHabitModal = (day: Dayjs) => {
-    handleSetModal("habit")
-    setDayClicked(day)
-  }
-
   const days = React.useMemo(
     () => getDays(dayjs().subtract(daysBack, "day"), daysBack + daysForward),
     [daysBack, daysForward],
@@ -130,9 +122,6 @@ const Timeline: React.FC<RouteComponentProps> = () => {
 
   return (
     <>
-      {modal === "habit" && (
-        <HabitModal day={dayClicked} closeModal={closeModal} />
-      )}
       {modal === "share" && <ShareModal closeModal={closeModal} />}
       <Nav
         filteredElements={filteredElements}
@@ -143,11 +132,7 @@ const Timeline: React.FC<RouteComponentProps> = () => {
       />
       {allTasks && (
         <StyledTimelineWrapper ref={timelineRef}>
-          <TimelineHead
-            openHabitModal={handleHabitModal}
-            daysBack={daysBack}
-            daysForward={daysForward}
-          />
+          <TimelineHead daysBack={daysBack} daysForward={daysForward} />
           <StyledTimeline>
             <StyledSpacer currentUser={user.id === selectedUserId} />
             <StyledDaysWrapper>

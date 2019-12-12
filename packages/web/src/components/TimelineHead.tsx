@@ -1,30 +1,27 @@
 import React from "react"
 import styled from "styled-components"
-import dayjs, { Dayjs } from "dayjs"
+import dayjs from "dayjs"
 import advancedFormat from "dayjs/plugin/advancedFormat"
 import {
   getMonths,
   getDays,
   isToday,
-  calculateHabitProgress,
   monthNames,
   allActiveHabits,
 } from "../lib/helpers"
 import { useAllHabits } from "../lib/graphql/habit/hooks"
 import { useAllProgress } from "../lib/graphql/progress/hooks"
-import { darken, lighten } from "polished"
 import { useTimelineContext } from "./providers/TimelineProvider"
 import { useMe } from "./providers/MeProvider"
+import { Habits } from "./Habits"
 
 dayjs.extend(advancedFormat)
 
 interface TimelineHeadProps {
-  openHabitModal: (day: Dayjs) => void
   daysBack: number
   daysForward: number
 }
 const TimelineHead: React.FC<TimelineHeadProps> = ({
-  openHabitModal,
   daysBack,
   daysForward,
 }) => {
@@ -65,46 +62,21 @@ const TimelineHead: React.FC<TimelineHeadProps> = ({
                       {dayjs(day).format("ddd Do")}
                     </StyledDayHeader>
 
-                    {allProgress &&
-                    user.id === selectedUserId &&
-                    habits &&
-                    allActiveHabits(day, habits).length !== 0 ? (
-                      <StyledHabits
-                        today={isToday(day)}
-                        count={habits && allActiveHabits(day, habits).length}
-                        onClick={() => openHabitModal(day)}
-                      >
-                        {calculateHabitProgress(day, allProgress, habits).map(
-                          (result: any[], index) => (
-                            <Circle
-                              key={index}
-                              completed={result[1]}
-                              count={
-                                habits && allActiveHabits(day, habits).length
-                              }
-                              past={dayjs(day).isBefore(dayjs())}
-                            />
-                          ),
-                        )}
-                      </StyledHabits>
-                    ) : user.id === selectedUserId &&
+                    {user.id === selectedUserId &&
+                      (allProgress &&
                       habits &&
-                      allActiveHabits(day, habits).length === 0 ? (
-                      isToday(day) ? (
-                        <StyledAddHabits
-                          onClick={() => openHabitModal(day)}
-                          today={isToday(day)}
-                        >
-                          Add habit
-                        </StyledAddHabits>
+                      allActiveHabits(day, habits).length !== 0 ? (
+                        <Habits
+                          day={day}
+                          allProgress={allProgress}
+                          habits={habits}
+                        />
+                      ) : habits &&
+                        allActiveHabits(day, habits).length === 0 ? (
+                        <Habits day={day} allProgress={[]} habits={habits} />
                       ) : (
-                        <StyledHabits today={isToday(day)} count={1} />
-                      )
-                    ) : (
-                      user.id === selectedUserId && (
-                        <StyledHabits today={isToday(day)} count={4} />
-                      )
-                    )}
+                        <Habits day={day} allProgress={[]} habits={[]} />
+                      ))}
                   </StyledContainer>
                 ))}
             </StyledDaysHeader>
@@ -152,8 +124,6 @@ const StyledDaysHeader = styled.div`
 
 const StyledDayHeader = styled.h3<{ today: boolean; weekend: boolean }>`
   font-size: ${p => (p.today ? p.theme.textM : p.theme.textS)};
-  /* font-weight: ${p =>
-    p.today ? p.theme.fontSemiBold : p.theme.fontNormal}; */
   color: ${p => (p.today ? "black" : p.theme.colorText)};
   width: 98px;
   margin: 0;
@@ -161,17 +131,10 @@ const StyledDayHeader = styled.h3<{ today: boolean; weekend: boolean }>`
   justify-content: center;
   align-items: center;
   padding-top: ${p => (p.today ? "113px" : "119px")};
-  /* margin-top: ${p => (p.today ? "-6px" : "0px")}; */
   background-color: ${p => p.today && p.theme.colorBlue};
-  /* border: ${p => (p.today ? "3px solid black" : "none")}; */
-  /* box-sizing: content-box; */
-
   border-bottom: none;
-  /* border-radius: ${p => p.theme.borderRadiusL} ${p =>
-  p.theme.borderRadiusL}  0 0; */
   font-weight: ${p => (p.today ? p.theme.fontBold : p.theme.fontNormal)};
   padding-bottom: 5px;
-
 `
 
 const StyledContainer = styled.div<{
@@ -187,50 +150,4 @@ const StyledContainer = styled.div<{
   background-color: ${p => p.theme.colorBackground};
   border-left: ${p => p.monday && "5px #efefef dotted"};
   border-left: ${p => p.first && `5px ${p.theme.colorLightBlue} dotted`};
-`
-
-const StyledHabits = styled.div<{ today: boolean; count: any }>`
-  display: flex;
-  /* max-width: 88px; */
-  height: 31px;
-  justify-content: ${props => (props.count > 6 ? "center" : "space-evenly")};
-  cursor: pointer;
-  padding: ${p => p.theme.paddingM};
-  padding-left: ${props =>
-    props.count > 6 ? 8 + 0.73 * props.count + "px" : "8px"};
-  background-color: ${p => (p.today ? p.theme.colorBlue : "transparent")};
-  /* border: ${p => (p.today ? "3px solid black" : "none")}; */
-  /* border-bottom: none;
-  border-top: none; */
-
-  &:hover {
-    background-color: ${p => lighten(0.02, p.theme.colorLightBlue)};
-  }
-`
-
-const Circle = styled.div<{ completed: boolean; count: any; past: boolean }>`
-  min-width: 11px;
-  min-height: 11px;
-  margin-left: ${p => (p.count > 6 ? -0.3 * p.count + "px" : 0)};
-  border-radius: 50%;
-  background-color: ${p =>
-    p.completed ? "#8CCEA7" : p.past ? p.theme.colorRed : "#EAEBEF"};
-  z-index: ${p => (p.completed ? 1 : 0)};
-`
-
-const StyledAddHabits = styled.p<{ today: boolean }>`
-  font-size: ${p => p.theme.textXS};
-  background-color: ${p => lighten(0.2, p.theme.colorPlaceholder)};
-  color: ${p => lighten(0.5, p.theme.colorText)};
-  border-radius: ${p => p.theme.borderRadiusS};
-  text-align: center;
-  align-items: center;
-  /* padding: ${p => p.theme.paddingS}; */
-  height: 31px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: ${p =>
-      darken(0.01, lighten(0.02, p.theme.colorLightBlue))};
-  }
 `

@@ -1,32 +1,47 @@
 import React, { FC } from "react"
-import {
-  useCreateHabit,
-  useAllHabits,
-  useArchiveHabit,
-} from "../lib/graphql/habit/hooks"
-import { useAllProgress } from "../lib/graphql/progress/hooks"
+import { useCreateHabit, useArchiveHabit } from "../lib/graphql/habit/hooks"
 
-import { HabitInput, HabitFragment } from "../lib/graphql/types"
-import Modal from "./Modal"
+import {
+  HabitInput,
+  HabitFragment,
+  ProgressFragment,
+} from "../lib/graphql/types"
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/core"
 import HabitForm from "./HabitForm"
 import FlexGrid from "./styled/FlexGrid"
 import styled from "styled-components"
 import { darken, lighten } from "polished"
-import { calculateHabitProgress, allActiveHabits } from "../lib/helpers"
+import {
+  calculateHabitProgress,
+  allActiveHabits,
+  isMobileDevice,
+} from "../lib/helpers"
 import { Dayjs } from "dayjs"
 import dayjs from "dayjs"
 
 interface HabitModalProps {
-  closeModal: () => void
   day: Dayjs
+  isOpen: boolean
+  onClose: () => void
+  habits: HabitFragment[]
+  allProgress: ProgressFragment[]
 }
-const HabitModal: FC<HabitModalProps> = ({ closeModal, day }) => {
+
+const HabitModal: FC<HabitModalProps> = ({
+  day,
+  isOpen,
+  onClose,
+  habits,
+  allProgress,
+}) => {
   const [createHabit] = useCreateHabit()
   const [archiveHabit] = useArchiveHabit()
-  const habits = useAllHabits()
-
-  const allProgress = useAllProgress()
-  if (!allProgress) return null
 
   const handleCreateHabit = async (habitData: HabitInput) => {
     const data = { ...habitData, archived: false }
@@ -47,45 +62,61 @@ const HabitModal: FC<HabitModalProps> = ({ closeModal, day }) => {
   }
 
   return (
-    <Modal onClose={closeModal}>
-      <StyledHeader>Daily Habits - {dayjs(day).format("Do MMMM")}</StyledHeader>
-      <StyledInfo>
-        Select which elements of your life you want to track as habits
-      </StyledInfo>
-      <FlexGrid style={{ marginBottom: "1rem", justifyContent: "flex-start" }}>
-        {habits &&
-          calculateHabitProgress(day, allProgress, habits).map(
-            (result: any[]) => {
-              const habit = result[0]
-              const completed = result[1]
+    <Modal isOpen={isOpen} onClose={onClose} isCentered size={["full", "lg"]}>
+      <ModalOverlay />
+      <ModalContent
+        m={0}
+        height={["100vh", "auto"]}
+        border="solid"
+        borderWidth={4}
+        borderColor="black"
+      >
+        <ModalBody p={12} m={0}>
+          {isMobileDevice() && <ModalCloseButton />}
+          <StyledHeader>
+            Daily Habits - {dayjs(day).format("Do MMMM")}
+          </StyledHeader>
+          <StyledInfo>
+            Select which elements of your life you want to track as habits
+          </StyledInfo>
+          <FlexGrid
+            style={{ marginBottom: "1rem", justifyContent: "flex-start" }}
+          >
+            {habits &&
+              calculateHabitProgress(day, allProgress, habits).map(
+                (result: any[]) => {
+                  const habit = result[0]
+                  const completed = result[1]
 
-              return (
-                <StyledOptionContainer
-                  key={habit.id}
-                  color={habit.element.color}
-                  completed={completed}
-                >
-                  <StyledOption completed={completed}>
-                    {habit.element.name}
-                  </StyledOption>
-                  <StyledDelete
-                    color={habit.element.color}
-                    onClick={() => handleArchiveHabit(habit, day)}
-                  >
-                    x
-                  </StyledDelete>
-                </StyledOptionContainer>
-              )
-            },
+                  return (
+                    <StyledOptionContainer
+                      key={habit.id}
+                      color={habit.element.color}
+                      completed={completed}
+                    >
+                      <StyledOption completed={completed}>
+                        {habit.element.name}
+                      </StyledOption>
+                      <StyledDelete
+                        color={habit.element.color}
+                        onClick={() => handleArchiveHabit(habit, day)}
+                      >
+                        x
+                      </StyledDelete>
+                    </StyledOptionContainer>
+                  )
+                },
+              )}
+          </FlexGrid>
+          {habits && (
+            <HabitForm
+              onFormSubmit={handleCreateHabit}
+              habits={allActiveHabits(dayjs(day), habits)}
+              day={day.format("YYYY-MM-DD")}
+            />
           )}
-      </FlexGrid>
-      {habits && (
-        <HabitForm
-          onFormSubmit={handleCreateHabit}
-          habits={allActiveHabits(dayjs(day), habits)}
-          day={day.format("YYYY-MM-DD")}
-        />
-      )}
+        </ModalBody>
+      </ModalContent>
     </Modal>
   )
 }

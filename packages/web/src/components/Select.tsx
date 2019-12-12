@@ -1,10 +1,5 @@
 import React from "react"
-import {
-  Select as ChakraSelect,
-  SelectProps,
-  IconButton,
-} from "@chakra-ui/core"
-import { border, borderRadius } from "polished"
+import { Select as ChakraSelect, SelectProps } from "@chakra-ui/core"
 
 interface Props extends SelectProps {}
 
