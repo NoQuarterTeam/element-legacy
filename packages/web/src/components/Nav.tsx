@@ -8,11 +8,13 @@ import { Filter } from "styled-icons/boxicons-regular/Filter"
 import { Feedback } from "styled-icons/material/Feedback"
 import { AccountBox } from "styled-icons/material/AccountBox"
 import { Today } from "styled-icons/material/Today"
+import { Link as ReachLink } from "@reach/router"
 
 // import { useLogout } from "../lib/graphql/user/hooks"
 import { useGetSharedUsersByUser } from "../lib/graphql/sharedElement/hooks"
 import { useTimelineContext } from "./providers/TimelineProvider"
 import { useMe } from "./providers/MeProvider"
+import { Link } from "@chakra-ui/core"
 
 interface NavProps {
   filteredElements: string[]
@@ -130,7 +132,7 @@ const Nav: FC<NavProps> = ({
           ))}
       </StyledContainer>
       <StyledContainer>
-        <StyledAccountButton href="/account" open={open}>
+        <StyledAccountButton as={ReachLink} to="/account" open={open}>
           <AccountBox width={20} color="lightgrey" />
           ACCOUNT
         </StyledAccountButton>
@@ -232,7 +234,7 @@ const StyledFeedbackButton = styled.a<{ open: boolean }>`
   align-items: center;
 `
 
-const StyledAccountButton = styled.a<{ open: boolean }>`
+const StyledAccountButton = styled(Link)<{ open: boolean }>`
   visibility: ${p => (p.open ? "visible" : "hidden")};
   text-align: center;
   cursor: pointer;
