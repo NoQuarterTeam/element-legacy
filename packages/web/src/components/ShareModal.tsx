@@ -1,10 +1,15 @@
 import React, { FC, useState } from "react"
 
-import Modal from "./Modal"
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/core"
 
 import { ReactMultiEmail, isEmail } from "react-multi-email"
 import "react-multi-email/style.css"
-import { useTimelineContext } from "./providers/TimelineProvider"
 import Button from "./Button"
 import styled from "../application/theme"
 
@@ -18,24 +23,26 @@ import { UserFragment, ElementFragment } from "../lib/graphql/types"
 import { darken, lighten } from "polished"
 import Spacer from "./styled/Spacer"
 import { useMe } from "./providers/MeProvider"
+import { isMobileDevice } from "../lib/helpers"
 
 interface ShareModalProps {
-  closeModal: () => void
+  isOpen: boolean
+  onClose: () => void
+  element: ElementFragment
 }
-const ShareModal: FC<ShareModalProps> = ({ closeModal }) => {
-  const [emails, setEmails] = useState()
-  const [error, setError] = useState()
-
+const ShareModal: FC<ShareModalProps> = ({ isOpen, onClose, element }) => {
   const currentUser = useMe()
-  const { selectedElement } = useTimelineContext()
+
+  const [error, setError] = useState()
+  const [emails, setEmails] = useState()
   const [createSharedElements] = useCreateSharedElements(
     currentUser.id,
-    selectedElement.id,
+    element.id,
   )
-  const allSharedUsers = useGetSharedUsersByElement(selectedElement.id)
+  const allSharedUsers = useGetSharedUsersByElement(element.id)
 
   const handleShareElement = async () => {
-    const data = { emails, elementId: selectedElement.id }
+    const data = { emails, elementId: element.id }
     const res = await createSharedElements({
       variables: { data },
     })
@@ -52,48 +59,65 @@ const ShareModal: FC<ShareModalProps> = ({ closeModal }) => {
   }
 
   return (
-    <Modal onClose={closeModal}>
-      <h2>{selectedElement.name}</h2>
-      <Spacer />
-      <FlexGrid style={{ marginBottom: "1rem", justifyContent: "flex-start" }}>
-        {allSharedUsers &&
-          allSharedUsers.map((user: UserFragment) => {
-            return (
-              <SharedUser
-                key={user.id}
-                userId={currentUser.id}
-                sharedUser={user}
-                selectedElement={selectedElement}
-              />
-            )
-          })}
-      </FlexGrid>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered size={["full", "lg"]}>
+      <ModalOverlay />
+      <ModalContent
+        m={0}
+        height={["100vh", "auto"]}
+        border="solid"
+        borderWidth={4}
+        borderColor="black"
+      >
+        <ModalBody p={12} m={0}>
+          {isMobileDevice() && <ModalCloseButton />}
+          <h2>{element.name}</h2>
+          <Spacer />
+          <FlexGrid
+            style={{ marginBottom: "1rem", justifyContent: "flex-start" }}
+          >
+            {allSharedUsers &&
+              allSharedUsers.map((user: UserFragment) => {
+                return (
+                  <SharedUser
+                    key={user.id}
+                    userId={currentUser.id}
+                    sharedUser={user}
+                    element={element}
+                  />
+                )
+              })}
+          </FlexGrid>
 
-      <ReactMultiEmail
-        emails={emails}
-        onChange={emails => {
-          setEmails(emails)
-        }}
-        validateEmail={email => {
-          return isEmail(email) // return boolean
-        }}
-        style={{ width: "100%" }}
-        getLabel={(email, index) => {
-          return (
-            <div data-tag key={index}>
-              {email}
-              <span data-tag-handle onClick={() => handleRemoveEmail(email)}>
-                ×
-              </span>
-            </div>
-          )
-        }}
-      />
-      {error && <StyledError>{error}</StyledError>}
-      <FlexGrid style={{ justifyContent: "flex-end" }}>
-        <Spacer />
-        <Button onClick={handleShareElement}>Share</Button>{" "}
-      </FlexGrid>
+          <ReactMultiEmail
+            emails={emails}
+            onChange={emails => {
+              setEmails(emails)
+            }}
+            validateEmail={email => {
+              return isEmail(email) // return boolean
+            }}
+            style={{ width: "100%" }}
+            getLabel={(email, index) => {
+              return (
+                <div data-tag key={index}>
+                  {email}
+                  <span
+                    data-tag-handle
+                    onClick={() => handleRemoveEmail(email)}
+                  >
+                    ×
+                  </span>
+                </div>
+              )
+            }}
+          />
+          {error && <StyledError>{error}</StyledError>}
+          <FlexGrid style={{ justifyContent: "flex-end" }}>
+            <Spacer />
+            <Button onClick={handleShareElement}>Share</Button>{" "}
+          </FlexGrid>
+        </ModalBody>
+      </ModalContent>
     </Modal>
   )
 }
@@ -103,23 +127,19 @@ export default ShareModal
 interface SharedUserProps {
   userId: string
   sharedUser: UserFragment
-  selectedElement: ElementFragment
+  element: ElementFragment
 }
 
-const SharedUser: FC<SharedUserProps> = ({
-  userId,
-  sharedUser,
-  selectedElement,
-}) => {
+const SharedUser: FC<SharedUserProps> = ({ userId, sharedUser, element }) => {
   const [deleteSharedElement] = useDeleteSharedElement(
     sharedUser.id,
     userId,
-    selectedElement.id,
+    element.id,
   )
   const handleUnshareElement = async (email: string) => {
     await deleteSharedElement({
       variables: {
-        elementId: selectedElement.id,
+        elementId: element.id,
         email,
       },
     })

@@ -3,11 +3,12 @@ import React, { FC } from "react"
 import { ElementFragment } from "../lib/graphql/types"
 import { darken, lighten } from "polished"
 import styled from "styled-components"
-import { useTimelineContext } from "./providers/TimelineProvider"
 import { DeleteOutline } from "styled-icons/material/DeleteOutline"
 import { Add } from "styled-icons/material/Add"
 import { GroupAdd } from "styled-icons/material/GroupAdd"
 import { useMe } from "./providers/MeProvider"
+import ShareModal from "./ShareModal"
+import { useDisclosure } from "@chakra-ui/core"
 
 interface ElementDropdownOptionProps {
   element: ElementFragment
@@ -34,13 +35,8 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
   handleShowChildren,
   ...props
 }) => {
-  const { handleSetModal, handleSetElement } = useTimelineContext()
+  const { isOpen, onClose, onOpen } = useDisclosure()
   const user = useMe()
-
-  const handleShare = () => {
-    handleSetModal("share")
-    handleSetElement(element)
-  }
 
   return (
     <>
@@ -60,7 +56,7 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
           {element.name}
         </StyledOption>
 
-        <StyledShare color={element.color} onClick={handleShare}>
+        <StyledShare color={element.color} onClick={onOpen}>
           <GroupAdd color={element.color} width="20" />
         </StyledShare>
 
@@ -98,6 +94,7 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
             </StyledArrowContainer>
           )}
       </StyledOptionContainer>
+      <ShareModal element={element} isOpen={isOpen} onClose={onClose} />
     </>
   )
 }
@@ -125,7 +122,7 @@ const StyledOption = styled.p<{
   color: ${p => (p.hiddenElement ? p.theme.colorLabel : p.theme.colorText)};
 `
 
-const StyledArrowContainer = styled.div<{ open: boolean }>`
+const StyledArrowContainer = styled.div<{ open?: boolean }>`
   padding: 0 ${props => props.theme.paddingS} 0 ${props => props.theme.paddingM};
 `
 

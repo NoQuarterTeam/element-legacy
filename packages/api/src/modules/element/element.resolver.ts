@@ -11,7 +11,7 @@ import {
 import { Element } from "./element.entity"
 import { ElementService } from "./element.service"
 // import { ResolverContext } from "../../lib/types"
-import { CreateElementInput } from "./element.input"
+import { CreateElementInput, UpdateElementInput } from "./element.input"
 import { CurrentUser } from "../shared/context/currentUser"
 import { User } from "../user/user.entity"
 import { Loaders } from "../shared/context/loaders"
@@ -45,7 +45,7 @@ export class ElementResolver {
   @Mutation(() => Element, { nullable: true })
   async updateElement(
     @Arg("elementId") elementId: string,
-    @Arg("data") data: CreateElementInput,
+    @Arg("data") data: UpdateElementInput,
   ): Promise<Element> {
     return this.elementService.update(elementId, data)
   }

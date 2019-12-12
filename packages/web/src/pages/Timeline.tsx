@@ -1,6 +1,6 @@
 import React from "react"
 import { RouteComponentProps } from "@reach/router"
-import dayjs, { Dayjs } from "dayjs"
+import dayjs from "dayjs"
 import { ChevronLeft } from "styled-icons/fa-solid/ChevronLeft"
 import { ChevronRight } from "styled-icons/fa-solid/ChevronRight"
 
@@ -13,7 +13,7 @@ import { useAllTasksQuery } from "../lib/graphql/types"
 import styled, { media } from "../application/theme"
 import Nav from "../components/Nav"
 import { useTimelineContext } from "../components/providers/TimelineProvider"
-import ShareModal from "../components/ShareModal"
+
 import { useMe } from "../components/providers/MeProvider"
 
 const Timeline: React.FC<RouteComponentProps> = () => {
@@ -30,7 +30,7 @@ const Timeline: React.FC<RouteComponentProps> = () => {
   const [daysForward, setDaysForward] = React.useState(DAY_COUNT)
 
   const [filteredElements, setFilteredElements] = React.useState<string[]>([])
-  const { handleSetModal, modal, selectedUserId } = useTimelineContext()
+  const { selectedUserId } = useTimelineContext()
 
   const { data, fetchMore } = useAllTasksQuery({
     variables: { selectedUserId, daysBack: DAY_COUNT, daysForward: DAY_COUNT },
@@ -57,7 +57,7 @@ const Timeline: React.FC<RouteComponentProps> = () => {
 
     setDaysForward(daysForward + DAY_COUNT)
 
-    // need this sleep to make the scroll by work
+    // need this sleep to make the scrollBy work
     await sleep(100)
     timelineRef?.current?.scrollBy({
       left: 4 * 98,
@@ -118,11 +118,8 @@ const Timeline: React.FC<RouteComponentProps> = () => {
     [daysBack, daysForward],
   )
 
-  const closeModal = () => handleSetModal("")
-
   return (
     <>
-      {modal === "share" && <ShareModal closeModal={closeModal} />}
       <Nav
         filteredElements={filteredElements}
         handleSetFilteredElements={setFilteredElements}

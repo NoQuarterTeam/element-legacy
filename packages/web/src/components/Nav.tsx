@@ -104,7 +104,7 @@ const Nav: FC<NavProps> = ({
         <ChevronsLeft width={40} color="lightgrey" />
       </StyledOpenButton> */}
       <StyledContainer>
-        <StyledCloseButton open={open} onClick={() => toggleOpen(!open)}>
+        <StyledCloseButton open={open} onClick={() => toggleOpen()}>
           <ChevronsRight width={40} color="lightgrey" />
         </StyledCloseButton>
         <StyledUser
