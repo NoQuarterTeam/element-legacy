@@ -2,15 +2,7 @@ import React from "react"
 import styled from "styled-components"
 import dayjs from "dayjs"
 import advancedFormat from "dayjs/plugin/advancedFormat"
-import {
-  getMonths,
-  getDays,
-  isToday,
-  monthNames,
-  allActiveHabits,
-} from "../lib/helpers"
-import { useAllHabits } from "../lib/graphql/habit/hooks"
-import { useAllProgress } from "../lib/graphql/progress/hooks"
+import { getMonths, getDays, isToday, monthNames } from "../lib/helpers"
 import { useTimelineContext } from "./providers/TimelineProvider"
 import { useMe } from "./providers/MeProvider"
 import { Habits } from "./Habits"
@@ -27,8 +19,6 @@ const TimelineHead: React.FC<TimelineHeadProps> = ({
 }) => {
   const user = useMe()
   const { selectedUserId } = useTimelineContext()
-  const habits = useAllHabits()
-  const allProgress = useAllProgress()
 
   const months = React.useMemo(
     () => getMonths(dayjs().subtract(daysBack, "day"), daysBack + daysForward),
@@ -62,21 +52,7 @@ const TimelineHead: React.FC<TimelineHeadProps> = ({
                       {dayjs(day).format("ddd Do")}
                     </StyledDayHeader>
 
-                    {user.id === selectedUserId &&
-                      (allProgress &&
-                      habits &&
-                      allActiveHabits(day, habits).length !== 0 ? (
-                        <Habits
-                          day={day}
-                          allProgress={allProgress}
-                          habits={habits}
-                        />
-                      ) : habits &&
-                        allActiveHabits(day, habits).length === 0 ? (
-                        <Habits day={day} allProgress={[]} habits={habits} />
-                      ) : (
-                        <Habits day={day} allProgress={[]} habits={[]} />
-                      ))}
+                    {user.id === selectedUserId && <Habits day={day} />}
                   </StyledContainer>
                 ))}
             </StyledDaysHeader>

@@ -28,8 +28,8 @@ export function useCreateHabit() {
 }
 
 export function useAllHabits() {
-  const { data } = useAllHabitsQuery({})
-  return data?.allHabits
+  const { data, loading } = useAllHabitsQuery({})
+  return { habits: data?.allHabits, loading }
 }
 
 export function useArchiveHabit() {

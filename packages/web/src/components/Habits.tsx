@@ -8,52 +8,59 @@ import {
   calculateHabitProgress,
   allActiveHabits,
 } from "../lib/helpers"
-import { HabitFragment, ProgressFragment } from "../lib/graphql/types"
 import HabitModal from "./HabitModal"
 import { useDisclosure, Button } from "@chakra-ui/core"
+import { useAllHabits } from "../lib/graphql/habit/hooks"
+import { useAllProgress } from "../lib/graphql/progress/hooks"
 
 interface Props {
   day: Dayjs
-  habits: HabitFragment[]
-  allProgress: ProgressFragment[]
 }
 
-export const Habits: React.FC<Props> = ({ day, habits, allProgress }) => {
+export const Habits: React.FC<Props> = ({ day }) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
+  const { habits, loading: habitsLoading } = useAllHabits()
+  const { allProgress, loading: progressLoading } = useAllProgress()
 
   return (
     <>
-      {allActiveHabits(day, habits).length === 0 && isToday(day) ? (
-        <Button
-          bg="#D2ECFC"
-          height={31}
-          fontSize={12}
-          fontWeight="medium"
-          onClick={onOpen}
-          borderRadius={0}
-          alignItems="space-between"
-        >
-          Add Habits
-        </Button>
+      {progressLoading || habitsLoading ? (
+        <StyledHabits today={isToday(day)} count={0} />
       ) : (
-        <StyledHabits
-          today={isToday(day)}
-          count={habits && allActiveHabits(day, habits).length}
-          onClick={onOpen}
-        >
-          {calculateHabitProgress(day, allProgress, habits).map(
-            (result: any[], index) => (
-              <StyledCircle
-                key={index}
-                completed={result[1]}
-                count={habits && allActiveHabits(day, habits).length}
-                past={dayjs(day).isBefore(dayjs())}
-              />
-            ),
-          )}
-        </StyledHabits>
+        habits &&
+        allProgress &&
+        (allActiveHabits(day, habits).length === 0 && isToday(day) ? (
+          // TODO clean up with theme, or something?
+          <Button
+            bg="#D2ECFC"
+            height={31}
+            fontSize={12}
+            fontWeight="medium"
+            onClick={onOpen}
+            borderRadius={0}
+            alignItems="space-between"
+          >
+            Add Habits
+          </Button>
+        ) : (
+          <StyledHabits
+            today={isToday(day)}
+            count={habits && allActiveHabits(day, habits).length}
+            onClick={onOpen}
+          >
+            {calculateHabitProgress(day, allProgress, habits).map(
+              (result: any[], index) => (
+                <StyledCircle
+                  key={index}
+                  completed={result[1]}
+                  count={habits && allActiveHabits(day, habits).length}
+                  past={dayjs(day).isBefore(dayjs())}
+                />
+              ),
+            )}
+          </StyledHabits>
+        ))
       )}
-
       <HabitModal
         day={day}
         isOpen={isOpen}
