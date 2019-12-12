@@ -43,7 +43,7 @@ export function useAllTasks(
   const { data, fetchMore } = useAllTasksQuery({
     variables: { selectedUserId, daysBack, daysForward },
   })
-  const allTasks = data && data.allTasks ? data.allTasks : []
+  const allTasks = data?.allTasks || []
   return { allTasks, fetchMore }
 }
 

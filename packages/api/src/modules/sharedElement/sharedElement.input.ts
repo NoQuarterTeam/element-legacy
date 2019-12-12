@@ -3,14 +3,11 @@ import { SharedElement } from "./sharedElement.entity"
 
 @InputType()
 export class CreateSharedElementInput implements Partial<SharedElement> {
-  @Field({ nullable: true })
-  userId?: string
+  @Field()
+  userId: string
 
-  @Field({ nullable: true })
-  creatorId?: string
-
-  @Field({ nullable: true })
-  elementId?: string
+  @Field()
+  elementId: string
 }
 
 @InputType()

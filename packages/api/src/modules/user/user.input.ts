@@ -14,6 +14,7 @@ export class UpdateInput implements Partial<User> {
   @Field({ nullable: true })
   email?: string
 
+  @MinLength(8)
   @Field({ nullable: true })
   password?: string
 }
@@ -30,6 +31,7 @@ export class RegisterInput implements Partial<User> {
   @Field()
   email: string
 
+  @MinLength(8)
   @Field()
   password: string
 }

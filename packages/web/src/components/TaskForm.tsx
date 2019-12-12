@@ -17,6 +17,8 @@ import Checkbox from "./Checkbox"
 import TextArea from "./TextArea"
 import { useTimelineContext } from "./providers/TimelineProvider"
 import { useMe } from "./providers/MeProvider"
+import { FormControl } from "@chakra-ui/core"
+import { Select } from "./Select"
 
 interface TaskFormProps {
   onFormSubmit: (data: any) => Promise<any>
@@ -119,18 +121,22 @@ function TaskForm({
           />
         </StyledRow>
         <StyledRow style={{ width: "fit-content" }}>
-          <StyledLabel>Who?</StyledLabel>
-          <select
-            value={formState.userId}
-            onChange={e => handleUserSelect(e.target.value)}
-          >
-            <option value={user.id}>{user.firstName}</option>
-            {selectUserOptions?.map(opt => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
+          <StyledLabel id="who">Who?</StyledLabel>
+          <FormControl>
+            <Select
+              value={formState.userId}
+              onChange={e => handleUserSelect(e.target.value)}
+              id="user"
+              aria-labelledby="who"
+            >
+              <option value={user.id}>{user.firstName}</option>
+              {selectUserOptions?.map(opt => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
         </StyledRow>
         <StyledRow>
           <StyledLabel>How long?</StyledLabel>

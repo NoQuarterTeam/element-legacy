@@ -5,15 +5,15 @@ import {
   useCreateElement,
   useUpdateElement,
 } from "../lib/graphql/element/hooks"
-import { isMobileDevice } from "../lib/helpers"
+
 import { ElementFragment } from "../lib/graphql/types"
 import useOnClickOutside from "../lib/hooks/useOnOutsideClick"
 import ElementDropdownOption from "./ElementDropdownOption"
 import Input from "./Input"
 import { Close } from "styled-icons/material/Close"
 
-import { useTimelineContext } from "./providers/TimelineProvider"
 import { readableColor, darken, lighten } from "polished"
+import { Icon } from "@chakra-ui/core"
 
 interface ElementDropdownProps {
   selectedElementId?: string | null
@@ -35,10 +35,8 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
   open,
   onClose,
 }) => {
-  const { selectedUserId } = useTimelineContext()
-
-  const createElement = useCreateElement(selectedUserId)
-  const updateElement = useUpdateElement()
+  const [createElement] = useCreateElement()
+  const [updateElement] = useUpdateElement()
   const [dropdownOpen, openDropdown] = useState(false || open)
   const [pickerOpen, openColorPicker] = useState(false)
   const [newElement, setNewElement] = useState("")
@@ -337,30 +335,14 @@ const StyledDropdownPlaceholder = styled.div<{
   background-color: white;
   border: ${p => p.theme.border};
   cursor: pointer;
-  padding: ${p => p.theme.paddingS} ${p => p.theme.paddingM};
-  // border-radius: ${p => p.theme.borderRadius};
+  padding: ${p => p.theme.paddingS} 1rem;
   ${p => p.theme.flexStart};
   white-space: nowrap;
-  min-width: 150px;
+  min-width: 110px;
   color: ${p =>
     p.color &&
     readableColor(p.color, darken(0.5, p.color), lighten(0.5, p.color))};
   background: ${p => p.color && p.color};
-  // border-color: ${p => p.color && p.color};
-
-
-  // &:after {
-  //   border: solid black;
-  //   border-width: 0 3px 3px 0;
-  //   display: inline-block;
-  //   padding: ${p => p.theme.paddingXS};
-  //   content: "";
-  //   transform: ${props => (props.open ? "rotate(225deg)" : "rotate(45deg)")};
-  //   width: 0;
-  //   height: 0;
-  //   margin-left: ${p => p.theme.paddingM};
-  //   margin-top: ${props => (props.open ? p => p.theme.paddingS : "-3px")};
-  // }
 `
 
 const StyledDropdownOpenBlur = styled.div<{ open: boolean; filter: string }>`

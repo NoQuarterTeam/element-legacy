@@ -1,5 +1,11 @@
 import React, { FC } from "react"
-import { Modal, ModalOverlay, ModalContent, ModalBody } from "@chakra-ui/core"
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/core"
 
 import {
   useCreateTask,
@@ -13,6 +19,7 @@ import {
 } from "../lib/graphql/types"
 import TaskForm from "./TaskForm"
 import { useTimelineContext } from "./providers/TimelineProvider"
+import { isMobileDevice } from "../lib/helpers"
 
 interface TaskModalProps {
   task?: TaskFragment
@@ -27,10 +34,10 @@ const TaskModal: FC<TaskModalProps> = ({
   scheduledDate,
 }) => {
   const { selectedUserId } = useTimelineContext()
-  const createTask = useCreateTask()
-  const updateTask = useUpdateTask(task?.userId)
+  const [createTask] = useCreateTask()
+  const [updateTask] = useUpdateTask(task?.userId)
   // TODO: fix this
-  const destroyTask = useDeleteTask(task?.id || "", selectedUserId)
+  const [destroyTask] = useDeleteTask(task?.id || "", selectedUserId)
 
   const handleCreateTask = async (taskData: TaskInput) => {
     if (!scheduledDate) return
@@ -68,10 +75,17 @@ const TaskModal: FC<TaskModalProps> = ({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered size={["full", "lg"]}>
       <ModalOverlay />
-      <ModalContent>
-        <ModalBody p={6}>
+      <ModalContent
+        m={0}
+        height={["100vh", "auto"]}
+        border="solid"
+        borderWidth={4}
+        borderColor="black"
+      >
+        <ModalBody p={12} m={0}>
+          {isMobileDevice() && <ModalCloseButton />}
           <TaskForm
             onFormSubmit={task ? handleUpdateTask : handleCreateTask}
             onDeleteTask={handleDeleteTask}

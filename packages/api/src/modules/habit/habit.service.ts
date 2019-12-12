@@ -3,7 +3,6 @@ import { HabitInput } from "./habit.input"
 import { ElementService } from "../element/element.service"
 
 import { Service } from "typedi"
-import dayjs = require("dayjs")
 
 @Service()
 export class HabitService {

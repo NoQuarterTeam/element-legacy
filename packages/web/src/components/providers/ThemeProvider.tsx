@@ -6,7 +6,7 @@ import {
   ThemeProvider as SCThemeProvider,
 } from "../../application/theme"
 
-const ThemeProvider: FC = ({ children }) => {
+export const ThemeProvider: FC = ({ children }) => {
   return (
     <SCThemeProvider theme={theme(false, false)}>
       <CThemeProvider>
@@ -15,5 +15,3 @@ const ThemeProvider: FC = ({ children }) => {
     </SCThemeProvider>
   )
 }
-
-export default ThemeProvider

@@ -16,139 +16,98 @@ export class SharedElementService {
   }
 
   async findAll(userId: string): Promise<SharedElement[]> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const sharedElements = await SharedElement.createQueryBuilder(
-          "sharedElement",
-        )
-          .innerJoinAndSelect("sharedElement.element", "element")
-          .innerJoinAndSelect("sharedElement.user", "user")
-          .where("element.creatorId = :userId", {
-            userId,
-          })
-          .orWhere("sharedElement.userId = :userId", { userId })
-          .getMany()
+    const sharedElements = await SharedElement.createQueryBuilder(
+      "sharedElement",
+    )
+      .innerJoinAndSelect("sharedElement.element", "element")
+      .innerJoinAndSelect("sharedElement.user", "user")
+      .where("element.creatorId = :userId", {
+        userId,
+      })
+      .orWhere("sharedElement.userId = :userId", { userId })
+      .getMany()
 
-        resolve(sharedElements)
-      } catch (error) {
-        reject(error)
-      }
-    })
+    return sharedElements
   }
 
   async findAllSharedUsersByElementId(elementId: string): Promise<User[]> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const sharedUsers = await User.createQueryBuilder("user")
-          .innerJoinAndSelect("user.sharedElements", "sharedElement")
-          .where("sharedElement.elementId = :elementId", {
-            elementId,
-          })
-          .getMany()
-
-        resolve(sharedUsers)
-      } catch (error) {
-        reject(error)
-      }
-    })
+    const sharedUsers = await User.createQueryBuilder("user")
+      .innerJoinAndSelect("user.sharedElements", "sharedElement")
+      .where("sharedElement.elementId = :elementId", {
+        elementId,
+      })
+      .getMany()
+    return sharedUsers
   }
 
   async findAllSharedUsersByUserId(userId: string): Promise<User[]> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const sharedElements = await SharedElement.createQueryBuilder(
-          "sharedElement",
-        )
-          .innerJoinAndSelect("sharedElement.element", "element")
-          .innerJoinAndSelect("element.creator", "creator")
-          .innerJoinAndSelect("sharedElement.user", "user")
-          .where("element.creatorId = :userId", {
-            userId,
-          })
-          .orWhere("sharedElement.userId = :userId", { userId })
-          .getMany()
+    const sharedElements = await SharedElement.createQueryBuilder(
+      "sharedElement",
+    )
+      .innerJoinAndSelect("sharedElement.element", "element")
+      .innerJoinAndSelect("element.creator", "creator")
+      .innerJoinAndSelect("sharedElement.user", "user")
+      .where("element.creatorId = :userId", {
+        userId,
+      })
+      .orWhere("sharedElement.userId = :userId", { userId })
+      .getMany()
 
-        const sharedUsers = sharedElements
-          .map(se => [se.element.creator, se.user])
-          .flat()
-          .filter(user => user.id !== userId)
-          .filter(
-            (user, index, self) =>
-              index === self.findIndex(u => u.id === user.id),
-          )
-
-        resolve(sharedUsers)
-      } catch (error) {
-        reject(error)
-      }
-    })
+    const sharedUsers = sharedElements
+      .map(se => [se.element.creator, se.user])
+      .flat()
+      .filter(user => user.id !== userId)
+      .filter(
+        (user, index, self) => index === self.findIndex(u => u.id === user.id),
+      )
+    return sharedUsers
   }
 
-  create(data: CreateSharedElementInput): Promise<SharedElement> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        if (!data.elementId) return false
-        const children = await this.elementService.findChildren(data.elementId)
+  async create(data: CreateSharedElementInput): Promise<SharedElement> {
+    const children = await this.elementService.findChildren(data.elementId)
 
-        if (children.length > 0) {
-          children.map(async child => {
-            const childData = {
-              userId: data.userId,
-              elementId: child.id,
-            }
-            await SharedElement.create({
-              ...childData,
-            }).save()
-          })
+    if (children.length > 0) {
+      children.map(async child => {
+        const childData = {
+          userId: data.userId,
+          elementId: child.id,
         }
-
-        const sharedElement = await SharedElement.create({
-          ...data,
+        await SharedElement.create({
+          ...childData,
         }).save()
-        resolve(sharedElement)
-      } catch (error) {
-        reject(error)
-      }
-    })
+      })
+    }
+
+    const sharedElement = await SharedElement.create({
+      ...data,
+    }).save()
+    return sharedElement
   }
 
-  update(
+  async update(
     sharedElementId: string,
     data: CreateSharedElementInput,
   ): Promise<SharedElement> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const sharedElement = await this.findById(sharedElementId)
-        if (!sharedElement) throw new Error("sharedElement not found")
-        Object.assign(sharedElement, data)
-        await sharedElement.save()
-        resolve(sharedElement)
-      } catch (error) {
-        reject(error)
-      }
-    })
+    const sharedElement = await this.findById(sharedElementId)
+    if (!sharedElement) throw new Error("sharedElement not found")
+    Object.assign(sharedElement, data)
+    await sharedElement.save()
+    return sharedElement
   }
 
-  destroy(userId: string, elementId: string): Promise<boolean> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const sharedElement = await SharedElement.findOne({
-          where: { userId, elementId },
-        })
-        if (!sharedElement) throw new Error("not found")
-        const children = await this.elementService.findChildren(elementId)
-
-        if (children.length > 0) {
-          children.map(async child => {
-            child.remove()
-          })
-        }
-
-        await sharedElement.remove()
-        resolve(true)
-      } catch (error) {
-        reject(error)
-      }
+  async destroy(userId: string, elementId: string): Promise<boolean> {
+    const sharedElement = await SharedElement.findOne({
+      where: { userId, elementId },
     })
+    if (!sharedElement) throw new Error("not found")
+    const children = await this.elementService.findChildren(elementId)
+
+    if (children.length > 0) {
+      children.map(async child => {
+        child.remove()
+      })
+    }
+    await sharedElement.remove()
+    return true
   }
 }

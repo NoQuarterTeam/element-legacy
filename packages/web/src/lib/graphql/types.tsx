@@ -1,6 +1,6 @@
-import gql from "graphql-tag"
-import * as ApolloReactCommon from "@apollo/react-common"
-import * as ApolloReactHooks from "@apollo/react-hooks"
+import { gql } from "@apollo/client"
+import * as ApolloReactCommon from "@apollo/client"
+import * as ApolloReactHooks from "@apollo/client"
 export type Maybe<T> = T | null
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -28,9 +28,8 @@ export type CreateElementInput = {
 }
 
 export type CreateSharedElementInput = {
-  userId?: Maybe<Scalars["String"]>
-  creatorId?: Maybe<Scalars["String"]>
-  elementId?: Maybe<Scalars["String"]>
+  userId: Scalars["String"]
+  elementId: Scalars["String"]
 }
 
 export type CreateSharedElementsInput = {
@@ -56,14 +55,14 @@ export type Element = {
 export type Habit = {
   __typename?: "Habit"
   id: Scalars["ID"]
-  archived: Scalars["Boolean"]
+  createdAt: Scalars["DateTime"]
+  updatedAt: Scalars["DateTime"]
+  archived?: Maybe<Scalars["Boolean"]>
   elementId: Scalars["String"]
   activeFrom?: Maybe<Scalars["DateTime"]>
   element: Element
   userId?: Maybe<Scalars["String"]>
   user: User
-  createdAt: Scalars["DateTime"]
-  updatedAt: Scalars["DateTime"]
   archivedAt?: Maybe<Scalars["DateTime"]>
 }
 
@@ -174,9 +173,9 @@ export type OrderTaskInput = {
 export type Progress = {
   __typename?: "Progress"
   id: Scalars["ID"]
-  task: Task
   createdAt: Scalars["DateTime"]
   updatedAt: Scalars["DateTime"]
+  task: Task
 }
 
 export type Query = {
@@ -219,12 +218,12 @@ export type RegisterInput = {
 export type SharedElement = {
   __typename?: "SharedElement"
   id: Scalars["ID"]
+  createdAt: Scalars["DateTime"]
+  updatedAt: Scalars["DateTime"]
   elementId: Scalars["String"]
   element: Element
   userId: Scalars["String"]
   user: User
-  createdAt: Scalars["DateTime"]
-  updatedAt: Scalars["DateTime"]
 }
 
 export type Subscription = {
@@ -236,19 +235,19 @@ export type Subscription = {
 export type Task = {
   __typename?: "Task"
   id: Scalars["ID"]
+  createdAt: Scalars["DateTime"]
+  updatedAt: Scalars["DateTime"]
   name: Scalars["String"]
   startTime?: Maybe<Scalars["String"]>
   description?: Maybe<Scalars["String"]>
   estimatedTime?: Maybe<Scalars["String"]>
   completed: Scalars["Boolean"]
   scheduledDate?: Maybe<Scalars["DateTime"]>
-  order: Scalars["Float"]
+  order: Scalars["Int"]
   elementId: Scalars["String"]
   element: Element
   userId: Scalars["String"]
   user: User
-  createdAt: Scalars["DateTime"]
-  updatedAt: Scalars["DateTime"]
 }
 
 export type TaskInput = {
@@ -273,7 +272,10 @@ export type UpdateInput = {
 export type User = {
   __typename?: "User"
   id: Scalars["ID"]
+  createdAt: Scalars["DateTime"]
+  updatedAt: Scalars["DateTime"]
   email: Scalars["String"]
+  password: Scalars["String"]
   firstName: Scalars["String"]
   lastName: Scalars["String"]
   elements: Array<Element>
@@ -683,10 +685,6 @@ export const CreateElementDocument = gql`
   }
   ${ElementFragmentDoc}
 `
-export type CreateElementMutationFn = ApolloReactCommon.MutationFunction<
-  CreateElementMutation,
-  CreateElementMutationVariables
->
 
 /**
  * __useCreateElementMutation__
@@ -734,10 +732,6 @@ export const UpdateElementDocument = gql`
   }
   ${ElementFragmentDoc}
 `
-export type UpdateElementMutationFn = ApolloReactCommon.MutationFunction<
-  UpdateElementMutation,
-  UpdateElementMutationVariables
->
 
 /**
  * __useUpdateElementMutation__
@@ -840,10 +834,6 @@ export const CreateHabitDocument = gql`
   }
   ${HabitFragmentDoc}
 `
-export type CreateHabitMutationFn = ApolloReactCommon.MutationFunction<
-  CreateHabitMutation,
-  CreateHabitMutationVariables
->
 
 /**
  * __useCreateHabitMutation__
@@ -891,10 +881,6 @@ export const ArchiveHabitDocument = gql`
   }
   ${HabitFragmentDoc}
 `
-export type ArchiveHabitMutationFn = ApolloReactCommon.MutationFunction<
-  ArchiveHabitMutation,
-  ArchiveHabitMutationVariables
->
 
 /**
  * __useArchiveHabitMutation__
@@ -1167,10 +1153,6 @@ export const CreateSharedElementsDocument = gql`
   }
   ${SharedElementFragmentDoc}
 `
-export type CreateSharedElementsMutationFn = ApolloReactCommon.MutationFunction<
-  CreateSharedElementsMutation,
-  CreateSharedElementsMutationVariables
->
 
 /**
  * __useCreateSharedElementsMutation__
@@ -1215,10 +1197,6 @@ export const DeleteSharedElementDocument = gql`
     destroySharedElement(email: $email, elementId: $elementId)
   }
 `
-export type DeleteSharedElementMutationFn = ApolloReactCommon.MutationFunction<
-  DeleteSharedElementMutation,
-  DeleteSharedElementMutationVariables
->
 
 /**
  * __useDeleteSharedElementMutation__
@@ -1332,10 +1310,6 @@ export const CreateTaskDocument = gql`
   }
   ${TaskFragmentDoc}
 `
-export type CreateTaskMutationFn = ApolloReactCommon.MutationFunction<
-  CreateTaskMutation,
-  CreateTaskMutationVariables
->
 
 /**
  * __useCreateTaskMutation__
@@ -1383,10 +1357,6 @@ export const UpdateTaskDocument = gql`
   }
   ${TaskFragmentDoc}
 `
-export type UpdateTaskMutationFn = ApolloReactCommon.MutationFunction<
-  UpdateTaskMutation,
-  UpdateTaskMutationVariables
->
 
 /**
  * __useUpdateTaskMutation__
@@ -1436,10 +1406,6 @@ export const UpdateTaskOrderDocument = gql`
     }
   }
 `
-export type UpdateTaskOrderMutationFn = ApolloReactCommon.MutationFunction<
-  UpdateTaskOrderMutation,
-  UpdateTaskOrderMutationVariables
->
 
 /**
  * __useUpdateTaskOrderMutation__
@@ -1485,10 +1451,6 @@ export const DeleteTaskDocument = gql`
     destroyTask(taskId: $taskId)
   }
 `
-export type DeleteTaskMutationFn = ApolloReactCommon.MutationFunction<
-  DeleteTaskMutation,
-  DeleteTaskMutationVariables
->
 
 /**
  * __useDeleteTaskMutation__
@@ -1588,10 +1550,6 @@ export const LoginDocument = gql`
   }
   ${UserFragmentDoc}
 `
-export type LoginMutationFn = ApolloReactCommon.MutationFunction<
-  LoginMutation,
-  LoginMutationVariables
->
 
 /**
  * __useLoginMutation__
@@ -1640,10 +1598,6 @@ export const RegisterDocument = gql`
   }
   ${UserFragmentDoc}
 `
-export type RegisterMutationFn = ApolloReactCommon.MutationFunction<
-  RegisterMutation,
-  RegisterMutationVariables
->
 
 /**
  * __useRegisterMutation__
@@ -1689,10 +1643,6 @@ export const UpdateUserDocument = gql`
   }
   ${UserFragmentDoc}
 `
-export type UpdateUserMutationFn = ApolloReactCommon.MutationFunction<
-  UpdateUserMutation,
-  UpdateUserMutationVariables
->
 
 /**
  * __useUpdateUserMutation__
@@ -1737,10 +1687,6 @@ export const LogoutDocument = gql`
     logout
   }
 `
-export type LogoutMutationFn = ApolloReactCommon.MutationFunction<
-  LogoutMutation,
-  LogoutMutationVariables
->
 
 /**
  * __useLogoutMutation__

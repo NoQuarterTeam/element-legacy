@@ -19,7 +19,7 @@ const Register: FC<RouteComponentProps> = () => {
   const [error, setError] = useState<string>("")
   const [loading, setLoading] = useState<boolean>(false)
 
-  const register = useRegister()
+  const [register] = useRegister()
 
   const handleSubmit = (e: any) => {
     e.preventDefault()

@@ -6,7 +6,7 @@ import {
   AllElementsDocument,
 } from "../types"
 
-export function useCreateElement(selectedUserId: string) {
+export function useCreateElement() {
   return useCreateElementMutation({
     update: (cache, { data }) => {
       if (data && data.createElement) {
@@ -38,6 +38,5 @@ export function useUpdateElement() {
 
 export function useAllElements(selectedUserId: string) {
   const { data } = useAllElementsQuery({ variables: { selectedUserId } })
-  const allElements = data && data.allElements
-  return allElements
+  return data?.allElements
 }

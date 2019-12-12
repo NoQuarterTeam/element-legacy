@@ -1,20 +1,22 @@
 import React from "react"
 import { useFormContext, FormContext } from "react-hook-form"
-import { useToast } from "../lib/hooks/useToast"
 import { FormProps } from "react-hook-form/dist/contextTypes"
-
+import { useToast } from "../lib/hooks/useToast"
 interface FormContainerProps {
-  onSubmit: (values: any) => Promise<any> | any
+  onSubmit?: (values: any) => Promise<any> | any
   onBlur?: (values: any) => Promise<any> | any
 }
-
 const FormContainer: React.FC<FormContainerProps> = props => {
   const toast = useToast()
   const { handleSubmit } = useFormContext()
   const onSubmit = async (values: any) => {
     try {
-      const res = await props.onSubmit(values)
-      return res
+      if (props.onBlur) {
+        return await props.onBlur(values)
+      }
+      if (props.onSubmit) {
+        return await props.onSubmit(values)
+      }
     } catch {
       toast({
         title: "Network error",
@@ -26,20 +28,20 @@ const FormContainer: React.FC<FormContainerProps> = props => {
   return (
     <form
       style={{ width: "100%" }}
-      onSubmit={handleSubmit(onSubmit)}
-      onBlur={handleSubmit(onSubmit)}
+      {...(props.onSubmit && { onSubmit: handleSubmit(onSubmit) })}
+      {...(props.onBlur && { onBlur: handleSubmit(onSubmit) })}
     >
       {props.children}
     </form>
   )
 }
-
 interface Props<T> extends FormProps<T>, FormContainerProps {}
-
-export function Form<T>({ onSubmit, ...props }: Props<T>) {
+export function Form<T>({ onSubmit, onBlur, ...props }: Props<T>) {
   return (
     <FormContext {...props}>
-      <FormContainer onSubmit={onSubmit}>{props.children}</FormContainer>
+      <FormContainer onSubmit={onSubmit} onBlur={onBlur}>
+        {props.children}
+      </FormContainer>
     </FormContext>
   )
 }

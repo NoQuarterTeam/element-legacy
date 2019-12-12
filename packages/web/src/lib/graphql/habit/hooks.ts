@@ -27,14 +27,9 @@ export function useCreateHabit() {
   })
 }
 
-// export function useUpdateHabit() {
-//   return useUpdateHabitMutation({})
-// }
-
 export function useAllHabits() {
   const { data } = useAllHabitsQuery({})
-  const allHabits = data && data.allHabits
-  return allHabits
+  return data?.allHabits
 }
 
 export function useArchiveHabit() {

@@ -14,7 +14,7 @@ const Login: FC<RouteComponentProps> = () => {
   const [error, setError] = useState<string>("")
   const [loading, setLoading] = useState<boolean>(false)
 
-  const login = useLogin()
+  const [login] = useLogin()
 
   const handleSubmit = (e: any) => {
     e.preventDefault()

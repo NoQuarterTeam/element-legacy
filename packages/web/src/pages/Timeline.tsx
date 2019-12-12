@@ -6,7 +6,7 @@ import { ChevronRight } from "styled-icons/fa-solid/ChevronRight"
 
 import Day from "../components/Day"
 import TimelineHead from "../components/TimelineHead"
-import { getDays, isMobileDevice } from "../lib/helpers"
+import { getDays, isMobileDevice, sleep } from "../lib/helpers"
 import { DragDropContainer } from "../components/DragDropContainer"
 import HabitModal from "../components/HabitModal"
 
@@ -42,7 +42,7 @@ const Timeline: React.FC<RouteComponentProps> = () => {
 
   const timelineRef = React.useRef<HTMLDivElement>(null)
 
-  const handleForward = () => {
+  const handleForward = async () => {
     fetchMore({
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!fetchMoreResult || !prev.allTasks || !fetchMoreResult.allTasks)
@@ -59,9 +59,16 @@ const Timeline: React.FC<RouteComponentProps> = () => {
     })
 
     setDaysForward(daysForward + DAY_COUNT)
+
+    // need this sleep to make the scroll by work
+    await sleep(100)
+    timelineRef?.current?.scrollBy({
+      left: 4 * 98,
+      behavior: "smooth",
+    })
   }
 
-  const handleBack = () => {
+  const handleBack = async () => {
     fetchMore({
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!prev.allTasks || !fetchMoreResult?.allTasks) return prev
@@ -86,7 +93,6 @@ const Timeline: React.FC<RouteComponentProps> = () => {
         left: num,
       })
     }
-
     setDaysBack(daysBack + DAY_COUNT)
   }
 
@@ -96,27 +102,19 @@ const Timeline: React.FC<RouteComponentProps> = () => {
         const num = daysBack * 98
         timelineRef.current.scrollTo(num, 0)
       } else {
-        const num = (daysBack - 4) * 98
+        const num = (daysBack - 2) * 98
         timelineRef.current.scrollTo(num, 0)
       }
     }
   }, [daysBack])
 
+  // Initial load
   React.useEffect(() => {
     if (initialLoad && timelineRef.current) {
       handleScrollToToday()
       setInitialLoad(false)
     }
   }, [handleScrollToToday, initialLoad])
-
-  React.useEffect(() => {
-    if (!initialLoad && timelineRef.current) {
-      timelineRef.current.scrollBy({
-        left: 4 * 98,
-        behavior: "smooth",
-      })
-    }
-  }, [daysForward, initialLoad])
 
   const handleHabitModal = (day: Dayjs) => {
     handleSetModal("habit")
@@ -191,19 +189,21 @@ const StyledTimelineWrapper = styled.div`
 const StyledTimeline = styled.div`
   width: fit-content;
   height: 100vh;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: scroll;
 `
 
 const StyledDaysWrapper = styled.div`
   display: flex;
   width: fit-content;
+  flex: 1;
+  min-height: min-content;
   height: fit-content;
-  overflow-y: scroll;
-  overflow-x: hidden;
+  overflow: hidden;
 `
 
 const StyledSpacer = styled.div<{ currentUser: boolean }>`
-  height: ${p => (p.currentUser ? "162px" : "131px")};
+  height: ${p => (p.currentUser ? "174px" : "143px")};
 
   ${p => media.greaterThan("md")`
     height: ${p.currentUser ? "174px" : "143px"};
@@ -215,6 +215,7 @@ const StyledBack = styled.p`
   top: 30vh;
   left: 5px;
   z-index: 95;
+  cursor: pointer;
   filter: drop-shadow(1px 1px 2px rgba(200, 200, 200, 0.3));
   padding-right: ${p => p.theme.paddingM};
 `

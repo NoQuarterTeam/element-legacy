@@ -12,7 +12,6 @@ import {
 } from "../lib/helpers"
 import { useAllHabits } from "../lib/graphql/habit/hooks"
 import { useAllProgress } from "../lib/graphql/progress/hooks"
-import { FC } from "react"
 import { darken, lighten } from "polished"
 import { useTimelineContext } from "./providers/TimelineProvider"
 import { useMe } from "./providers/MeProvider"
@@ -24,7 +23,7 @@ interface TimelineHeadProps {
   daysBack: number
   daysForward: number
 }
-const TimelineHead: FC<TimelineHeadProps> = ({
+const TimelineHead: React.FC<TimelineHeadProps> = ({
   openHabitModal,
   daysBack,
   daysForward,
@@ -34,89 +33,84 @@ const TimelineHead: FC<TimelineHeadProps> = ({
   const habits = useAllHabits()
   const allProgress = useAllProgress()
 
+  const months = React.useMemo(
+    () => getMonths(dayjs().subtract(daysBack, "day"), daysBack + daysForward),
+    [daysBack, daysForward],
+  )
   return (
     <StyledMonthsHeadContainer>
-      {getMonths(dayjs().subtract(daysBack, "day"), daysBack + daysForward).map(
-        (month, i) => {
-          return (
-            <StyledTimelineHead key={i}>
-              <StyledMonthHeader>{monthNames[month]}</StyledMonthHeader>
-              <StyledDaysHeader>
-                {getDays(
-                  dayjs().subtract(daysBack, "day"),
-                  daysBack + daysForward,
-                )
-                  .filter(day => {
-                    return month === day.month()
-                  })
-                  .map(day => (
-                    <StyledContainer
+      {months.map((month, i) => {
+        return (
+          <StyledTimelineHead key={i}>
+            <StyledMonthHeader>{monthNames[month]}</StyledMonthHeader>
+            <StyledDaysHeader>
+              {getDays(
+                dayjs().subtract(daysBack, "day"),
+                daysBack + daysForward,
+              )
+                .filter(day => month === day.month())
+                .map(day => (
+                  <StyledContainer
+                    key={day.unix()}
+                    today={isToday(day)}
+                    weekend={dayjs(day).day() === 0 || dayjs(day).day() === 6}
+                    monday={dayjs(day).day() === 1}
+                    first={dayjs(day).date() === 1}
+                  >
+                    <StyledDayHeader
                       key={day.unix()}
                       today={isToday(day)}
                       weekend={dayjs(day).day() === 0 || dayjs(day).day() === 6}
-                      monday={dayjs(day).day() === 1}
-                      first={dayjs(day).date() === 1}
                     >
-                      <StyledDayHeader
-                        key={day.unix()}
-                        today={isToday(day)}
-                        weekend={
-                          dayjs(day).day() === 0 || dayjs(day).day() === 6
-                        }
-                      >
-                        {dayjs(day).format("ddd Do")}
-                      </StyledDayHeader>
+                      {dayjs(day).format("ddd Do")}
+                    </StyledDayHeader>
 
-                      {allProgress &&
-                      user.id === selectedUserId &&
+                    {allProgress &&
+                    user.id === selectedUserId &&
+                    habits &&
+                    allActiveHabits(day, habits).length !== 0 ? (
+                      <StyledHabits
+                        today={isToday(day)}
+                        count={habits && allActiveHabits(day, habits).length}
+                        onClick={() => openHabitModal(day)}
+                      >
+                        {calculateHabitProgress(day, allProgress, habits).map(
+                          (result: any[], index) => (
+                            <Circle
+                              key={index}
+                              completed={result[1]}
+                              count={
+                                habits && allActiveHabits(day, habits).length
+                              }
+                              past={dayjs(day).isBefore(dayjs())}
+                            />
+                          ),
+                        )}
+                      </StyledHabits>
+                    ) : user.id === selectedUserId &&
                       habits &&
-                      allActiveHabits(day, habits).length !== 0 ? (
-                        <StyledHabits
-                          today={isToday(day)}
-                          count={habits && allActiveHabits(day, habits).length}
+                      allActiveHabits(day, habits).length === 0 ? (
+                      isToday(day) ? (
+                        <StyledAddHabits
                           onClick={() => openHabitModal(day)}
+                          today={isToday(day)}
                         >
-                          {calculateHabitProgress(day, allProgress, habits).map(
-                            (result: any[], index) => {
-                              return (
-                                <Circle
-                                  key={index}
-                                  completed={result[1]}
-                                  count={
-                                    habits &&
-                                    allActiveHabits(day, habits).length
-                                  }
-                                  past={dayjs(day).isBefore(dayjs())}
-                                />
-                              )
-                            },
-                          )}
-                        </StyledHabits>
-                      ) : user.id === selectedUserId &&
-                        habits &&
-                        allActiveHabits(day, habits).length === 0 ? (
-                        isToday(day) ? (
-                          <StyledAddHabits
-                            onClick={() => openHabitModal(day)}
-                            today={isToday(day)}
-                          >
-                            Add habit
-                          </StyledAddHabits>
-                        ) : (
-                          <StyledHabits today={isToday(day)} count={1} />
-                        )
-                      ) : user.id === selectedUserId ? (
-                        <StyledHabits today={isToday(day)} count={4} />
+                          Add habit
+                        </StyledAddHabits>
                       ) : (
-                        <></>
-                      )}
-                    </StyledContainer>
-                  ))}
-              </StyledDaysHeader>
-            </StyledTimelineHead>
-          )
-        },
-      )}
+                        <StyledHabits today={isToday(day)} count={1} />
+                      )
+                    ) : (
+                      user.id === selectedUserId && (
+                        <StyledHabits today={isToday(day)} count={4} />
+                      )
+                    )}
+                  </StyledContainer>
+                ))}
+            </StyledDaysHeader>
+          </StyledTimelineHead>
+        )
+      })}
     </StyledMonthsHeadContainer>
   )
 }

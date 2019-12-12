@@ -1,9 +1,9 @@
 import React, { memo, Suspense } from "react"
 import { Router } from "@reach/router"
 
-import AppProvider from "../components/providers/AppProvider"
+import { AppProvider } from "../components/providers/AppProvider"
 import Timeline from "../pages/Timeline"
-import Account from "../pages/Account"
+import { Account } from "../pages/Account"
 import NotFound from "../pages/NotFound"
 
 function Application() {
