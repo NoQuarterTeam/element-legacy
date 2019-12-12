@@ -13,7 +13,7 @@ export class UserService {
 
   async findByEmail(email: string): Promise<User> {
     const user = await User.findOne({ where: { email } })
-    if (!user) throw new Error("New user with that email found")
+    if (!user) throw new Error("No user with that email found")
     return user
   }
 
@@ -26,7 +26,7 @@ export class UserService {
   }
 
   async create(data: RegisterInput): Promise<User> {
-    const userExists = await this.findByEmail(data.email)
+    const userExists = await User.findOne({ where: { email: data.email } })
     if (userExists) throw new Error("user already exists")
     const user = await User.create({
       ...data,
