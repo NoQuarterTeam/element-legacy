@@ -235,3 +235,26 @@ export const isMobileDevice = () => {
     navigator.userAgent.indexOf("IEMobile") !== -1
   )
 }
+
+export interface ValidationError {
+  property: string
+  constraints: { [key: string]: string }
+}
+
+export type FormattedError = {
+  name: string
+  types: {
+    [key: string]: string
+  }
+}
+export function formatValidations(errors: ValidationError[]): FormattedError[] {
+  return errors.map(error => ({
+    name: error.property,
+    types: error.constraints,
+  }))
+}
+
+export const formatFileName = (filename: string) => {
+  const cleanFileName = filename.toLowerCase().replace(/[^a-z0-9]/g, "-")
+  return cleanFileName
+}

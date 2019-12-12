@@ -6,12 +6,15 @@ import { useAllElements } from "../lib/graphql/element/hooks"
 import { ChevronsRight } from "styled-icons/boxicons-regular/ChevronsRight"
 import { Filter } from "styled-icons/boxicons-regular/Filter"
 import { Feedback } from "styled-icons/material/Feedback"
+import { AccountBox } from "styled-icons/material/AccountBox"
 import { Today } from "styled-icons/material/Today"
+import { Link as ReachLink } from "@reach/router"
 
 // import { useLogout } from "../lib/graphql/user/hooks"
 import { useGetSharedUsersByUser } from "../lib/graphql/sharedElement/hooks"
 import { useTimelineContext } from "./providers/TimelineProvider"
 import { useMe } from "./providers/MeProvider"
+import { Link } from "@chakra-ui/core"
 
 interface NavProps {
   filteredElements: string[]
@@ -129,6 +132,10 @@ const Nav: FC<NavProps> = ({
           ))}
       </StyledContainer>
       <StyledContainer>
+        <StyledAccountButton as={ReachLink} to="/account" open={open}>
+          <AccountBox width={20} color="lightgrey" />
+          ACCOUNT
+        </StyledAccountButton>
         <StyledFeedbackButton
           href="https://www.notion.so/noquarter/Tell-me-how-you-really-feel-3210d7178b704f1dbf977ff82cbb543d"
           target="_blank"
@@ -214,6 +221,20 @@ const StyledUser = styled.div<{
 // `
 
 const StyledFeedbackButton = styled.a<{ open: boolean }>`
+  visibility: ${p => (p.open ? "visible" : "hidden")};
+  text-align: center;
+  cursor: pointer;
+  font-size: ${p => p.theme.textXXS};
+  text-decoration: none;
+  margin-bottom: ${p => p.theme.paddingL};
+  font-variant: small-caps;
+  color: ${p => p.theme.colorLabel};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
+
+const StyledAccountButton = styled(Link)<{ open: boolean }>`
   visibility: ${p => (p.open ? "visible" : "hidden")};
   text-align: center;
   cursor: pointer;
