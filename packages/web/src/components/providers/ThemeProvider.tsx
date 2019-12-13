@@ -1,6 +1,7 @@
 import React, { FC, Fragment } from "react"
 
-import { ThemeProvider as CThemeProvider } from "@chakra-ui/core"
+import emotionStyled, { CreateStyled } from "@emotion/styled"
+import { ThemeProvider as CThemeProvider, DefaultTheme } from "@chakra-ui/core"
 import {
   theme,
   ThemeProvider as SCThemeProvider,
@@ -15,3 +16,5 @@ export const ThemeProvider: FC = ({ children }) => {
     </SCThemeProvider>
   )
 }
+
+export const styled = emotionStyled as CreateStyled<DefaultTheme>
