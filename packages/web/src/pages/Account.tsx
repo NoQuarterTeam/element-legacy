@@ -2,13 +2,14 @@ import React, { FC } from "react"
 import gql from "graphql-tag"
 import { RouteComponentProps, Link as ReachLink } from "@reach/router"
 
-import { Flex, Box, Link, Icon, Avatar, PseudoBox } from "@chakra-ui/core"
+import { Flex, Box, Link, Avatar } from "@chakra-ui/core"
 
 import Page from "../components/Page"
 import { useMe } from "../components/providers/MeProvider"
 import { AccountForm } from "../components/AccountForm"
 import { ImageUploader } from "../components/ImageUploader"
 import { useUpdateUserAvatarMutation } from "../lib/graphql/types"
+import { CButton } from "../components/CButton"
 
 export const UPDATE_USER_AVATAR = gql`
   mutation UpdateUserAvatar($data: UpdateInput!) {
@@ -33,9 +34,9 @@ export const Account: FC<RouteComponentProps> = () => {
     <Page>
       <Box pos="fixed" top="5" left="5">
         <Link as={ReachLink} to="/">
-          <Flex align="center">
-            <Icon name="arrow-back" mx="2px" /> Back
-          </Flex>
+          <CButton leftIcon="arrow-back" bg="white">
+            Back
+          </CButton>
         </Link>
       </Box>
       <Box w={["90%", 400]}>
