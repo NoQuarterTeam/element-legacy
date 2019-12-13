@@ -120,13 +120,6 @@ const Timeline: React.FC<RouteComponentProps> = () => {
 
   return (
     <>
-      <Nav
-        filteredElements={filteredElements}
-        handleSetFilteredElements={setFilteredElements}
-        scrollToToday={handleScrollToToday}
-        open={navOpen}
-        toggleOpen={() => setNavOpen(!navOpen)}
-      />
       {allTasks && (
         <StyledTimelineWrapper ref={timelineRef}>
           <TimelineHead daysBack={daysBack} daysForward={daysForward} />
@@ -155,6 +148,11 @@ const Timeline: React.FC<RouteComponentProps> = () => {
               </DragDropContainer>
             </StyledDaysWrapper>
           </StyledTimeline>
+          <Nav
+            filteredElements={filteredElements}
+            handleSetFilteredElements={setFilteredElements}
+            scrollToToday={handleScrollToToday}
+          />
         </StyledTimelineWrapper>
       )}
     </>
@@ -205,9 +203,9 @@ const StyledBack = styled.p`
 const StyledForward = styled.p<{ open: boolean }>`
   position: absolute;
   top: 30vh;
-  right: ${p => (p.open ? "80px" : "5px")};
+  right: 5px;
   transition: right 0.5s;
-  z-index: 95;
+  z-index: 105;
   cursor: pointer;
   filter: drop-shadow(1px 1px 2px rgba(200, 200, 200, 0.3));
   padding-left: ${p => p.theme.paddingM};
