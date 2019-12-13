@@ -113,19 +113,18 @@ const Nav: FC<NavProps> = ({
           {user.firstName.charAt(0)}
           {user.lastName.charAt(0)}
         </StyledUser>
-        {sharedUsers &&
-          sharedUsers.map((sharedUser, index) => (
-            <StyledUser
-              key={sharedUser.id}
-              onClick={() => handleSelectUser(sharedUser.id)}
-              color={colors[index + 1]}
-              selected={selectedUserId === sharedUser.id}
-              open={open}
-            >
-              {sharedUser.firstName.charAt(0)}
-              {sharedUser.lastName.charAt(0)}
-            </StyledUser>
-          ))}
+        {sharedUsers?.map((sharedUser, index) => (
+          <StyledUser
+            key={sharedUser.id}
+            onClick={() => handleSelectUser(sharedUser.id)}
+            color={colors[index + 1]}
+            selected={selectedUserId === sharedUser.id}
+            open={open}
+          >
+            {sharedUser.firstName.charAt(0)}
+            {sharedUser.lastName.charAt(0)}
+          </StyledUser>
+        ))}
       </StyledContainer>
       <StyledContainer>
         <StyledAccountButton as={ReachLink} to="/account" open={open}>
