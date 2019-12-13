@@ -7,14 +7,15 @@ import { ChevronsRight } from "styled-icons/boxicons-regular/ChevronsRight"
 import { Filter } from "styled-icons/boxicons-regular/Filter"
 import { Feedback } from "styled-icons/material/Feedback"
 import { AccountBox } from "styled-icons/material/AccountBox"
+import { LogOut } from "styled-icons/boxicons-regular/LogOut"
 import { Today } from "styled-icons/material/Today"
 import { Link as ReachLink } from "@reach/router"
 
-// import { useLogout } from "../lib/graphql/user/hooks"
+import { useLogout } from "../lib/graphql/user/hooks"
 import { useGetSharedUsersByUser } from "../lib/graphql/sharedElement/hooks"
 import { useTimelineContext } from "./providers/TimelineProvider"
 import { useMe } from "./providers/MeProvider"
-import { Link } from "@chakra-ui/core"
+import { Link, Avatar } from "@chakra-ui/core"
 
 interface NavProps {
   filteredElements: string[]
@@ -34,7 +35,7 @@ const Nav: FC<NavProps> = ({
   const sharedUsers = useGetSharedUsersByUser(user.id)
   const [elementsOpen, setElementsOpen] = useState(false)
 
-  // const logout = useLogout()
+  const logout = useLogout()
 
   // TODO: MOVE OUT TO LIB
   const toggleFilteredElement = (element: ElementFragment) => {
@@ -103,7 +104,24 @@ const Nav: FC<NavProps> = ({
         <StyledCloseButton open={open} onClick={() => handleToggle()}>
           <ChevronsRight width={40} color="lightgrey" />
         </StyledCloseButton>
-        <StyledUser
+        <Avatar
+          size="md"
+          name={user.firstName + " " + user.lastName}
+          src={user.avatarUrl || undefined}
+          onClick={() => handleSelectUser(user.id)}
+          mt={4}
+        />
+        {sharedUsers?.map((sharedUser, index) => (
+          <Avatar
+            key={sharedUser.id}
+            size="md"
+            name={sharedUser.firstName + " " + sharedUser.lastName}
+            src={sharedUser.avatarUrl || undefined}
+            onClick={() => handleSelectUser(sharedUser.id)}
+            mt={4}
+          />
+        ))}
+        {/* <StyledUser
           key={user.id}
           onClick={() => handleSelectUser(user.id)}
           color={colors[0]}
@@ -124,9 +142,13 @@ const Nav: FC<NavProps> = ({
             {sharedUser.firstName.charAt(0)}
             {sharedUser.lastName.charAt(0)}
           </StyledUser>
-        ))}
+        ))} */}
       </StyledContainer>
       <StyledContainer>
+        <StyledLogoutButton onClick={logout}>
+          <LogOut width={20} color="lightgrey" />
+          LOGOUT
+        </StyledLogoutButton>
         <StyledAccountButton as={ReachLink} to="/account" open={open}>
           <AccountBox width={20} color="lightgrey" />
           ACCOUNT
@@ -183,25 +205,25 @@ const StyledCloseButton = styled.button<{ open: boolean }>`
   transition: transform 0.4s;
 `
 
-const StyledUser = styled.div<{
-  color: string
-  selected: boolean
-  open: boolean
-}>`
-  visibility: ${p => (p.open ? "visible" : "hidden")};
-  display: flex;
-  height: 45px;
-  width: 45px;
-  border-radius: 50%;
-  justify-content: center;
-  align-items: center;
-  background-color: ${p => p.color};
-  color: white;
-  cursor: pointer;
-  margin: ${p => p.theme.paddingM} 0;
-  border: 2px solid black;
-  opacity: ${p => !p.selected && 0.7};
-`
+// const StyledUser = styled.div<{
+//   color: string
+//   selected: boolean
+//   open: boolean
+// }>`
+//   visibility: ${p => (p.open ? "visible" : "hidden")};
+//   display: flex;
+//   height: 45px;
+//   width: 45px;
+//   border-radius: 50%;
+//   justify-content: center;
+//   align-items: center;
+//   background-color: ${p => p.color};
+//   color: white;
+//   cursor: pointer;
+//   margin: ${p => p.theme.paddingM} 0;
+//   border: 2px solid black;
+//   opacity: ${p => !p.selected && 0.7};
+// `
 
 // const StyledLogoutButton = styled.a`
 //   color: ${p => darken(0.3, p.theme.colorYellow)};
@@ -229,6 +251,18 @@ const StyledFeedbackButton = styled.a<{ open: boolean }>`
   align-items: center;
 `
 
+const StyledLogoutButton = styled.div`
+  text-align: center;
+  cursor: pointer;
+  font-size: ${p => p.theme.textXXS};
+  text-decoration: none;
+  margin-bottom: ${p => p.theme.paddingL};
+  font-variant: small-caps;
+  color: ${p => p.theme.colorLabel};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
 const StyledAccountButton = styled(Link)<{ open: boolean }>`
   visibility: ${p => (p.open ? "visible" : "hidden")};
   text-align: center;

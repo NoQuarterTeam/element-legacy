@@ -47,7 +47,7 @@ export const Account: FC<RouteComponentProps> = () => {
           >
             <Avatar
               size="xl"
-              name={user.firstName + user.lastName}
+              name={user.firstName + " " + user.lastName}
               src={user.avatarUrl || undefined}
               mb="4"
             />
