@@ -91,6 +91,7 @@ const TaskModal: FC<TaskModalProps> = ({
             onDeleteTask={handleDeleteTask}
             onDuplicateTask={handleDuplicateTask}
             task={task}
+            day={scheduledDate}
           />
         </ModalBody>
       </ModalContent>

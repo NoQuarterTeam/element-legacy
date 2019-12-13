@@ -82,11 +82,13 @@ function Day({ day, tasks, filteredElements, ...props }: DayProps) {
         </Droppable>
       </StyledBorder>
 
-      <TaskModal
-        isOpen={isOpen}
-        onClose={onClose}
-        scheduledDate={day.format()}
-      />
+      {isOpen && (
+        <TaskModal
+          isOpen={isOpen}
+          onClose={onClose}
+          scheduledDate={day.format()}
+        />
+      )}
     </>
   )
 }

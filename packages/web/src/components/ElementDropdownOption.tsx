@@ -94,7 +94,9 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
             </StyledArrowContainer>
           )}
       </StyledOptionContainer>
-      <ShareModal element={element} isOpen={isOpen} onClose={onClose} />
+      {isOpen && (
+        <ShareModal element={element} isOpen={isOpen} onClose={onClose} />
+      )}
     </>
   )
 }

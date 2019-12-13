@@ -2,7 +2,7 @@ import React from "react"
 import { RouteComponentProps } from "@reach/router"
 import dayjs from "dayjs"
 import { ChevronLeft } from "styled-icons/fa-solid/ChevronLeft"
-import { ChevronRight } from "styled-icons/fa-solid/ChevronRight"
+import throttle from "lodash.throttle"
 
 import Day from "../components/Day"
 import TimelineHead from "../components/TimelineHead"
@@ -15,6 +15,7 @@ import Nav from "../components/Nav"
 import { useTimelineContext } from "../components/providers/TimelineProvider"
 
 import { useMe } from "../components/providers/MeProvider"
+import useEventListener from "../lib/hooks/useEventListener"
 
 const Timeline: React.FC<RouteComponentProps> = () => {
   const user = useMe()
@@ -32,12 +33,35 @@ const Timeline: React.FC<RouteComponentProps> = () => {
   const [filteredElements, setFilteredElements] = React.useState<string[]>([])
   const { selectedUserId } = useTimelineContext()
 
-  const { data, fetchMore } = useAllTasksQuery({
+  const { data, fetchMore, loading } = useAllTasksQuery({
     variables: { selectedUserId, daysBack: DAY_COUNT, daysForward: DAY_COUNT },
   })
   const allTasks = data && data.allTasks ? data.allTasks : []
 
   const timelineRef = React.useRef<HTMLDivElement>(null)
+  const fullWidthTimelineRef = React.useRef<HTMLDivElement>(null)
+
+  const handleScroll = () => {
+    if (!fullWidthTimelineRef.current) return
+
+    const right =
+      fullWidthTimelineRef.current.getBoundingClientRect().right - 100 <=
+      window.innerWidth
+
+    const left = fullWidthTimelineRef.current.getBoundingClientRect().left >= 0
+
+    if (right && !loading) {
+      handleForward()
+    } else if (left && !loading) {
+      handleBack()
+    }
+  }
+
+  useEventListener(
+    "scroll",
+    throttle(handleScroll, 400, { leading: true, trailing: true }),
+    true,
+  )
 
   const handleForward = async () => {
     fetchMore({
@@ -56,13 +80,6 @@ const Timeline: React.FC<RouteComponentProps> = () => {
     })
 
     setDaysForward(daysForward + DAY_COUNT)
-
-    // need this sleep to make the scrollBy work
-    await sleep(100)
-    timelineRef?.current?.scrollBy({
-      left: 4 * 98,
-      behavior: "smooth",
-    })
   }
 
   const handleBack = async () => {
@@ -80,7 +97,6 @@ const Timeline: React.FC<RouteComponentProps> = () => {
         daysForward: -daysBack - 1,
       },
     })
-
     if (timelineRef.current) {
       let num = (DAY_COUNT - 1.5) * 98
       if (isMobileDevice()) {
@@ -90,10 +106,11 @@ const Timeline: React.FC<RouteComponentProps> = () => {
         left: num,
       })
     }
+
     setDaysBack(daysBack + DAY_COUNT)
   }
 
-  const handleScrollToToday = React.useCallback(() => {
+  const handleScrollToToday = React.useCallback(async () => {
     if (timelineRef.current) {
       if (isMobileDevice()) {
         const num = daysBack * 98
@@ -113,24 +130,32 @@ const Timeline: React.FC<RouteComponentProps> = () => {
     }
   }, [handleScrollToToday, initialLoad])
 
-  const days = React.useMemo(
-    () => getDays(dayjs().subtract(daysBack, "day"), daysBack + daysForward),
-    [daysBack, daysForward],
-  )
+  const startDate = React.useMemo(() => dayjs().subtract(daysBack, "day"), [
+    daysBack,
+  ])
 
+  const daysCount = React.useMemo(() => daysBack + daysForward, [
+    daysBack,
+    daysForward,
+  ])
+
+  const days = React.useMemo(() => getDays(startDate, daysCount), [
+    startDate,
+    daysCount,
+  ])
   return (
     <>
       {allTasks && (
         <StyledTimelineWrapper ref={timelineRef}>
-          <TimelineHead daysBack={daysBack} daysForward={daysForward} />
-          <StyledTimeline>
+          <TimelineHead
+            days={days}
+            startDate={startDate}
+            daysCount={daysCount}
+          />
+          <StyledTimeline ref={fullWidthTimelineRef}>
             <StyledSpacer currentUser={user.id === selectedUserId} />
             <StyledDaysWrapper>
               <DragDropContainer allTasks={allTasks}>
-                <StyledBack onClick={handleBack}>
-                  <ChevronLeft width={30} color="lightgrey" />
-                </StyledBack>
-
                 {days.map(day => (
                   <Day
                     key={day.unix()}
@@ -141,10 +166,6 @@ const Timeline: React.FC<RouteComponentProps> = () => {
                     )}
                   />
                 ))}
-
-                <StyledForward onClick={handleForward} open={navOpen}>
-                  <ChevronRight width={30} color="lightgrey" />
-                </StyledForward>
               </DragDropContainer>
             </StyledDaysWrapper>
           </StyledTimeline>
@@ -188,25 +209,4 @@ const StyledSpacer = styled.div<{ currentUser: boolean }>`
   ${p => media.greaterThan("md")`
     height: ${p.currentUser ? "174px" : "143px"};
   `}
-`
-
-const StyledBack = styled.p`
-  position: absolute;
-  top: 30vh;
-  left: 5px;
-  z-index: 95;
-  cursor: pointer;
-  filter: drop-shadow(1px 1px 2px rgba(200, 200, 200, 0.3));
-  padding-right: ${p => p.theme.paddingM};
-`
-
-const StyledForward = styled.p<{ open: boolean }>`
-  position: absolute;
-  top: 30vh;
-  right: 5px;
-  transition: right 0.5s;
-  z-index: 105;
-  cursor: pointer;
-  filter: drop-shadow(1px 1px 2px rgba(200, 200, 200, 0.3));
-  padding-left: ${p => p.theme.paddingM};
 `
