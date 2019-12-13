@@ -160,7 +160,11 @@ export const getDayTasksAndOrder = (allTasks: any, target: any) => {
     })
 }
 
-export const allActiveHabits = (day: Dayjs, habits: HabitFragment[]) => {
+export const allActiveHabits = (
+  day: Dayjs,
+  habits?: HabitFragment[] | null,
+) => {
+  if (!habits) return []
   const activeHabits = habits
     .filter((hab: HabitFragment) =>
       dayjs(day)
@@ -206,7 +210,7 @@ export const calculateHabitProgress = (
         return [h, false]
       }
     })
-    .sort(function(x, y) {
+    .sort((x, y) => {
       return x[1] === y[1] ? 0 : x[1] ? -1 : 1
     })
 

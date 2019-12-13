@@ -8,27 +8,32 @@ import {
   calculateHabitProgress,
   allActiveHabits,
 } from "../lib/helpers"
-import { HabitFragment, ProgressFragment } from "../lib/graphql/types"
-import HabitModal from "./HabitModal"
 import { useDisclosure, Button } from "@chakra-ui/core"
+import HabitModal from "./HabitModal"
 
 interface Props {
   day: Dayjs
-  habits: HabitFragment[]
-  allProgress: ProgressFragment[]
+  habits?: any[] | null
+  allProgress?: any[] | null
 }
 
-export const Habits: React.FC<Props> = ({ day, habits, allProgress }) => {
+export const Habits: React.FC<Props> = ({ day, allProgress, habits }) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
-
+  const activeHabits = React.useMemo(() => allActiveHabits(day, habits), [
+    day,
+    habits,
+  ])
   return (
     <>
-      {allActiveHabits(day, habits).length === 0 && isToday(day) ? (
+      {!habits || !allProgress ? (
+        <StyledHabits today={isToday(day)} count={0} />
+      ) : activeHabits.length === 0 && isToday(day) ? (
+        // TODO clean up with theme, or something?
         <Button
           bg="#D2ECFC"
           height={31}
           fontSize={12}
-          fontWeight="medium"
+          fontWeight="normal"
           onClick={onOpen}
           borderRadius={0}
           alignItems="space-between"
@@ -38,7 +43,7 @@ export const Habits: React.FC<Props> = ({ day, habits, allProgress }) => {
       ) : (
         <StyledHabits
           today={isToday(day)}
-          count={habits && allActiveHabits(day, habits).length}
+          count={activeHabits.length}
           onClick={onOpen}
         >
           {calculateHabitProgress(day, allProgress, habits).map(
@@ -46,14 +51,13 @@ export const Habits: React.FC<Props> = ({ day, habits, allProgress }) => {
               <StyledCircle
                 key={index}
                 completed={result[1]}
-                count={habits && allActiveHabits(day, habits).length}
+                count={activeHabits.length}
                 past={dayjs(day).isBefore(dayjs())}
               />
             ),
           )}
         </StyledHabits>
       )}
-
       <HabitModal
         day={day}
         isOpen={isOpen}

@@ -129,7 +129,6 @@ const StyledTaskStart = styled.p<{ completed: boolean }>`
   bottom: ${p => p.theme.paddingML};
   right: ${p => p.theme.paddingXS};
   margin: 0;
-  /* text-decoration: ${p => (p.completed ? "line-through" : "none")}; */
 `
 
 const StyledTaskDuration = styled.p<{ completed: boolean }>`
@@ -139,7 +138,6 @@ const StyledTaskDuration = styled.p<{ completed: boolean }>`
   color: ${p => (p.completed ? "lightgrey" : p.theme.colorText)};
   font-size: ${p => p.theme.textXS};
   margin: 0;
-  /* text-decoration: ${p => (p.completed ? "line-through" : "none")}; */
 `
 
 const StyledTaskName = styled.p<{ completed: boolean }>`

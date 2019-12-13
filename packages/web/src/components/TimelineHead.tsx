@@ -2,18 +2,12 @@ import React from "react"
 import styled from "styled-components"
 import dayjs from "dayjs"
 import advancedFormat from "dayjs/plugin/advancedFormat"
-import {
-  getMonths,
-  getDays,
-  isToday,
-  monthNames,
-  allActiveHabits,
-} from "../lib/helpers"
-import { useAllHabits } from "../lib/graphql/habit/hooks"
-import { useAllProgress } from "../lib/graphql/progress/hooks"
+import { getMonths, getDays, isToday, monthNames } from "../lib/helpers"
 import { useTimelineContext } from "./providers/TimelineProvider"
 import { useMe } from "./providers/MeProvider"
 import { Habits } from "./Habits"
+import { useAllHabits } from "../lib/graphql/habit/hooks"
+import { useAllProgress } from "../lib/graphql/progress/hooks"
 
 dayjs.extend(advancedFormat)
 
@@ -27,62 +21,55 @@ const TimelineHead: React.FC<TimelineHeadProps> = ({
 }) => {
   const user = useMe()
   const { selectedUserId } = useTimelineContext()
-  const habits = useAllHabits()
-  const allProgress = useAllProgress()
+
+  const { habits } = useAllHabits()
+  const { allProgress } = useAllProgress()
 
   const months = React.useMemo(
     () => getMonths(dayjs().subtract(daysBack, "day"), daysBack + daysForward),
     [daysBack, daysForward],
   )
+  const days = React.useMemo(
+    () => getDays(dayjs().subtract(daysBack, "day"), daysBack + daysForward),
+    [daysBack, daysForward],
+  )
+
   return (
     <StyledMonthsHeadContainer>
-      {months.map((month, i) => {
-        return (
-          <StyledTimelineHead key={i}>
-            <StyledMonthHeader>{monthNames[month]}</StyledMonthHeader>
-            <StyledDaysHeader>
-              {getDays(
-                dayjs().subtract(daysBack, "day"),
-                daysBack + daysForward,
-              )
-                .filter(day => month === day.month())
-                .map(day => (
-                  <StyledContainer
+      {months.map((month, i) => (
+        <StyledTimelineHead key={i}>
+          <StyledMonthHeader>{monthNames[month]}</StyledMonthHeader>
+          <StyledDaysHeader>
+            {days
+              .filter(day => month === day.month())
+              .map(day => (
+                <StyledContainer
+                  key={day.unix()}
+                  today={isToday(day)}
+                  weekend={dayjs(day).day() === 0 || dayjs(day).day() === 6}
+                  monday={dayjs(day).day() === 1}
+                  first={dayjs(day).date() === 1}
+                >
+                  <StyledDayHeader
                     key={day.unix()}
                     today={isToday(day)}
                     weekend={dayjs(day).day() === 0 || dayjs(day).day() === 6}
-                    monday={dayjs(day).day() === 1}
-                    first={dayjs(day).date() === 1}
                   >
-                    <StyledDayHeader
-                      key={day.unix()}
-                      today={isToday(day)}
-                      weekend={dayjs(day).day() === 0 || dayjs(day).day() === 6}
-                    >
-                      {dayjs(day).format("ddd Do")}
-                    </StyledDayHeader>
+                    {dayjs(day).format("ddd Do")}
+                  </StyledDayHeader>
 
-                    {user.id === selectedUserId &&
-                      (allProgress &&
-                      habits &&
-                      allActiveHabits(day, habits).length !== 0 ? (
-                        <Habits
-                          day={day}
-                          allProgress={allProgress}
-                          habits={habits}
-                        />
-                      ) : habits &&
-                        allActiveHabits(day, habits).length === 0 ? (
-                        <Habits day={day} allProgress={[]} habits={habits} />
-                      ) : (
-                        <Habits day={day} allProgress={[]} habits={[]} />
-                      ))}
-                  </StyledContainer>
-                ))}
-            </StyledDaysHeader>
-          </StyledTimelineHead>
-        )
-      })}
+                  {user.id === selectedUserId && (
+                    <Habits
+                      day={day}
+                      allProgress={allProgress}
+                      habits={habits}
+                    />
+                  )}
+                </StyledContainer>
+              ))}
+          </StyledDaysHeader>
+        </StyledTimelineHead>
+      ))}
     </StyledMonthsHeadContainer>
   )
 }

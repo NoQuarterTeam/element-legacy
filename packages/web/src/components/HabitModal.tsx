@@ -29,8 +29,8 @@ interface HabitModalProps {
   day: Dayjs
   isOpen: boolean
   onClose: () => void
-  habits: HabitFragment[]
-  allProgress: ProgressFragment[]
+  habits?: HabitFragment[] | null
+  allProgress?: ProgressFragment[] | null
 }
 
 const HabitModal: FC<HabitModalProps> = ({
@@ -83,6 +83,7 @@ const HabitModal: FC<HabitModalProps> = ({
             style={{ marginBottom: "1rem", justifyContent: "flex-start" }}
           >
             {habits &&
+              allProgress &&
               calculateHabitProgress(day, allProgress, habits).map(
                 (result: any[]) => {
                   const habit = result[0]
