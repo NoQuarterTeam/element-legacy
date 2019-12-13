@@ -21,8 +21,8 @@ export type BaseEntity = {
 }
 
 export type CreateElementInput = {
-  name?: Maybe<Scalars["String"]>
-  color?: Maybe<Scalars["String"]>
+  name: Scalars["String"]
+  color: Scalars["String"]
   archived?: Maybe<Scalars["Boolean"]>
   parentId?: Maybe<Scalars["String"]>
 }
@@ -43,7 +43,7 @@ export type Element = {
   createdAt: Scalars["DateTime"]
   updatedAt: Scalars["DateTime"]
   name: Scalars["String"]
-  color?: Maybe<Scalars["String"]>
+  color: Scalars["String"]
   archived?: Maybe<Scalars["Boolean"]>
   children?: Maybe<Array<Element>>
   parentId?: Maybe<Scalars["String"]>
@@ -104,7 +104,7 @@ export type MutationCreateElementArgs = {
 }
 
 export type MutationUpdateElementArgs = {
-  data: CreateElementInput
+  data: UpdateElementInput
   elementId: Scalars["String"]
 }
 
@@ -272,6 +272,13 @@ export type TaskInput = {
   order?: Maybe<Scalars["Float"]>
 }
 
+export type UpdateElementInput = {
+  name?: Maybe<Scalars["String"]>
+  color?: Maybe<Scalars["String"]>
+  archived?: Maybe<Scalars["Boolean"]>
+  parentId?: Maybe<Scalars["String"]>
+}
+
 export type UpdateInput = {
   firstName?: Maybe<Scalars["String"]>
   lastName?: Maybe<Scalars["String"]>
@@ -338,7 +345,7 @@ export type CreateElementMutation = { __typename?: "Mutation" } & {
 
 export type UpdateElementMutationVariables = {
   elementId: Scalars["String"]
-  data: CreateElementInput
+  data: UpdateElementInput
 }
 
 export type UpdateElementMutation = { __typename?: "Mutation" } & {
@@ -799,7 +806,7 @@ export type CreateElementMutationOptions = ApolloReactCommon.BaseMutationOptions
   CreateElementMutationVariables
 >
 export const UpdateElementDocument = gql`
-  mutation UpdateElement($elementId: String!, $data: CreateElementInput!) {
+  mutation UpdateElement($elementId: String!, $data: UpdateElementInput!) {
     updateElement(elementId: $elementId, data: $data) {
       ...Element
     }

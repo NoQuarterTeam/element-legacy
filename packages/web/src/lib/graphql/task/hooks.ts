@@ -7,6 +7,7 @@ import {
   AllTasksQuery,
   AllTasksQueryVariables,
   AllTasksDocument,
+  TaskFragment,
 } from "../types"
 
 export function useCreateTask() {
@@ -128,7 +129,9 @@ export function useDeleteTask(taskId: string, selectedUserId: string) {
         variables: { selectedUserId },
       })
       if (data && tasksData?.allTasks) {
-        const tasks = tasksData.allTasks.filter(task => task.id !== taskId)
+        const tasks = tasksData.allTasks.filter(
+          (task: TaskFragment) => task.id !== taskId,
+        )
         cache.writeQuery({
           query: AllTasksDocument,
           variables: { selectedUserId },

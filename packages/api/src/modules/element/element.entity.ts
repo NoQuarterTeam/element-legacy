@@ -14,7 +14,7 @@ export class Element extends BaseEntity<Element> {
   @StringField()
   name: string
 
-  @StringField({ nullable: true })
+  @StringField()
   color: string
 
   @BooleanField({ nullable: true, default: false })

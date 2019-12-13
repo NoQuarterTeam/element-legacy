@@ -32,7 +32,7 @@ export const decimalCount = (value: number) => {
 export const getDays = (startDate: Dayjs, daysCount: number) => {
   return Array(daysCount)
     .fill(null)
-    .map((_, v) => dayjs(startDate).add(v, "day"))
+    .map((_, v) => startDate.add(v, "day"))
 }
 
 export const isToday = (day: Dayjs) => {
@@ -40,13 +40,22 @@ export const isToday = (day: Dayjs) => {
 }
 
 export const getMonths = (startDate: Dayjs, daysCount: number) => {
-  const days = getDays(startDate, daysCount)
+  // Include year to cater for scrolling further than 12
+  const monthsByDay = Array(daysCount)
+    .fill(null)
+    .map(
+      (_, v) =>
+        startDate.add(v, "day").month() + "/" + startDate.add(v, "day").year(),
+    )
 
-  const monthsByDay = days.map(day => dayjs(day).month())
-
-  return monthsByDay.filter(function(value, index, array) {
+  const uniqueMonths = monthsByDay.filter(function(value, index, array) {
     return array.indexOf(value) === index
   })
+
+  return uniqueMonths.map(month => ({
+    month: Number(month.split("/", 2)[0]),
+    year: Number(month.split("/", 2)[1]),
+  }))
 }
 
 export const formatTime = (time: number) => {

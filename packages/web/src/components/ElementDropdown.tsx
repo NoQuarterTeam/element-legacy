@@ -13,7 +13,6 @@ import Input from "./Input"
 import { Close } from "styled-icons/material/Close"
 
 import { readableColor, darken, lighten } from "polished"
-import { Icon } from "@chakra-ui/core"
 
 interface ElementDropdownProps {
   selectedElementId?: string | null
@@ -42,7 +41,7 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
   const [newElement, setNewElement] = useState("")
   const [newChildElement, setNewChildElement] = useState("")
   const [showChildren, setShowChildren] = useState("")
-  const [updatedColor, setUpdatedColor] = useState(null)
+  const [updatedColor, setUpdatedColor] = useState("")
 
   const [pickerElement, setPickerElement] = useState<ElementFragment>()
   const [selectedElement, selectSelectedElement] = useState<ElementFragment>()
@@ -328,7 +327,7 @@ const StyledDropdownContainer = styled.div`
 `
 
 const StyledDropdownPlaceholder = styled.div<{
-  open: boolean
+  open?: boolean
   color?: string
 }>`
   color: black;
@@ -345,7 +344,7 @@ const StyledDropdownPlaceholder = styled.div<{
   background: ${p => p.color && p.color};
 `
 
-const StyledDropdownOpenBlur = styled.div<{ open: boolean; filter: string }>`
+const StyledDropdownOpenBlur = styled.div<{ open?: boolean; filter: string }>`
   /* visibility: ${props =>
     props.open && !props.filter ? "visible" : "hidden"}; */
   top: 0;
@@ -357,7 +356,7 @@ const StyledDropdownOpenBlur = styled.div<{ open: boolean; filter: string }>`
   display: ${props => (props.open ? "block" : "none")};
 `
 
-const StyledDropdownMenu = styled.div<{ open: boolean; filter: string }>`
+const StyledDropdownMenu = styled.div<{ open?: boolean; filter: string }>`
   visibility: ${props => (props.open ? "visible" : "hidden")};
   position: fixed;
   padding-top: ${p => p.theme.paddingXL};

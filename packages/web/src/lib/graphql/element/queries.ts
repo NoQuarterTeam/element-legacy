@@ -21,7 +21,7 @@ export const CREATE_ELEMENT = gql`
 `
 
 export const UPDATE_ELEMENT = gql`
-  mutation UpdateElement($elementId: String!, $data: CreateElementInput!) {
+  mutation UpdateElement($elementId: String!, $data: UpdateElementInput!) {
     updateElement(elementId: $elementId, data: $data) {
       ...Element
     }

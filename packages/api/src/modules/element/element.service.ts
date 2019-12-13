@@ -1,10 +1,8 @@
 import { Element } from "./element.entity"
-import { CreateElementInput } from "./element.input"
+import { CreateElementInput, UpdateElementInput } from "./element.input"
 
 import { Service } from "typedi"
 import { Brackets } from "typeorm"
-import { SharedElement } from "../sharedElement/sharedElement.entity"
-import { element } from "prop-types"
 
 @Service()
 export class ElementService {
@@ -78,7 +76,7 @@ export class ElementService {
     })
   }
 
-  update(elementId: string, data: CreateElementInput): Promise<Element> {
+  update(elementId: string, data: UpdateElementInput): Promise<Element> {
     return new Promise(async (resolve, reject) => {
       try {
         const element = await this.findById(elementId)

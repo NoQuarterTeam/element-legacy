@@ -20,19 +20,15 @@ interface NavProps {
   filteredElements: string[]
   handleSetFilteredElements: (elements: string[]) => void
   scrollToToday: () => void
-  toggleOpen: () => void
-  open: boolean
 }
 
 const Nav: FC<NavProps> = ({
   filteredElements,
   handleSetFilteredElements,
   scrollToToday,
-  toggleOpen,
-  open,
 }) => {
   const user = useMe()
-
+  const [open, setOpen] = useState(true)
   const { handleSelectUser, selectedUserId } = useTimelineContext()
   const elements = useAllElements(user.id)
   const sharedUsers = useGetSharedUsersByUser(user.id)
@@ -97,14 +93,14 @@ const Nav: FC<NavProps> = ({
 
   const colors = ["#FF9292", "#245A7A", "#F7B002"]
 
+  const handleToggle = () => {
+    setOpen(!open)
+  }
+
   return (
     <StyledNav open={open}>
-      {/* <StyledBlur /> */}
-      {/* <StyledOpenButton open={open} onClick={() => setOpen(true)}>
-        <ChevronsLeft width={40} color="lightgrey" />
-      </StyledOpenButton> */}
       <StyledContainer>
-        <StyledCloseButton open={open} onClick={() => toggleOpen(!open)}>
+        <StyledCloseButton open={open} onClick={() => handleToggle()}>
           <ChevronsRight width={40} color="lightgrey" />
         </StyledCloseButton>
         <StyledUser
