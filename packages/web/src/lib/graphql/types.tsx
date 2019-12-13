@@ -86,6 +86,7 @@ export type Mutation = {
   createHabit?: Maybe<Habit>
   updateHabit?: Maybe<Habit>
   archiveHabit?: Maybe<Habit>
+  getSignedS3Url?: Maybe<Scalars["String"]>
   createSharedElements?: Maybe<Array<SharedElement>>
   destroySharedElement?: Maybe<Scalars["Boolean"]>
   createTask?: Maybe<Task>
@@ -123,6 +124,10 @@ export type MutationUpdateHabitArgs = {
 export type MutationArchiveHabitArgs = {
   data: HabitInput
   habitId: Scalars["String"]
+}
+
+export type MutationGetSignedS3UrlArgs = {
+  data: S3SignedUrlInput
 }
 
 export type MutationCreateSharedElementsArgs = {
@@ -215,6 +220,11 @@ export type RegisterInput = {
   password: Scalars["String"]
 }
 
+export type S3SignedUrlInput = {
+  key: Scalars["String"]
+  fileType: Scalars["String"]
+}
+
 export type SharedElement = {
   __typename?: "SharedElement"
   id: Scalars["ID"]
@@ -267,6 +277,7 @@ export type UpdateInput = {
   lastName?: Maybe<Scalars["String"]>
   email?: Maybe<Scalars["String"]>
   password?: Maybe<Scalars["String"]>
+  avatarKey?: Maybe<Scalars["String"]>
 }
 
 export type User = {
@@ -282,6 +293,7 @@ export type User = {
   habits: Array<Habit>
   sharedElements?: Maybe<Array<SharedElement>>
   tasks: Array<Task>
+  avatarUrl?: Maybe<Scalars["String"]>
 }
 
 export type UserAuthResponse = {
@@ -289,6 +301,15 @@ export type UserAuthResponse = {
   user: User
   token: Scalars["String"]
 }
+
+export type GetSignedUrlMutationVariables = {
+  data: S3SignedUrlInput
+}
+
+export type GetSignedUrlMutation = { __typename?: "Mutation" } & Pick<
+  Mutation,
+  "getSignedS3Url"
+>
 
 export type ElementFragment = { __typename?: "Element" } & Pick<
   Element,
@@ -491,7 +512,7 @@ export type DeleteTaskMutation = { __typename?: "Mutation" } & Pick<
 
 export type UserFragment = { __typename?: "User" } & Pick<
   User,
-  "id" | "firstName" | "lastName" | "email"
+  "id" | "firstName" | "lastName" | "email" | "avatarUrl"
 >
 
 export type MeQueryVariables = {}
@@ -536,6 +557,14 @@ export type LogoutMutation = { __typename?: "Mutation" } & Pick<
   Mutation,
   "logout"
 >
+
+export type UpdateUserAvatarMutationVariables = {
+  data: UpdateInput
+}
+
+export type UpdateUserAvatarMutation = { __typename?: "Mutation" } & {
+  updateUser: Maybe<{ __typename?: "User" } & Pick<User, "id" | "avatarUrl">>
+}
 
 export const ElementFragmentDoc = gql`
   fragment Element on Element {
@@ -620,8 +649,53 @@ export const UserFragmentDoc = gql`
     firstName
     lastName
     email
+    avatarUrl
   }
 `
+export const GetSignedUrlDocument = gql`
+  mutation GetSignedUrl($data: S3SignedUrlInput!) {
+    getSignedS3Url(data: $data)
+  }
+`
+
+/**
+ * __useGetSignedUrlMutation__
+ *
+ * To run a mutation, you first call `useGetSignedUrlMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetSignedUrlMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [getSignedUrlMutation, { data, loading, error }] = useGetSignedUrlMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useGetSignedUrlMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    GetSignedUrlMutation,
+    GetSignedUrlMutationVariables
+  >,
+) {
+  return ApolloReactHooks.useMutation<
+    GetSignedUrlMutation,
+    GetSignedUrlMutationVariables
+  >(GetSignedUrlDocument, baseOptions)
+}
+export type GetSignedUrlMutationHookResult = ReturnType<
+  typeof useGetSignedUrlMutation
+>
+export type GetSignedUrlMutationResult = ApolloReactCommon.MutationResult<
+  GetSignedUrlMutation
+>
+export type GetSignedUrlMutationOptions = ApolloReactCommon.BaseMutationOptions<
+  GetSignedUrlMutation,
+  GetSignedUrlMutationVariables
+>
 export const AllElementsDocument = gql`
   query AllElements($selectedUserId: String!) {
     allElements(selectedUserId: $selectedUserId) {
@@ -1722,4 +1796,51 @@ export type LogoutMutationResult = ApolloReactCommon.MutationResult<
 export type LogoutMutationOptions = ApolloReactCommon.BaseMutationOptions<
   LogoutMutation,
   LogoutMutationVariables
+>
+export const UpdateUserAvatarDocument = gql`
+  mutation UpdateUserAvatar($data: UpdateInput!) {
+    updateUser(data: $data) {
+      id
+      avatarUrl
+    }
+  }
+`
+
+/**
+ * __useUpdateUserAvatarMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserAvatarMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserAvatarMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserAvatarMutation, { data, loading, error }] = useUpdateUserAvatarMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useUpdateUserAvatarMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UpdateUserAvatarMutation,
+    UpdateUserAvatarMutationVariables
+  >,
+) {
+  return ApolloReactHooks.useMutation<
+    UpdateUserAvatarMutation,
+    UpdateUserAvatarMutationVariables
+  >(UpdateUserAvatarDocument, baseOptions)
+}
+export type UpdateUserAvatarMutationHookResult = ReturnType<
+  typeof useUpdateUserAvatarMutation
+>
+export type UpdateUserAvatarMutationResult = ApolloReactCommon.MutationResult<
+  UpdateUserAvatarMutation
+>
+export type UpdateUserAvatarMutationOptions = ApolloReactCommon.BaseMutationOptions<
+  UpdateUserAvatarMutation,
+  UpdateUserAvatarMutationVariables
 >

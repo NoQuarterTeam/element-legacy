@@ -17,6 +17,9 @@ export class UpdateInput implements Partial<User> {
   @MinLength(8)
   @Field({ nullable: true })
   password?: string
+
+  @Field({ nullable: true })
+  avatarKey?: string
 }
 
 @InputType()

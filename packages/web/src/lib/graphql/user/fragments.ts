@@ -6,5 +6,6 @@ export const User = gql`
     firstName
     lastName
     email
+    avatarUrl
   }
 `

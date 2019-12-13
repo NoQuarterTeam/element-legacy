@@ -63,7 +63,8 @@ export const AccountForm = ({ user }: Props) => {
       <CInput name="email" label="Email" placeholder="j.sebe@gmail.com" />
       <Flex justify="space-between" align="center" mt={4}>
         <Button
-          variantColor="pink"
+          variantColor="orange"
+          variant="solid"
           type="submit"
           isLoading={form.formState.isSubmitting}
         >
