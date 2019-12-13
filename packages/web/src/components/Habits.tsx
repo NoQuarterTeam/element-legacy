@@ -8,25 +8,26 @@ import {
   calculateHabitProgress,
   allActiveHabits,
 } from "../lib/helpers"
-import HabitModal from "./HabitModal"
 import { useDisclosure, Button } from "@chakra-ui/core"
-import { useAllHabits } from "../lib/graphql/habit/hooks"
-import { useAllProgress } from "../lib/graphql/progress/hooks"
+import HabitModal from "./HabitModal"
 
 interface Props {
   day: Dayjs
+  habits?: any[] | null
+  allProgress?: any[] | null
 }
 
-export const Habits: React.FC<Props> = ({ day }) => {
+export const Habits: React.FC<Props> = ({ day, allProgress, habits }) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const { habits } = useAllHabits()
-  const { allProgress } = useAllProgress()
-
+  const activeHabits = React.useMemo(() => allActiveHabits(day, habits), [
+    day,
+    habits,
+  ])
   return (
     <>
       {!habits || !allProgress ? (
         <StyledHabits today={isToday(day)} count={0} />
-      ) : allActiveHabits(day, habits).length === 0 && isToday(day) ? (
+      ) : activeHabits.length === 0 && isToday(day) ? (
         // TODO clean up with theme, or something?
         <Button
           bg="#D2ECFC"
@@ -42,7 +43,7 @@ export const Habits: React.FC<Props> = ({ day }) => {
       ) : (
         <StyledHabits
           today={isToday(day)}
-          count={habits && allActiveHabits(day, habits).length}
+          count={activeHabits.length}
           onClick={onOpen}
         >
           {calculateHabitProgress(day, allProgress, habits).map(
@@ -50,7 +51,7 @@ export const Habits: React.FC<Props> = ({ day }) => {
               <StyledCircle
                 key={index}
                 completed={result[1]}
-                count={habits && allActiveHabits(day, habits).length}
+                count={activeHabits.length}
                 past={dayjs(day).isBefore(dayjs())}
               />
             ),
