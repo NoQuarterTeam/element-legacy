@@ -2082,10 +2082,10 @@
   resolved "https://registry.yarnpkg.com/@noquarter/hooks/-/hooks-1.1.13.tgz#bc7d2d92ac8b46bbd22aa468e1a111a25cc6c27f"
   integrity sha512-F3L8GjXftezzcLpn3dQ+79ZlbYez9SFvnWGhlo/vHPye7iv3fk3SUeMSPTcyDb0S5IU2hOJvrJyWSnD/YnbZsg==
 
-"@noquarter/ui@^1.1.5":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@noquarter/ui/-/ui-1.2.0.tgz#4a52bc5cba61bb2c346f82d3d1c9ef809005d897"
-  integrity sha512-G31pysrZ/+J+a0SCLgT0sg/BUblxWXmBhaMFETuGRC0iCrKpq6ncmWUHpxE7QP3KSc4V3Jt8IpLsj03CwMb2FA==
+"@noquarter/ui@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@noquarter/ui/-/ui-3.0.1.tgz#e82c9d07c055082ed51a0677f5fe9f6bf21bbd90"
+  integrity sha512-aYM7/xEnKnf/BeNDvYnhl2t5Xi52PIvW3WV3STSgqsIn8oaL5YTFWgXqk95WFkJP/kbbVrbRVH9JWD9DpPhj1w==
   dependencies:
     polished "^3.3.2"
     styled-components "^5.0.0-beta.2"
