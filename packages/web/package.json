@@ -71,6 +71,6 @@
     "eslint-config-react-app": "5.1.0",
     "eslint-plugin-react": "7.17.0",
     "eslint-plugin-react-hooks": "2.3.0",
-    "parcel-bundler": "1.12.3"
+    "parcel-bundler": "1.12.4"
   }
 }
