@@ -33,6 +33,7 @@ const Timeline: React.FC<RouteComponentProps> = () => {
 
   const { data, fetchMore, loading } = useAllTasksQuery({
     variables: { selectedUserId, daysBack: DAY_COUNT, daysForward: DAY_COUNT },
+    fetchPolicy: "cache-and-network",
   })
   const allTasks = data && data.allTasks ? data.allTasks : []
 

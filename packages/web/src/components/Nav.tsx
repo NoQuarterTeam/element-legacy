@@ -110,6 +110,8 @@ const Nav: FC<NavProps> = ({
           src={user.avatarUrl || undefined}
           onClick={() => handleSelectUser(user.id)}
           mt={4}
+          cursor="pointer"
+          opacity={user.id !== selectedUserId ? 0.6 : 1}
         />
         {sharedUsers?.map((sharedUser, index) => (
           <Avatar
@@ -119,6 +121,8 @@ const Nav: FC<NavProps> = ({
             src={sharedUser.avatarUrl || undefined}
             onClick={() => handleSelectUser(sharedUser.id)}
             mt={4}
+            cursor="pointer"
+            opacity={sharedUser.id !== selectedUserId ? 0.6 : 1}
           />
         ))}
         {/* <StyledUser

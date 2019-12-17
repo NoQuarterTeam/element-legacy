@@ -86,6 +86,9 @@ function Day({ day, tasks, ...props }: DayProps) {
 export default memo(Day, dayIsEqual)
 
 function dayIsEqual(prevDay: DayProps, nextDay: DayProps) {
+  if (prevDay.selectedUserId !== nextDay.selectedUserId) {
+    return false
+  }
   return deepEqual(prevDay.tasks, nextDay.tasks)
 }
 

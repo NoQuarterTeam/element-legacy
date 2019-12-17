@@ -42,7 +42,11 @@ export function useAllTasks(
   daysForward: number,
 ) {
   const { data, fetchMore } = useAllTasksQuery({
-    variables: { selectedUserId, daysBack, daysForward },
+    variables: {
+      selectedUserId,
+      daysBack,
+      daysForward,
+    },
   })
   const allTasks = data?.allTasks || []
   return { allTasks, fetchMore }
