@@ -111,6 +111,7 @@ const Nav: FC<NavProps> = ({
           onClick={() => handleSelectUser(user.id)}
           mt={4}
           cursor="pointer"
+          display={open ? "block" : "none"}
           opacity={user.id !== selectedUserId ? 0.6 : 1}
         />
         {sharedUsers?.map((sharedUser, index) => (
@@ -122,6 +123,7 @@ const Nav: FC<NavProps> = ({
             onClick={() => handleSelectUser(sharedUser.id)}
             mt={4}
             cursor="pointer"
+            display={open ? "block" : "none"}
             opacity={sharedUser.id !== selectedUserId ? 0.6 : 1}
           />
         ))}
@@ -149,7 +151,7 @@ const Nav: FC<NavProps> = ({
         ))} */}
       </StyledContainer>
       <StyledContainer>
-        <StyledLogoutButton onClick={logout}>
+        <StyledLogoutButton onClick={logout} open={open}>
           <LogOut width={20} color="lightgrey" />
           LOGOUT
         </StyledLogoutButton>
@@ -178,7 +180,7 @@ const Nav: FC<NavProps> = ({
           filteredElements={filteredElements && filteredElements}
           toggleAll={toggleAll}
         />
-        <StyledToday open={open} onClick={scrollToToday}>
+        <StyledToday onClick={scrollToToday} open={open}>
           <Today width={30} color="lightgrey" />
         </StyledToday>
       </StyledContainer>
@@ -255,7 +257,8 @@ const StyledFeedbackButton = styled.a<{ open: boolean }>`
   align-items: center;
 `
 
-const StyledLogoutButton = styled.div`
+const StyledLogoutButton = styled.div<{ open: boolean }>`
+  visibility: ${p => (p.open ? "visible" : "hidden")};
   text-align: center;
   cursor: pointer;
   font-size: ${p => p.theme.textXXS};
@@ -290,7 +293,7 @@ const StyledContainer = styled.div`
 
 const StyledToday = styled.button<{ open: boolean }>`
   transform-origin: left;
-  transform: ${p => !p.open && "translate(20px, 0) scale(-1, 1) "};
+  transform: ${p => !p.open && "translate(10px, 0) scale(-1, 1) "};
   transition: transform 0.4s;
   margin-bottom: ${p => p.theme.paddingL};
 `
