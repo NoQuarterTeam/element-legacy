@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "parcel src/index.html --port 3000",
-    "build": "rm -rf dist && NODE_ENV=production parcel build src/index.html",
+    "build": "NODE_ENV=production parcel build src/index.html",
     "test": "jest --passWithNoTests",
     "typecheck": "tsc --noEmit",
     "generate": "graphql-codegen",
