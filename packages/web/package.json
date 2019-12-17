@@ -33,7 +33,7 @@
     "@noquarter/ui": "^1.1.5",
     "@noquarter/utils": "^1.0.5",
     "@reach/router": "^1.2.1",
-    "deep-equal": "^2.0.0",
+    "deep-equal": "1.1.1",
     "emotion-theming": "^10.0.19",
     "graphql": "^14.3.1",
     "lodash.throttle": "^4.1.1",
