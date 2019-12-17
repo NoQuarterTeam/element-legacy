@@ -16,9 +16,8 @@ import { useDisclosure } from "@chakra-ui/core"
 interface TaskProps {
   task: TaskFragment
   isDragging: boolean
-  hidden: boolean
 }
-function Task({ task, hidden, ...rest }: TaskProps) {
+function Task({ task, ...rest }: TaskProps) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { selectedUserId } = useTimelineContext()
   const [createTask] = useCreateTask()
@@ -76,7 +75,6 @@ function Task({ task, hidden, ...rest }: TaskProps) {
         color={task.element.color}
         id={task.id}
         className="task"
-        hidden={hidden}
         onClick={event => onTaskClick(event, task)}
       >
         <StyledTaskName completed={task.completed}>{task.name}</StyledTaskName>
@@ -153,9 +151,8 @@ const StyledTaskName = styled.p<{ completed: boolean }>`
 const StyledTaskBox = styled.div<{
   completed: boolean
   color: string
-  hidden: boolean
 }>`
-  display: ${p => (p.hidden ? "none" : "flex")};
+  display: flex;
   position: relative;
   cursor: pointer;
   flex-direction: column;

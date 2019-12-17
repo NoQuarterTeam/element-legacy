@@ -1,12 +1,11 @@
 import React from "react"
 import { RouteComponentProps } from "@reach/router"
 import dayjs from "dayjs"
-import { ChevronLeft } from "styled-icons/fa-solid/ChevronLeft"
 import throttle from "lodash.throttle"
 
 import Day from "../components/Day"
 import TimelineHead from "../components/TimelineHead"
-import { getDays, isMobileDevice, sleep } from "../lib/helpers"
+import { getDays, isMobileDevice } from "../lib/helpers"
 import { DragDropContainer } from "../components/DragDropContainer"
 
 import { useAllTasksQuery } from "../lib/graphql/types"
@@ -19,7 +18,6 @@ import useEventListener from "../lib/hooks/useEventListener"
 
 const Timeline: React.FC<RouteComponentProps> = () => {
   const user = useMe()
-  const [navOpen, setNavOpen] = React.useState(true)
   const [initialLoad, setInitialLoad] = React.useState(true)
 
   let DAY_COUNT = 20
@@ -143,9 +141,14 @@ const Timeline: React.FC<RouteComponentProps> = () => {
     startDate,
     daysCount,
   ])
+
+  const filteredTasks = allTasks.filter(
+    task => !filteredElements?.includes(task.element.id),
+  )
+
   return (
     <>
-      {allTasks && (
+      {filteredTasks && (
         <StyledTimelineWrapper ref={timelineRef}>
           <TimelineHead
             days={days}
@@ -155,13 +158,12 @@ const Timeline: React.FC<RouteComponentProps> = () => {
           <StyledTimeline ref={fullWidthTimelineRef}>
             <StyledSpacer currentUser={user.id === selectedUserId} />
             <StyledDaysWrapper>
-              <DragDropContainer allTasks={allTasks}>
+              <DragDropContainer tasks={filteredTasks}>
                 {days.map(day => (
                   <Day
                     key={day.unix()}
                     day={day}
-                    filteredElements={filteredElements}
-                    tasks={allTasks.filter(t =>
+                    tasks={filteredTasks.filter(t =>
                       dayjs(t.scheduledDate).isSame(dayjs(day), "day"),
                     )}
                   />

@@ -19,9 +19,8 @@ import TaskModal from "./TaskModal"
 interface DayProps {
   day: Dayjs
   tasks: TaskFragment[]
-  filteredElements: string[]
 }
-function Day({ day, tasks, filteredElements, ...props }: DayProps) {
+function Day({ day, tasks, ...props }: DayProps) {
   const { isOpen, onClose, onOpen } = useDisclosure()
   const { selectedUserId } = useTimelineContext()
   const user = useMe()
@@ -54,22 +53,13 @@ function Day({ day, tasks, filteredElements, ...props }: DayProps) {
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                         >
-                          <Task
-                            isDragging={snapshot.isDragging}
-                            task={task}
-                            hidden={filteredElements?.includes(task.element.id)}
-                          />
+                          <Task isDragging={snapshot.isDragging} task={task} />
                         </div>
                       )}
                     </Draggable>
                   ))}
                 <StyledTotalTime dragging={snapshot.isDraggingOver}>
-                  {filteredElements &&
-                    calculateTotalTime(
-                      tasks.filter(
-                        task => !filteredElements.includes(task.element.id),
-                      ),
-                    )}
+                  {calculateTotalTime(tasks)}
                 </StyledTotalTime>
 
                 {provided.placeholder}
