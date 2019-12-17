@@ -167,6 +167,7 @@ const Timeline: React.FC<RouteComponentProps> = () => {
                     tasks={filteredTasks.filter(t =>
                       dayjs(t.scheduledDate).isSame(dayjs(day), "day"),
                     )}
+                    selectedUserId={selectedUserId}
                   />
                 ))}
               </DragDropContainer>

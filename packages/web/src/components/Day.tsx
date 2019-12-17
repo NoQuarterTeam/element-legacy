@@ -10,7 +10,7 @@ import { calculateTotalTime, isToday } from "../lib/helpers"
 import { TaskFragment } from "../lib/graphql/types"
 import { darken } from "polished"
 import dayjs from "dayjs"
-import { useTimelineContext } from "./providers/TimelineProvider"
+// import { useTimelineContext } from "./providers/TimelineProvider"
 import { media } from "../application/theme"
 import { useMe } from "./providers/MeProvider"
 import deepEqual from "deep-equal"
@@ -19,10 +19,11 @@ import TaskModal from "./TaskModal"
 interface DayProps {
   day: Dayjs
   tasks: TaskFragment[]
+  selectedUserId: string
 }
-function Day({ day, tasks, ...props }: DayProps) {
+function Day({ day, tasks, selectedUserId, ...props }: DayProps) {
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const { selectedUserId } = useTimelineContext()
+  // const { selectedUserId } = useTimelineContext()
   const user = useMe()
   const weekend = dayjs(day).day() === 0 || dayjs(day).day() === 6
   return (
