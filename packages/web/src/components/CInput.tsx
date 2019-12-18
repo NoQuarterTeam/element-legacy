@@ -13,7 +13,14 @@ interface Props extends InputProps {
   label: string
 }
 
-export const CInput = ({ label, ...props }: Props) => {
+export const CInput = ({
+  border = "2px",
+  borderColor = "black",
+  borderRadius = "0",
+  bg = "white",
+  label,
+  ...props
+}: Props) => {
   const { register, errors } = useFormContext()
   const fieldError = errors?.[props.name]
   const error = fieldError?.message || fieldError?.types
@@ -21,7 +28,18 @@ export const CInput = ({ label, ...props }: Props) => {
   return (
     <FormControl isInvalid={!!error} mb={4}>
       <FormLabel htmlFor={props.name}>{label}</FormLabel>
-      <Input ref={register} mb={0} variant="filled" {...props} />
+      <Input
+        border={border}
+        borderColor={borderColor}
+        borderRadius={borderRadius}
+        bg={bg}
+        _hover={{ backgroundColor: bg }}
+        _focus={{ borderColor: borderColor }}
+        ref={register}
+        mb={0}
+        variant="filled"
+        {...props}
+      />
       {error &&
         (typeof error === "string" ? (
           <FormErrorMessage>{error}</FormErrorMessage>

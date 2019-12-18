@@ -7,6 +7,7 @@ import {
   AllTasksQuery,
   AllTasksQueryVariables,
   AllTasksDocument,
+  TaskFragment,
 } from "../types"
 
 export function useCreateTask() {
@@ -41,7 +42,11 @@ export function useAllTasks(
   daysForward: number,
 ) {
   const { data, fetchMore } = useAllTasksQuery({
-    variables: { selectedUserId, daysBack, daysForward },
+    variables: {
+      selectedUserId,
+      daysBack,
+      daysForward,
+    },
   })
   const allTasks = data?.allTasks || []
   return { allTasks, fetchMore }
@@ -128,7 +133,9 @@ export function useDeleteTask(taskId: string, selectedUserId: string) {
         variables: { selectedUserId },
       })
       if (data && tasksData?.allTasks) {
-        const tasks = tasksData.allTasks.filter(task => task.id !== taskId)
+        const tasks = tasksData.allTasks.filter(
+          (task: TaskFragment) => task.id !== taskId,
+        )
         cache.writeQuery({
           query: AllTasksDocument,
           variables: { selectedUserId },

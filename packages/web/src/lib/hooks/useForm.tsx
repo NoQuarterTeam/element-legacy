@@ -5,7 +5,8 @@ import { UseFormOptions } from "react-hook-form/dist/types"
 import { useToast } from "./useToast"
 import { MutationHandler, mutationHandler } from "../mutationHandler"
 import { FormattedError } from "../helpers"
-export function useForm<T extends {}>(props: UseFormOptions<T>) {
+
+export function useForm<T extends {}>(props?: UseFormOptions<T>) {
   const toast = useToast()
   const [appError, setAppError] = React.useState<string | null | undefined>()
   const form = useHookForm<T>({

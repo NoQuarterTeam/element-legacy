@@ -8,6 +8,7 @@ import { Habit } from "../habit/habit.entity"
 import { Task } from "../task/task.entity"
 import { SharedElement } from "../sharedElement/sharedElement.entity"
 import { StringField } from "../shared/fields"
+import { s3Url } from "../../lib/config"
 
 @ObjectType()
 @Entity()
@@ -23,6 +24,11 @@ export class User extends BaseEntity<User> {
 
   @StringField()
   lastName: string
+
+  @StringField({ graphql: false, nullable: true })
+  avatarKey: string | null
+
+  // RELATIONS
 
   @Field(() => [Element])
   @OneToMany(
@@ -52,8 +58,19 @@ export class User extends BaseEntity<User> {
   )
   tasks: Task[]
 
+  // HOOKS
+
   @BeforeInsert()
   async hashPassword() {
     this.password = await bcrypt.hash(this.password, 10)
+  }
+
+  // HELPERS
+
+  @Field(() => String, { nullable: true })
+  avatarUrl() {
+    if (this.avatarKey) {
+      return s3Url + this.avatarKey
+    }
   }
 }

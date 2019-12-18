@@ -1,18 +1,16 @@
-import React, { FC } from "react"
-import { Flex, Button, Text, Box } from "@chakra-ui/core"
+import React from "react"
+import { Flex, Text } from "@chakra-ui/core"
 import { Form } from "./Form"
 import { CInput } from "./CInput"
 import { useForm } from "../lib/hooks/useForm"
 import * as Yup from "yup"
 import {
   UpdateInput,
-  MeQuery,
-  MeDocument,
   useUpdateUserMutation,
   UserFragment,
 } from "../lib/graphql/types"
-import { useApolloClient } from "@apollo/client"
 import { useToast } from "../lib/hooks/useToast"
+import { CButton } from "./CButton"
 
 const AccountSchema = Yup.object().shape({
   firstName: Yup.string().required("Required"),
@@ -35,18 +33,13 @@ export const AccountForm = ({ user }: Props) => {
   const form = useForm({ validationSchema: AccountSchema, defaultValues })
   const toast = useToast()
   const [updateUser] = useUpdateUserMutation()
-  const client = useApolloClient()
 
   const onSubmit = async (values: UpdateInput) => {
     const res = await updateUser({
       variables: { data: values },
     })
     form.handler(res, {
-      onSuccess: data => {
-        client.writeQuery<MeQuery>({
-          query: MeDocument,
-          data: { me: data?.updateUser },
-        })
+      onSuccess: () => {
         toast({
           title: "Success",
           description: "Account updated",
@@ -62,13 +55,7 @@ export const AccountForm = ({ user }: Props) => {
       <CInput name="lastName" label="Last Name" placeholder="Sebe" />
       <CInput name="email" label="Email" placeholder="j.sebe@gmail.com" />
       <Flex justify="space-between" align="center" mt={4}>
-        <Button
-          variantColor="pink"
-          type="submit"
-          isLoading={form.formState.isSubmitting}
-        >
-          Update
-        </Button>
+        <CButton isLoading={form.formState.isSubmitting}>Update</CButton>
         {form.appError && <Text color="red.500">{form.appError}</Text>}
       </Flex>
     </Form>

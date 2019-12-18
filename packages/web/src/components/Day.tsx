@@ -10,7 +10,7 @@ import { calculateTotalTime, isToday } from "../lib/helpers"
 import { TaskFragment } from "../lib/graphql/types"
 import { darken } from "polished"
 import dayjs from "dayjs"
-import { useTimelineContext } from "./providers/TimelineProvider"
+// import { useTimelineContext } from "./providers/TimelineProvider"
 import { media } from "../application/theme"
 import { useMe } from "./providers/MeProvider"
 import deepEqual from "deep-equal"
@@ -19,11 +19,11 @@ import TaskModal from "./TaskModal"
 interface DayProps {
   day: Dayjs
   tasks: TaskFragment[]
-  filteredElements: string[]
+  selectedUserId: string
 }
-function Day({ day, tasks, filteredElements, ...props }: DayProps) {
+function Day({ day, tasks, selectedUserId, ...props }: DayProps) {
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const { selectedUserId } = useTimelineContext()
+  // const { selectedUserId } = useTimelineContext()
   const user = useMe()
   const weekend = dayjs(day).day() === 0 || dayjs(day).day() === 6
   return (
@@ -54,22 +54,13 @@ function Day({ day, tasks, filteredElements, ...props }: DayProps) {
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                         >
-                          <Task
-                            isDragging={snapshot.isDragging}
-                            task={task}
-                            hidden={filteredElements?.includes(task.element.id)}
-                          />
+                          <Task isDragging={snapshot.isDragging} task={task} />
                         </div>
                       )}
                     </Draggable>
                   ))}
                 <StyledTotalTime dragging={snapshot.isDraggingOver}>
-                  {filteredElements &&
-                    calculateTotalTime(
-                      tasks.filter(
-                        task => !filteredElements.includes(task.element.id),
-                      ),
-                    )}
+                  {calculateTotalTime(tasks)}
                 </StyledTotalTime>
 
                 {provided.placeholder}
@@ -82,11 +73,13 @@ function Day({ day, tasks, filteredElements, ...props }: DayProps) {
         </Droppable>
       </StyledBorder>
 
-      <TaskModal
-        isOpen={isOpen}
-        onClose={onClose}
-        scheduledDate={day.format()}
-      />
+      {isOpen && (
+        <TaskModal
+          isOpen={isOpen}
+          onClose={onClose}
+          scheduledDate={day.format()}
+        />
+      )}
     </>
   )
 }
@@ -94,6 +87,9 @@ function Day({ day, tasks, filteredElements, ...props }: DayProps) {
 export default memo(Day, dayIsEqual)
 
 function dayIsEqual(prevDay: DayProps, nextDay: DayProps) {
+  if (prevDay.selectedUserId !== nextDay.selectedUserId) {
+    return false
+  }
   return deepEqual(prevDay.tasks, nextDay.tasks)
 }
 

@@ -3,6 +3,7 @@ export const {
   NODE_ENV = "development",
   APP_SECRET = "APP_SECRET",
   PORT = 5000,
+  AWS_S3_BUCKET = "S3_BUCKET",
   DATABASE_URL = "",
   REDIS_URL = "",
 } = process.env
@@ -39,3 +40,11 @@ export const path = "/graphql"
 export const resolverPaths = isProduction
   ? "/modules/**/*.resolver.js"
   : "/modules/**/*.resolver.ts"
+
+// AWS
+// S3
+export const s3Config = {
+  signatureVersion: "v4",
+  region: "eu-central-1",
+}
+export const s3Url = `https://${AWS_S3_BUCKET}.s3.amazonaws.com/`

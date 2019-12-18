@@ -1,23 +1,26 @@
 import React from "react"
 import styled from "styled-components"
-import dayjs from "dayjs"
+import dayjs, { Dayjs } from "dayjs"
 import advancedFormat from "dayjs/plugin/advancedFormat"
-import { getMonths, getDays, isToday, monthNames } from "../lib/helpers"
+import { isToday, monthNames, getMonths } from "../lib/helpers"
 import { useTimelineContext } from "./providers/TimelineProvider"
 import { useMe } from "./providers/MeProvider"
-import { Habits } from "./Habits"
+import Habits from "./Habits"
 import { useAllHabits } from "../lib/graphql/habit/hooks"
 import { useAllProgress } from "../lib/graphql/progress/hooks"
+import { media } from "../application/theme"
 
 dayjs.extend(advancedFormat)
 
 interface TimelineHeadProps {
-  daysBack: number
-  daysForward: number
+  days: Dayjs[]
+  startDate: Dayjs
+  daysCount: number
 }
 const TimelineHead: React.FC<TimelineHeadProps> = ({
-  daysBack,
-  daysForward,
+  days,
+  startDate,
+  daysCount,
 }) => {
   const user = useMe()
   const { selectedUserId } = useTimelineContext()
@@ -25,37 +28,35 @@ const TimelineHead: React.FC<TimelineHeadProps> = ({
   const { habits } = useAllHabits()
   const { allProgress } = useAllProgress()
 
-  const months = React.useMemo(
-    () => getMonths(dayjs().subtract(daysBack, "day"), daysBack + daysForward),
-    [daysBack, daysForward],
-  )
-  const days = React.useMemo(
-    () => getDays(dayjs().subtract(daysBack, "day"), daysBack + daysForward),
-    [daysBack, daysForward],
-  )
+  const months = React.useMemo(() => getMonths(startDate, daysCount), [
+    startDate,
+    daysCount,
+  ])
 
   return (
     <StyledMonthsHeadContainer>
       {months.map((month, i) => (
         <StyledTimelineHead key={i}>
-          <StyledMonthHeader>{monthNames[month]}</StyledMonthHeader>
+          <StyledMonthHeader>{monthNames[month.month]}</StyledMonthHeader>
           <StyledDaysHeader>
             {days
-              .filter(day => month === day.month())
-              .map(day => (
+              .filter(
+                day => month.month === day.month() && month.year === day.year(),
+              )
+              .map((day, i) => (
                 <StyledContainer
-                  key={day.unix()}
+                  key={i}
                   today={isToday(day)}
-                  weekend={dayjs(day).day() === 0 || dayjs(day).day() === 6}
-                  monday={dayjs(day).day() === 1}
-                  first={dayjs(day).date() === 1}
+                  weekend={day.day() === 0 || day.day() === 6}
+                  monday={day.day() === 1}
+                  first={day.date() === 1}
                 >
                   <StyledDayHeader
-                    key={day.unix()}
+                    key={i}
                     today={isToday(day)}
-                    weekend={dayjs(day).day() === 0 || dayjs(day).day() === 6}
+                    weekend={day.day() === 0 || day.day() === 6}
                   >
-                    {dayjs(day).format("ddd Do")}
+                    {day.format("ddd Do")}
                   </StyledDayHeader>
 
                   {user.id === selectedUserId && (
@@ -74,7 +75,7 @@ const TimelineHead: React.FC<TimelineHeadProps> = ({
   )
 }
 
-export default TimelineHead
+export default React.memo(TimelineHead)
 
 const StyledTimelineHead = styled.div`
   display: flex;
@@ -133,8 +134,12 @@ const StyledContainer = styled.div<{
   display: flex;
   flex-direction: column;
   padding-top: 0px;
-  margin-top: -93px;
+  margin-top: -90px;
   background-color: ${p => p.theme.colorBackground};
   border-left: ${p => p.monday && "5px #efefef dotted"};
   border-left: ${p => p.first && `5px ${p.theme.colorLightBlue} dotted`};
+
+  ${media.greaterThan("md")`
+    margin-top: -93px;
+  `};
 `

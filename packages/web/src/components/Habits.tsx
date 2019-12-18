@@ -17,12 +17,13 @@ interface Props {
   allProgress?: any[] | null
 }
 
-export const Habits: React.FC<Props> = ({ day, allProgress, habits }) => {
+const Habits: React.FC<Props> = ({ day, allProgress, habits }) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
   const activeHabits = React.useMemo(() => allActiveHabits(day, habits), [
     day,
     habits,
   ])
+
   return (
     <>
       {!habits || !allProgress ? (
@@ -58,16 +59,20 @@ export const Habits: React.FC<Props> = ({ day, allProgress, habits }) => {
           )}
         </StyledHabits>
       )}
-      <HabitModal
-        day={day}
-        isOpen={isOpen}
-        onClose={onClose}
-        habits={habits}
-        allProgress={allProgress}
-      />
+      {isOpen && (
+        <HabitModal
+          day={day}
+          isOpen={isOpen}
+          onClose={onClose}
+          habits={habits}
+          allProgress={allProgress}
+        />
+      )}
     </>
   )
 }
+
+export default React.memo(Habits)
 
 const StyledHabits = styled.div<{ today: boolean; count: any }>`
   display: flex;

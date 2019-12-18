@@ -99,7 +99,7 @@ const Home: FC<RouteComponentProps> = () => {
         </Flex>
 
         {/* Upper middle content */}
-        <Box w="100%" h="fit-content" p={5}>
+        <Box h="fit-content">
           {/* Left-line */}
           <Flex
             direction="column"
@@ -189,7 +189,7 @@ const Home: FC<RouteComponentProps> = () => {
         </Flex>
 
         {/* Bottom middle content */}
-        <Box w="100vw" h="fit-content" p={5}>
+        <Box h="fit-content">
           {/* Right vertical line */}
           <Flex
             w="75px"

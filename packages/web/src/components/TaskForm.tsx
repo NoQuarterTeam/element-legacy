@@ -25,12 +25,14 @@ interface TaskFormProps {
   onDeleteTask: () => void
   onDuplicateTask: () => void
   task?: TaskFragment
+  day?: string
 }
 function TaskForm({
   onFormSubmit,
   task,
   onDeleteTask,
   onDuplicateTask,
+  day,
 }: TaskFormProps) {
   const user = useMe()
   const [loading, setLoading] = React.useState<boolean>(false)
@@ -48,7 +50,7 @@ function TaskForm({
     completed: task?.completed || false,
     elementId: task?.element?.id || null,
     userId: task?.userId || selectedUserId,
-    scheduledDate: task?.scheduledDate || "",
+    scheduledDate: task?.scheduledDate || day,
     estimatedTime: task?.estimatedTime || "00:00",
     startTime: task?.startTime || "",
     description: task?.description || "",
