@@ -48,7 +48,7 @@ const Home: FC<RouteComponentProps> = () => {
 
   return (
     <>
-      <Box w="100vw" h="fit-content" p={5}>
+      <Box w="100vw" h="fit-content">
         <Flex h="1200px">
           {/* Top content */}
           <Box w="100%">
