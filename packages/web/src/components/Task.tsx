@@ -11,7 +11,7 @@ import {
 } from "../lib/graphql/task/hooks"
 import { useTimelineContext } from "./providers/TimelineProvider"
 import TaskModal from "./TaskModal"
-import { useDisclosure } from "@chakra-ui/core"
+import { useDisclosure, Box, Flex } from "@chakra-ui/core"
 
 interface TaskProps {
   task: TaskFragment
@@ -89,10 +89,21 @@ function Task({ task, ...rest }: TaskProps) {
             @{task.startTime}
           </StyledTaskStart>
         )}
-        <StyledTaskDuration completed={task.completed}>
-          {formatTime(hoursInMins(task.estimatedTime)) &&
-            formatTime(hoursInMins(task.estimatedTime))}
-        </StyledTaskDuration>
+        <Flex
+          justify="space-between"
+          align="center"
+          bottom="0"
+          position="absolute"
+          width="100%"
+          pr={2}
+        >
+          <StyledBottomLeftTriangle color={task.element.color} />
+
+          <StyledTaskDuration completed={task.completed}>
+            {formatTime(hoursInMins(task.estimatedTime)) &&
+              formatTime(hoursInMins(task.estimatedTime))}
+          </StyledTaskDuration>
+        </Flex>
       </StyledTaskBox>
       <TaskModal isOpen={isOpen} onClose={onClose} task={task} />
     </>
@@ -130,12 +141,8 @@ const StyledTaskStart = styled.p<{ completed: boolean }>`
 `
 
 const StyledTaskDuration = styled.p<{ completed: boolean }>`
-  position: absolute;
-  bottom: ${p => p.theme.paddingXS};
-  right: ${p => p.theme.paddingXS};
   color: ${p => (p.completed ? "lightgrey" : p.theme.colorText)};
   font-size: ${p => p.theme.textXS};
-  margin: 0;
 `
 
 const StyledTaskName = styled.p<{ completed: boolean }>`
@@ -178,4 +185,12 @@ const StyledTaskBox = styled.div<{
   &:hover ${StyledTaskName} {
     display: none;
   }
+`
+
+const StyledBottomLeftTriangle = styled(Box)`
+  width: 0;
+  height: 0;
+  left: -1px;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid ${p => p.color};
 `
