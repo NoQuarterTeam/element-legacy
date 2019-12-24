@@ -8,7 +8,7 @@ import { Add } from "styled-icons/material/Add"
 import { GroupAdd } from "styled-icons/material/GroupAdd"
 import { useMe } from "./providers/MeProvider"
 import ShareModal from "./ShareModal"
-import { useDisclosure } from "@chakra-ui/core"
+import { useDisclosure, Tooltip } from "@chakra-ui/core"
 
 interface ElementDropdownOptionProps {
   element: ElementFragment
@@ -56,32 +56,69 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
           {element.name}
         </StyledOption>
 
+        {/* TODO: Remove aria-label prop when bug is solved */}
         <StyledShare color={element.color} onClick={onOpen}>
-          <GroupAdd color={element.color} width="20" />
+          <Tooltip
+            aria-label=""
+            hasArrow
+            label="Share"
+            placement="top"
+            zIndex="900"
+            bg="gray.400"
+          >
+            <GroupAdd color={element.color} width="20" />
+          </Tooltip>
         </StyledShare>
 
         {element.children && user.id === element.creatorId && (
           <StyledDelete>
-            <DeleteOutline
-              color={element.color}
-              onClick={() => archiveElement(element)}
-              width="24px"
-              cursor="pointer"
-            />
+            <Tooltip
+              aria-label=""
+              hasArrow
+              label="Delete"
+              placement="top"
+              zIndex="900"
+              bg="gray.400"
+            >
+              <DeleteOutline
+                color={element.color}
+                onClick={() => archiveElement(element)}
+                width="24px"
+                cursor="pointer"
+              />
+            </Tooltip>
           </StyledDelete>
         )}
         {!child && (
           <StyledAdd color={element.color} onClick={() => addChild(element)}>
-            <Add color={element.color} width="24px" cursor="pointer" />
+            <Tooltip
+              aria-label=""
+              hasArrow
+              label="Add child element"
+              placement="top"
+              zIndex="900"
+              bg="gray.400"
+            >
+              <Add color={element.color} width="24px" cursor="pointer" />
+            </Tooltip>
           </StyledAdd>
         )}
         {user.id === element.creatorId && (
-          <StyledColorCircle
-            id={element.id}
-            onClick={() => togglePicker(element)}
-            color={element.color}
-            // ref={buttonRef}
-          />
+          <Tooltip
+            aria-label=""
+            hasArrow
+            label="Choose colour"
+            placement="top"
+            zIndex="900"
+            bg="gray.400"
+          >
+            <StyledColorCircle
+              id={element.id}
+              onClick={() => togglePicker(element)}
+              color={element.color}
+              // ref={buttonRef}
+            />
+          </Tooltip>
         )}
         {element.children &&
           element.children.filter(e => !e.archived).length > 0 && (

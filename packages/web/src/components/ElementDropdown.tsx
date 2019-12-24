@@ -13,6 +13,7 @@ import Input from "./Input"
 import { Close } from "styled-icons/material/Close"
 
 import { readableColor, darken, lighten } from "polished"
+import { Flex } from "@chakra-ui/core"
 
 interface ElementDropdownProps {
   selectedElementId?: string | null
@@ -302,12 +303,12 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
           ))}
         <StyledNewElement>
           <Input
-            placeholder="New Element..."
+            placeholder="Add new element"
             onChange={e => setNewElement(e.target.value)}
             value={newElement}
             style={{ fontSize: "16px", padding: 0 }}
             autoFocus
-          />
+          ></Input>
           <StyledAdd newElement={newElement} onClick={createNewElement}>
             +
           </StyledAdd>
@@ -386,7 +387,7 @@ const StyledDropdownMenu = styled.div<{ open?: boolean; filter: string }>`
   `};
 `
 
-const StyledNewElement = styled.div<{ child?: boolean }>`
+const StyledNewElement = styled(Flex)<{ child?: boolean }>`
   color: white;
   padding-left: ${p => (p.child ? p.theme.paddingM : p.theme.paddingML)};
   margin-left: ${p => (p.child ? p.theme.paddingL : 0)};
@@ -398,10 +399,9 @@ const StyledNewElement = styled.div<{ child?: boolean }>`
 const StyledAdd = styled.div<{ newElement: string }>`
   cursor: pointer;
   font-size: ${p => p.theme.textL};
-  color: ${p => p.theme.colorPurple};
+  color: ${p => (p.newElement ? p.theme.colorPurple : p.theme.colorLightGrey)};
   font-weight: ${p => p.theme.fontBlack};
   margin-right: ${p => p.theme.paddingM};
-  visibility: ${props => (props.newElement ? "visible" : "hidden")};
 
   &:hover {
     transform: scale(1.1);
