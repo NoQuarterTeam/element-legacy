@@ -48,18 +48,20 @@ const Home: FC<RouteComponentProps> = () => {
 
   return (
     <>
-      <Box w="100vw" h="fit-content">
+      <Box w="100%" h="fit-content">
         <Flex h="1200px">
           {/* Top content */}
           <Box w="100%">
             {/* Logo */}
-            <Heading as="h1" size="xl" fontSize="30px" fontWeight="normal">
-              element
-              <span style={{ color: "orange", fontFamily: "Open sans" }}>
-                .
-              </span>
-            </Heading>
-            <Text pl="1px">life design</Text>
+            <Box p={3}>
+              <Heading as="h1" size="xl" fontSize="30px" fontWeight="normal">
+                element
+                <span style={{ color: "orange", fontFamily: "Open sans" }}>
+                  .
+                </span>
+              </Heading>
+              <Text pl="1px">life design</Text>
+            </Box>
             {/* Banner */}
             <Flex flexDirection="column" justify="center" align="center">
               <Image src={logo} mt="60px" h="600px" mb="-220px" />
@@ -74,7 +76,7 @@ const Home: FC<RouteComponentProps> = () => {
                 variant="outline"
                 variantColor="black"
               >
-                <Text>start</Text>
+                start
               </Button>
               <Spacer margin={120} />
               <Heading as="h2" mb={5} color="black" fontWeight="normal">
@@ -281,7 +283,7 @@ const Home: FC<RouteComponentProps> = () => {
               <StyledBigCircle color="#245A7A" />
               <StyledBigCircle color="#F7B002" />
             </Flex>
-            <Button>Get started</Button>
+            <Button onClick={() => navigate("/register")}>Get started</Button>
             <Box mt={200} textAlign="center" w="80%" mb={50}>
               <Text fontSize="xl">Built by No Quarter</Text>
               <Text fontSize="xl" mt={5}>
