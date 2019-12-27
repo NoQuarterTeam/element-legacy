@@ -11,9 +11,9 @@ import useOnClickOutside from "../lib/hooks/useOnOutsideClick"
 import ElementDropdownOption from "./ElementDropdownOption"
 import Input from "./Input"
 import { Close } from "styled-icons/material/Close"
-
+import matchSorter from "match-sorter"
 import { readableColor, darken, lighten } from "polished"
-import { Flex } from "@chakra-ui/core"
+import { Flex, Icon } from "@chakra-ui/core"
 
 interface ElementDropdownProps {
   selectedElementId?: string | null
@@ -44,6 +44,8 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
   const [showChildren, setShowChildren] = useState("")
   const [updatedColor, setUpdatedColor] = useState("")
 
+  const [search, setSearch] = React.useState<string>("")
+
   const [pickerElement, setPickerElement] = useState<ElementFragment>()
   const [selectedElement, selectSelectedElement] = useState<ElementFragment>()
   const [addingChild, setAddingChild] = useState()
@@ -61,6 +63,13 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
   useEffect(() => {
     openDropdown(open)
   }, [open])
+
+  const matchedElements =
+    (elements &&
+      matchSorter(elements, search, {
+        keys: ["name"],
+      })) ||
+    []
 
   const createNewElement = async () => {
     if (newElement !== "") {
@@ -210,109 +219,127 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
           <Close size={30} color="lightgrey" />
         </StyledClose>
 
-        {elements
-          ?.filter(e => e.archived === false)
-          .sort((a, b) => {
+        {/* Search input */}
+        <StyledInputContainer>
+          <Input
+            placeholder="Search element"
+            onChange={e => setSearch(e.target.value)}
+            value={search}
+            style={{ fontSize: "16px", padding: 0 }}
+            autoFocus
+          />
+          <Icon name="search" color="gray.200" />
+        </StyledInputContainer>
+
+        {/* Elements */}
+        {matchedElements
+          ?.filter((e: { archived: boolean }) => e.archived === false)
+          .sort((a: { name: string }, b: { name: any }) => {
             return a.name.localeCompare(b.name)
           })
-          .map((element, index) => (
-            <div key={element.id}>
-              {!element.parentId && (
-                <>
-                  <ElementDropdownOption
-                    key={index}
-                    element={element}
-                    selected={selectedElement && selectedElement}
-                    handleSelectElement={() => selectElement(element)}
-                    togglePicker={() => selectedPicker(element)}
-                    archiveElement={handleArchiveElement}
-                    hiddenElement={
-                      filteredElements && filteredElements.includes(element.id)
-                    }
-                    addChild={addChild}
-                    handleShowChildren={() => handleShowChildren(element.id)}
-                    open={
-                      showChildren && showChildren === element.id ? true : false
-                    }
-                  />
-                  {addingChild === element.id && (
-                    <StyledNewElement child={true}>
-                      <Input
-                        placeholder="New child element..."
-                        onChange={e => setNewChildElement(e.target.value)}
-                        value={newChildElement}
-                        style={{ fontSize: "16px", padding: 0 }}
-                        autoFocus
-                      />
-                      <StyledAdd
-                        newElement={newChildElement}
-                        onClick={() => createNewChildElement(element)}
-                      >
-                        +
-                      </StyledAdd>
-                    </StyledNewElement>
-                  )}
-                </>
-              )}
-              {showChildren === element.id &&
-                elements
-                  .filter(
-                    e => e.parentId === element.id && e.archived === false,
-                  )
-                  .map(el => (
-                    <div key={el.id}>
-                      <ElementDropdownOption
-                        key={el.id}
-                        element={el}
-                        selected={selectedElement && selectedElement}
-                        handleSelectElement={() => selectElement(el)}
-                        togglePicker={() => selectedPicker(el)}
-                        archiveElement={handleArchiveElement}
-                        child={true}
-                        hiddenElement={
-                          filteredElements && filteredElements.includes(el.id)
-                        }
-                        addChild={addChild}
-                        handleShowChildren={() => handleShowChildren(el.id)}
-                        open={
-                          showChildren && showChildren === element.id
-                            ? true
-                            : false
-                        }
-                      />
-                      {addingChild === el.id && (
-                        <StyledNewElement child={true}>
-                          <Input
-                            placeholder="New child element..."
-                            onChange={e => setNewChildElement(e.target.value)}
-                            value={newChildElement}
-                            style={{ fontSize: "16px", padding: 0 }}
-                            autoFocus
-                          />
-                          <StyledAdd
-                            newElement={newChildElement}
-                            onClick={() => createNewChildElement(el)}
-                          >
-                            +
-                          </StyledAdd>
-                        </StyledNewElement>
-                      )}
-                    </div>
-                  ))}
-            </div>
-          ))}
-        <StyledNewElement>
+          .map(
+            (element: ElementFragment, index: string | number | undefined) => (
+              <div key={element.id}>
+                {!element.parentId && (
+                  <>
+                    <ElementDropdownOption
+                      key={index}
+                      element={element}
+                      selected={selectedElement && selectedElement}
+                      handleSelectElement={() => selectElement(element)}
+                      togglePicker={() => selectedPicker(element)}
+                      archiveElement={handleArchiveElement}
+                      hiddenElement={
+                        filteredElements &&
+                        filteredElements.includes(element.id)
+                      }
+                      addChild={addChild}
+                      handleShowChildren={() => handleShowChildren(element.id)}
+                      open={
+                        showChildren && showChildren === element.id
+                          ? true
+                          : false
+                      }
+                    />
+                    {addingChild === element.id && (
+                      <StyledInputContainer child={true}>
+                        <Input
+                          placeholder="New child element..."
+                          onChange={e => setNewChildElement(e.target.value)}
+                          value={newChildElement}
+                          style={{ fontSize: "16px", padding: 0 }}
+                          autoFocus
+                        />
+                        <StyledAdd
+                          newElement={newChildElement}
+                          onClick={() => createNewChildElement(element)}
+                        >
+                          +
+                        </StyledAdd>
+                      </StyledInputContainer>
+                    )}
+                  </>
+                )}
+                {showChildren === element.id &&
+                  elements
+                    ?.filter(
+                      e => e.parentId === element.id && e.archived === false,
+                    )
+                    .map(el => (
+                      <div key={el.id}>
+                        <ElementDropdownOption
+                          key={el.id}
+                          element={el}
+                          selected={selectedElement && selectedElement}
+                          handleSelectElement={() => selectElement(el)}
+                          togglePicker={() => selectedPicker(el)}
+                          archiveElement={handleArchiveElement}
+                          child={true}
+                          hiddenElement={
+                            filteredElements && filteredElements.includes(el.id)
+                          }
+                          addChild={addChild}
+                          handleShowChildren={() => handleShowChildren(el.id)}
+                          open={
+                            showChildren && showChildren === element.id
+                              ? true
+                              : false
+                          }
+                        />
+                        {addingChild === el.id && (
+                          <StyledInputContainer child={true}>
+                            <Input
+                              placeholder="New child element..."
+                              onChange={e => setNewChildElement(e.target.value)}
+                              value={newChildElement}
+                              style={{ fontSize: "16px", padding: 0 }}
+                              autoFocus
+                            />
+                            <StyledAdd
+                              newElement={newChildElement}
+                              onClick={() => createNewChildElement(el)}
+                            >
+                              +
+                            </StyledAdd>
+                          </StyledInputContainer>
+                        )}
+                      </div>
+                    ))}
+              </div>
+            ),
+          )}
+        <StyledInputContainer>
           <Input
             placeholder="Add new element"
             onChange={e => setNewElement(e.target.value)}
             value={newElement}
             style={{ fontSize: "16px", padding: 0 }}
             autoFocus
-          ></Input>
+          />
           <StyledAdd newElement={newElement} onClick={createNewElement}>
             +
           </StyledAdd>
-        </StyledNewElement>
+        </StyledInputContainer>
         {filteredElements && filteredElements.length > 0 && (
           <StyledToggle onClick={handleToggleAll}>Show all</StyledToggle>
         )}
@@ -387,11 +414,10 @@ const StyledDropdownMenu = styled.div<{ open?: boolean; filter: string }>`
   `};
 `
 
-const StyledNewElement = styled(Flex)<{ child?: boolean }>`
+const StyledInputContainer = styled(Flex)<{ child?: boolean }>`
   color: white;
   padding-left: ${p => (p.child ? p.theme.paddingM : p.theme.paddingML)};
   margin-left: ${p => (p.child ? p.theme.paddingL : 0)};
-  border-radius: ${p => p.theme.borderRadius};
   ${p => p.theme.flexBetween};
   margin-right: ${p => p.theme.paddingM};
 `
