@@ -7,8 +7,8 @@ import styled from "../application/theme"
 import { useRegister } from "../lib/graphql/user/hooks"
 
 import Input from "../components/Input"
-import Button from "../components/Button"
 import AuthForm from "../components/AuthForm"
+import { CButton } from "../components/CButton"
 
 const Register: FC<RouteComponentProps> = () => {
   const [email, setEmail] = useState<string>("")
@@ -74,9 +74,14 @@ const Register: FC<RouteComponentProps> = () => {
         placeholder="Sebe"
       />
       <br />
-      <Button disabled={loading} loading={loading} full={true}>
+      <CButton
+        type="submit"
+        isDisabled={loading}
+        isLoading={loading}
+        width="100%"
+      >
         Sign up
-      </Button>
+      </CButton>
       {error && <StyledError>{error}</StyledError>}
       <Link to="/login">
         <StyledLink>Login</StyledLink>

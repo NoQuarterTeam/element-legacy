@@ -12,6 +12,7 @@ export const CButton: React.FC<ButtonProps> = ({
   fontWeight = "normal",
   fontSize = "lg",
   letterSpacing = "wide",
+  width = "auto",
   children,
   ...props
 }) => {
@@ -28,6 +29,7 @@ export const CButton: React.FC<ButtonProps> = ({
       fontWeight={fontWeight}
       fontSize={fontSize}
       letterSpacing={letterSpacing}
+      width={width}
       {...props}
     >
       {children}
