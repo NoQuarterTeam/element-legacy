@@ -55,7 +55,9 @@ export const AccountForm = ({ user }: Props) => {
       <CInput name="lastName" label="Last Name" placeholder="Sebe" />
       <CInput name="email" label="Email" placeholder="j.sebe@gmail.com" />
       <Flex justify="space-between" align="center" mt={4}>
-        <CButton isLoading={form.formState.isSubmitting}>Update</CButton>
+        <CButton type="submit" isLoading={form.formState.isSubmitting}>
+          Update
+        </CButton>
         {form.appError && <Text color="red.500">{form.appError}</Text>}
       </Flex>
     </Form>

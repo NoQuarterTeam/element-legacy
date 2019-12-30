@@ -11,7 +11,6 @@ import { useAllElements } from "../lib/graphql/element/hooks"
 import { useGetSharedUsersByUser } from "../lib/graphql/sharedElement/hooks"
 
 import Input from "./Input"
-import Button from "./Button"
 import ElementDropdown from "./ElementDropdown"
 import Checkbox from "./Checkbox"
 import TextArea from "./TextArea"
@@ -19,6 +18,7 @@ import { useTimelineContext } from "./providers/TimelineProvider"
 import { useMe } from "./providers/MeProvider"
 import { FormControl } from "@chakra-ui/core"
 import { Select } from "./Select"
+import { CButton } from "./CButton"
 
 interface TaskFormProps {
   onFormSubmit: (data: any) => Promise<any>
@@ -189,9 +189,9 @@ function TaskForm({
             justifyContent: "space-between",
           }}
         >
-          <Button type="submit" loading={loading} variant="primary">
+          <CButton type="submit" isLoading={loading}>
             Submit
-          </Button>
+          </CButton>
           <div>
             <Duplicate
               onClick={onDuplicateTask}

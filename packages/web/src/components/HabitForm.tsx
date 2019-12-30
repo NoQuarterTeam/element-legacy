@@ -4,12 +4,12 @@ import styled, { media } from "../application/theme"
 import useFormState from "../lib/hooks/useFormState"
 import { useAllElements } from "../lib/graphql/element/hooks"
 
-import Button from "./Button"
 import ElementDropdown from "./ElementDropdown"
 import { sleep } from "../lib/helpers"
 import { HabitFragment } from "../lib/graphql/types"
 import Input from "./Input"
 import { useTimelineContext } from "./providers/TimelineProvider"
+import { CButton } from "./CButton"
 
 interface HabitFormProps {
   onFormSubmit: (data: any) => Promise<any>
@@ -59,9 +59,9 @@ function HabitForm({ onFormSubmit, habits, day }: HabitFormProps) {
         />
         <Input hidden defaultValue={formState.activeFrom} />
         {formState.elementId && (
-          <Button loading={loading} style={{ marginLeft: "1rem" }}>
+          <CButton type="submit" isLoading={loading}>
             Add
-          </Button>
+          </CButton>
         )}
       </StyledRow>
 

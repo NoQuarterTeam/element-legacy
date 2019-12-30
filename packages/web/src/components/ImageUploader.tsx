@@ -17,8 +17,8 @@ import {
   Text,
   Box,
   Image,
-  PseudoBox,
 } from "@chakra-ui/core"
+import { CButton } from "./CButton"
 
 export const GET_SIGNED_URL = gql`
   mutation GetSignedUrl($data: S3SignedUrlInput!) {
@@ -134,14 +134,14 @@ export const ImageUploader: React.FC<Props> = props => {
             )}
             {error && <Text>{error}</Text>}
             <ModalFooter>
-              <Button
+              <CButton
                 isLoading={loading}
                 isDisabled={loading}
                 loadingText="Submitting"
                 onClick={handleSubmitImage}
               >
                 Submit
-              </Button>
+              </CButton>
             </ModalFooter>
           </ModalBody>
         </ModalContent>
