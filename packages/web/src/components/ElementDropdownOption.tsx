@@ -63,7 +63,7 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
             hasArrow
             label="Share"
             placement="top"
-            zIndex="900"
+            zIndex={9000}
             bg="black"
           >
             <GroupAdd color={element.color} width="20" />
@@ -77,7 +77,7 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
               hasArrow
               label="Delete"
               placement="top"
-              zIndex="900"
+              zIndex={9000}
               bg="black"
             >
               <DeleteOutline
@@ -96,7 +96,7 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
               hasArrow
               label="Add child element"
               placement="top"
-              zIndex="900"
+              zIndex={9000}
               bg="black"
             >
               <Add color={element.color} width="24px" cursor="pointer" />
@@ -107,9 +107,9 @@ const ElementDropdownOption: FC<ElementDropdownOptionProps> = ({
           <Tooltip
             aria-label=""
             hasArrow
-            label="Choose colour"
+            label="Choose color"
             placement="top"
-            zIndex="900"
+            zIndex={9000}
             bg="black"
           >
             <StyledColorCircle
