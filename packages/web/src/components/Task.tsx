@@ -93,16 +93,18 @@ function Task({ task, ...rest }: TaskProps) {
           justify="space-between"
           align="center"
           bottom="0"
+          direction="row-reverse"
           position="absolute"
           width="100%"
           pr={2}
         >
-          <StyledBottomLeftTriangle color={task.element.color} />
-
           <StyledTaskDuration completed={task.completed}>
             {formatTime(hoursInMins(task.estimatedTime)) &&
               formatTime(hoursInMins(task.estimatedTime))}
           </StyledTaskDuration>
+          {task?.description && (
+            <StyledBottomLeftTriangle color={task.element.color} />
+          )}
         </Flex>
       </StyledTaskBox>
       <TaskModal isOpen={isOpen} onClose={onClose} task={task} />
@@ -172,6 +174,7 @@ const StyledTaskBox = styled.div<{
   filter: ${p => (p.completed ? "blur(0.6px)" : null)};
   opacity: ${p => (p.completed ? 0.8 : 1)};
   border-radius: ${p => p.theme.borderRadius};
+  overflow: hidden;
 
   &:hover ${StyledTaskElement} {
     height: 20px;
@@ -190,7 +193,8 @@ const StyledTaskBox = styled.div<{
 const StyledBottomLeftTriangle = styled(Box)`
   width: 0;
   height: 0;
-  left: -1px;
-  border-right: 10px solid transparent;
-  border-bottom: 10px solid ${p => p.color};
+  left: -3px;
+  bottom: -2px;
+  border-right: 12px solid transparent;
+  border-bottom: 12px solid ${p => p.color};
 `
