@@ -118,11 +118,11 @@ const StyledDayHeader = styled.h3<{ today: boolean; weekend: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: ${p => (p.today ? "113px" : "119px")};
+  padding-top: ${p => (p.today ? "114px" : "119px")};
   background-color: ${p => p.today && p.theme.colorBlue};
   border-bottom: none;
   font-weight: ${p => (p.today ? p.theme.fontBold : p.theme.fontNormal)};
-  padding-bottom: 5px;
+  padding-bottom: ${p => (p.today ? "4px" : "5px")};
 `
 
 const StyledContainer = styled.div<{
@@ -134,12 +134,12 @@ const StyledContainer = styled.div<{
   display: flex;
   flex-direction: column;
   padding-top: 0px;
-  margin-top: -90px;
+  margin-top: -95px;
   background-color: ${p => p.theme.colorBackground};
   border-left: ${p => p.monday && "5px #efefef dotted"};
   border-left: ${p => p.first && `5px ${p.theme.colorLightBlue} dotted`};
 
   ${media.greaterThan("md")`
-    margin-top: -93px;
+    margin-top: -95px;
   `};
 `

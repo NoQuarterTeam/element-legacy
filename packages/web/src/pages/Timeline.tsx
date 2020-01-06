@@ -208,9 +208,9 @@ const StyledDaysWrapper = styled.div`
 `
 
 const StyledSpacer = styled.div<{ currentUser: boolean }>`
-  height: ${p => (p.currentUser ? "174px" : "143px")};
+  height: ${p => (p.currentUser ? "172px" : "141px")};
 
   ${p => media.greaterThan("md")`
-    height: ${p.currentUser ? "174px" : "143px"};
+    height: ${p.currentUser ? "172px" : "141px"};
   `}
 `
