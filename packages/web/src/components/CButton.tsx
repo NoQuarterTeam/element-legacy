@@ -3,12 +3,12 @@ import { Button as ChakraButton, ButtonProps } from "@chakra-ui/core"
 
 export const CButton: React.FC<ButtonProps> = ({
   variant = "solid",
-  bg = "#F4CA87",
+  bg = "#F7B002",
   type = "button",
   borderRadius = "0",
   border = "2px",
   px = "10",
-  py = "5",
+  py = "0",
   fontWeight = "normal",
   fontSize = "lg",
   letterSpacing = "wide",

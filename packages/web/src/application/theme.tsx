@@ -18,7 +18,7 @@ const theme: (small: boolean, isDark: boolean) => ThemeInterface = (
   ...defaultTheme,
   colorPage: isDark ? "#2f3335" : "white",
   colorBackground: isDark ? "#373c3f" : "#fff",
-  colorPlaceholder: isDark ? "#6f7172" : "#d3d3d3",
+  colorPlaceholder: isDark ? "#6f7172" : "#b1b1b1",
   colorShadow: isDark ? "rgba(0, 0, 0, 0.1)" : "rgba(200, 200, 200, 0.1)",
   colorOverlay: isDark ? "rgba(200, 200, 200, 0.1)" : "rgba(0, 0, 0, 0.1);",
   colorLabel: isDark ? "#81878a" : "#b1bbc4",

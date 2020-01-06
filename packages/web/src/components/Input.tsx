@@ -66,7 +66,6 @@ const StyledInput = styled.input<{
   border-top-right-radius: ${p => p.theme.borderRadius};
 
   &::placeholder {
-    font-weight: ${p => p.theme.fontSemiBold};
     color: ${p => p.theme.colorPlaceholder};
   }
 `

@@ -51,6 +51,7 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
   const [addingChild, setAddingChild] = useState()
   const pickerRef = createRef<HTMLDivElement>()
   const dropdownRef = createRef<HTMLDivElement>()
+  const searchRef = createRef<HTMLInputElement>()
 
   useEffect(() => {
     if (elements) {
@@ -63,6 +64,10 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
   useEffect(() => {
     openDropdown(open)
   }, [open])
+
+  useEffect(() => {
+    searchRef.current?.focus()
+  })
 
   const matchedElements =
     (elements &&
@@ -220,15 +225,29 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
         </StyledClose>
 
         {/* Search input */}
-        <StyledInputContainer>
+        <StyledSearchContainer>
           <Input
-            placeholder="Search element"
+            placeholder="Search"
             onChange={e => setSearch(e.target.value)}
             value={search}
             style={{ fontSize: "16px", padding: 0 }}
+            autoFocus={true}
+            ref={searchRef}
+          />
+          <Icon name="search" color="gray.600" />
+        </StyledSearchContainer>
+
+        <StyledInputContainer>
+          <Input
+            placeholder="Add new element"
+            onChange={e => setNewElement(e.target.value)}
+            value={newElement}
+            style={{ fontSize: "16px", padding: 0 }}
             autoFocus
           />
-          <Icon name="search" color="gray.200" />
+          <StyledAdd newElement={newElement} onClick={createNewElement}>
+            +
+          </StyledAdd>
         </StyledInputContainer>
 
         {/* Elements */}
@@ -328,18 +347,7 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
               </div>
             ),
           )}
-        <StyledInputContainer>
-          <Input
-            placeholder="Add new element"
-            onChange={e => setNewElement(e.target.value)}
-            value={newElement}
-            style={{ fontSize: "16px", padding: 0 }}
-            autoFocus
-          />
-          <StyledAdd newElement={newElement} onClick={createNewElement}>
-            +
-          </StyledAdd>
-        </StyledInputContainer>
+
         {filteredElements && filteredElements.length > 0 && (
           <StyledToggle onClick={handleToggleAll}>Show all</StyledToggle>
         )}
@@ -425,13 +433,23 @@ const StyledInputContainer = styled(Flex)<{ child?: boolean }>`
 const StyledAdd = styled.div<{ newElement: string }>`
   cursor: pointer;
   font-size: ${p => p.theme.textL};
-  color: ${p => (p.newElement ? p.theme.colorPurple : p.theme.colorLightGrey)};
+  color: ${p => (p.newElement ? "black" : "transparent")};
   font-weight: ${p => p.theme.fontBlack};
   margin-right: ${p => p.theme.paddingM};
 
   &:hover {
     transform: scale(1.1);
   }
+`
+
+const StyledSearchContainer = styled(Flex)<{ child?: boolean }>`
+  color: white;
+  padding-left: ${p => p.theme.paddingML};
+  ${p => p.theme.flexBetween};
+  padding-right: ${p => p.theme.paddingML};
+  border-bottom: ${p => p.theme.border};
+  padding-bottom: ${p => p.theme.paddingM};
+  margin-bottom: ${p => p.theme.paddingM};
 `
 
 const StyledToggle = styled.div`
