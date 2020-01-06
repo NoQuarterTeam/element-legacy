@@ -66,8 +66,10 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
   }, [open])
 
   useEffect(() => {
-    searchRef.current?.focus()
-  })
+    if (!newElement && !newChildElement) {
+      searchRef.current?.focus()
+    }
+  }, [searchRef, newElement, newChildElement])
 
   const matchedElements =
     (elements &&
@@ -243,7 +245,6 @@ const ElementDropdown: FC<ElementDropdownProps> = ({
             onChange={e => setNewElement(e.target.value)}
             value={newElement}
             style={{ fontSize: "16px", padding: 0 }}
-            autoFocus
           />
           <StyledAdd newElement={newElement} onClick={createNewElement}>
             +
