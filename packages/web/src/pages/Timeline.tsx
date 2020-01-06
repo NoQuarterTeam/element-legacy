@@ -22,7 +22,7 @@ const Timeline: React.FC<RouteComponentProps> = () => {
 
   let DAY_COUNT = 20
   if (isMobileDevice()) {
-    DAY_COUNT = 4
+    DAY_COUNT = 5
   }
 
   const [daysBack, setDaysBack] = React.useState(DAY_COUNT)
