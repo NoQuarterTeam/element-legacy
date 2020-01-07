@@ -35,8 +35,6 @@ const Nav: FC<NavProps> = ({
   const sharedUsers = useGetSharedUsersByUser(user.id)
   const [elementsOpen, setElementsOpen] = useState(false)
 
-  const logout = useLogout()
-
   // TODO: MOVE OUT TO LIB
   const toggleFilteredElement = (element: ElementFragment) => {
     let newFiltered = filteredElements && filteredElements
@@ -151,22 +149,6 @@ const Nav: FC<NavProps> = ({
         ))} */}
       </StyledContainer>
       <StyledContainer>
-        <StyledLogoutButton onClick={logout} open={open}>
-          <LogOut width={20} color="lightgrey" />
-          LOGOUT
-        </StyledLogoutButton>
-        <StyledAccountButton as={ReachLink} to="/account" open={open}>
-          <AccountBox width={20} color="lightgrey" />
-          ACCOUNT
-        </StyledAccountButton>
-        <StyledFeedbackButton
-          href="https://www.notion.so/noquarter/Tell-me-how-you-really-feel-3210d7178b704f1dbf977ff82cbb543d"
-          target="_blank"
-          open={open}
-        >
-          <Feedback width={20} color="lightgrey" />
-          FEEDBACK
-        </StyledFeedbackButton>
         <StyledElementsOpen onClick={() => setElementsOpen(true)} open={open}>
           <Filter width={30} color="lightgrey" />
           ELEMENTS
@@ -180,6 +162,18 @@ const Nav: FC<NavProps> = ({
           filteredElements={filteredElements && filteredElements}
           toggleAll={toggleAll}
         />
+        <StyledFeedbackButton
+          href="https://www.notion.so/noquarter/Tell-me-how-you-really-feel-3210d7178b704f1dbf977ff82cbb543d"
+          target="_blank"
+          open={open}
+        >
+          <Feedback width={20} color="lightgrey" />
+          FEEDBACK
+        </StyledFeedbackButton>
+        <StyledAccountButton as={ReachLink} to="/account" open={open}>
+          <AccountBox width={20} color="lightgrey" />
+          ACCOUNT
+        </StyledAccountButton>
         <StyledToday onClick={scrollToToday} open={open}>
           <Today width={30} color="lightgrey" />
         </StyledToday>
@@ -257,26 +251,13 @@ const StyledFeedbackButton = styled.a<{ open: boolean }>`
   align-items: center;
 `
 
-const StyledLogoutButton = styled.div<{ open: boolean }>`
-  visibility: ${p => (p.open ? "visible" : "hidden")};
-  text-align: center;
-  cursor: pointer;
-  font-size: ${p => p.theme.textXXS};
-  text-decoration: none;
-  margin-bottom: ${p => p.theme.paddingL};
-  font-variant: small-caps;
-  color: ${p => p.theme.colorLabel};
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`
 const StyledAccountButton = styled(Link)<{ open: boolean }>`
   visibility: ${p => (p.open ? "visible" : "hidden")};
   text-align: center;
   cursor: pointer;
   font-size: ${p => p.theme.textXXS};
   text-decoration: none;
-  margin-bottom: ${p => p.theme.paddingL};
+  margin-bottom: ${p => p.theme.paddingXL};
   font-variant: small-caps;
   color: ${p => p.theme.colorLabel};
   display: flex;
@@ -304,7 +285,7 @@ const StyledElementsOpen = styled.div<{ open: boolean }>`
   font-variant: small-caps;
   cursor: pointer;
   font-size: ${p => p.theme.textXXS};
-  margin-bottom: ${p => p.theme.paddingXL};
+  margin-bottom: ${p => p.theme.paddingL};
   display: flex;
   flex-direction: column;
   align-items: center;

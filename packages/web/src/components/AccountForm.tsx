@@ -54,7 +54,7 @@ export const AccountForm = ({ user }: Props) => {
       <CInput name="firstName" label="First Name" placeholder="Jim" />
       <CInput name="lastName" label="Last Name" placeholder="Sebe" />
       <CInput name="email" label="Email" placeholder="j.sebe@gmail.com" />
-      <Flex justify="space-between" align="center" mt={4}>
+      <Flex justify="center" align="center" mt={6}>
         <CButton type="submit" isLoading={form.formState.isSubmitting}>
           Update
         </CButton>

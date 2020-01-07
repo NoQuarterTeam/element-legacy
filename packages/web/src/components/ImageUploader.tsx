@@ -17,6 +17,7 @@ import {
   Text,
   Box,
   Image,
+  Icon,
 } from "@chakra-ui/core"
 import { CButton } from "./CButton"
 
@@ -110,17 +111,14 @@ export const ImageUploader: React.FC<Props> = props => {
         <input {...(getInputProps() as any)} />
         {props.children}
         {props.button !== false && (
-          <Button
+          <Icon
             position="absolute"
             top="0"
             right="-30%"
-            leftIcon="edit"
-            variantColor="gray"
-            variant="solid"
-            size="xs"
-          >
-            Edit
-          </Button>
+            name="edit"
+            color="gray"
+            size="5"
+          />
         )}
       </Box>
       <Modal isOpen={modalOpen} onClose={handleClose}>

@@ -39,6 +39,7 @@ const body = css`
 
   a {
     text-decoration: none;
+    color: black;
   }
 
   * {

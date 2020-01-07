@@ -2,7 +2,7 @@ import React, { FC } from "react"
 import gql from "graphql-tag"
 import { RouteComponentProps, Link as ReachLink } from "@reach/router"
 
-import { Flex, Box, Link, Avatar } from "@chakra-ui/core"
+import { Flex, Box, Link, Avatar, Icon } from "@chakra-ui/core"
 
 import Page from "../components/Page"
 import { useMe } from "../components/providers/MeProvider"
@@ -10,6 +10,7 @@ import { AccountForm } from "../components/AccountForm"
 import { ImageUploader } from "../components/ImageUploader"
 import { useUpdateUserAvatarMutation } from "../lib/graphql/types"
 import { CButton } from "../components/CButton"
+import { useLogout } from "../lib/graphql/user/hooks"
 
 export const UPDATE_USER_AVATAR = gql`
   mutation UpdateUserAvatar($data: UpdateInput!) {
@@ -30,13 +31,13 @@ export const Account: FC<RouteComponentProps> = () => {
     })
   }
 
+  const logout = useLogout()
+
   return (
     <Page>
-      <Box pos="fixed" top="5" left="5">
+      <Box pos="fixed" top="10" right="10">
         <Link as={ReachLink} to="/">
-          <CButton leftIcon="arrow-back" bg="white">
-            Back
-          </CButton>
+          <Icon size="5" name="close" />
         </Link>
       </Box>
       <Box w={["90%", 400]}>
@@ -55,6 +56,13 @@ export const Account: FC<RouteComponentProps> = () => {
           <AccountForm user={user} />
         </Flex>
       </Box>
+      <CButton
+        style={{ position: "absolute", bottom: "2rem", right: "2rem" }}
+        variant="ghost"
+        onClick={logout}
+      >
+        Logout
+      </CButton>
     </Page>
   )
 }
