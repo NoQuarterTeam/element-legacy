@@ -35,7 +35,7 @@
     "dotenv": "7.0.0",
     "express": "4.17.1",
     "express-jwt": "5.3.1",
-    "ioredis": "4.14.1",
+    "ioredis": "4.16.0",
     "jsonwebtoken": "8.5.1",
     "match-sorter": "4.0.2",
     "morgan": "1.9.1",
