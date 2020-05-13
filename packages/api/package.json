@@ -53,7 +53,7 @@
     "@types/faker": "4.1.11",
     "@types/ioredis": "4.16.2",
     "@types/jest": "24.9.1",
-    "@types/jsonwebtoken": "8.3.9",
+    "@types/jsonwebtoken": "8.5.0",
     "@types/morgan": "1.9.0",
     "@types/node": "11.15.12",
     "faker": "4.1.0",
