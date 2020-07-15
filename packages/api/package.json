@@ -37,7 +37,7 @@
     "express-jwt": "5.3.3",
     "ioredis": "4.17.3",
     "jsonwebtoken": "8.5.1",
-    "match-sorter": "4.1.0",
+    "match-sorter": "4.2.0",
     "morgan": "1.10.0",
     "pg": "7.18.2",
     "reflect-metadata": "0.1.13",
