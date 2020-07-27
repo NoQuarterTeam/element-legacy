@@ -56,8 +56,8 @@
   "devDependencies": {
     "@graphql-codegen/cli": "1.17.4",
     "@graphql-codegen/typescript": "1.17.4",
-    "@graphql-codegen/typescript-operations": "1.17.4",
-    "@graphql-codegen/typescript-react-apollo": "1.17.4",
+    "@graphql-codegen/typescript-operations": "1.17.5",
+    "@graphql-codegen/typescript-react-apollo": "1.17.5",
     "@types/deep-equal": "1.0.1",
     "@types/graphql": "14.5.0",
     "@types/lodash.throttle": "4.1.6",
