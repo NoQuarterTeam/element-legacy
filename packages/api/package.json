@@ -57,7 +57,7 @@
     "@types/morgan": "1.9.2",
     "@types/node": "11.15.50",
     "faker": "4.1.0",
-    "ts-node-dev": "1.1.1"
+    "ts-node-dev": "1.1.6"
   },
   "workspaces": {
     "nohoist": [
