@@ -30,7 +30,7 @@
     "@emotion/core": "^10.0.22",
     "@emotion/styled": "^10.0.23",
     "@noquarter/hooks": "^1.1.13",
-    "@noquarter/ui": "^1.1.5",
+    "@noquarter/ui": "^3.0.0",
     "@noquarter/utils": "^1.0.5",
     "@reach/router": "^1.2.1",
     "@types/match-sorter": "^4.0.0",
