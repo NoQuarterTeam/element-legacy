@@ -34,7 +34,7 @@
     "dayjs": "1.10.5",
     "dotenv": "7.0.0",
     "express": "4.17.1",
-    "express-jwt": "5.3.3",
+    "express-jwt": "6.0.0",
     "ioredis": "4.27.6",
     "jsonwebtoken": "8.5.1",
     "match-sorter": "4.2.1",
